@@ -22,8 +22,10 @@ public class Administrator extends Staff {
 	 * 
 	 * @param req
 	 */
-	public void approveReplenishment(Medicine req) {
+	public void approveReplenishment(Medicine req, int amount) {
 		// TODO - implement Administrator.approveReplenishment
+		req.replenish(amount);
+
 		throw new UnsupportedOperationException();
 	}
 
