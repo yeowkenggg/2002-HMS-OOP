@@ -3,10 +3,21 @@ import java.io.*;
 
 public class Pharmacist extends Staff {
 
+	//to be able to store replenishmentRequest
+	 private List<ReplenishmentRequest> replenishmentReq;
+
+	public Pharmacist(String userId, String password, String name, String gender, String role,
+			int age) {
+		super(userId, password, name, gender, role, age);
+		this.replenishmentReq = new ArrayList<>();
+	}
+
 	public List<Prescription> viewPrescriptionRecords() {
 		// TODO - implement Pharmacist.viewPrescriptionRecords
 		throw new UnsupportedOperationException();
 	}
+
+	
 
 	/**
 	 * 
@@ -22,10 +33,29 @@ public class Pharmacist extends Staff {
 	/**
 	 * 
 	 * @param medicine
+	 * @param amt
 	 */
-	public void replenishmentRequest(Medicine med) {
-		// TODO - implement Pharmacist.replenishmentRequest
-		throw new UnsupportedOperationException();
+	public void replenishmentRequest(Medicine med, int amt) {
+		//stock < alertLine
+		if(med.alertReplenishment()){
+			//using time as a ID
+			String requestID = UUID.randomUUID().toString();
+			//use getStaffID in staff class to get the pharmacist's ID
+			ReplenishmentRequest req = new ReplenishmentRequest(requestID, med, amt, getUserId());
+
+			replenishmentReq.add(req);
+			System.out.println("Replenishment Req Sent");
+			System.out.println("Summary:");
+			System.out.printf("%d %s\n", amt, med.getName());
+		}
+		else{
+			System.out.println("Replenishment is not needed.");
+		}
+	}
+
+	//view all replenishment made by pharmacist
+	public List<ReplenishmentRequest> getReplenishmentRequests(){
+		return replenishmentReq;
 	}
 
 	public void displayMenu() {

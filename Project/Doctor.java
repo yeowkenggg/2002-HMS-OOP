@@ -3,6 +3,10 @@ import java.io.*;
 
 public class Doctor extends Staff {
 
+	public Doctor(String userId, String password, String name, String gender, String role, int age) {
+		super(userId, password, name, gender, role, age);
+	}
+
 	private List<TimeSlot> availability;
 
 	/**
@@ -42,6 +46,8 @@ public class Doctor extends Staff {
 		throw new UnsupportedOperationException();
 	}
 	
+	//override displayMenu in User class
+	@Override
 	public void displayMenu() {
         if (isLoggedIn()) {
             System.out.println("View Patient Medical Records");

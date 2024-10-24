@@ -9,8 +9,8 @@ public class Diagnosis {
 	private String doctorID;
 	private Date diagnosisDate;
 
-	public String getDIagnosisInfo() {
-		// TODO - implement Diagnosis.getDIagnosisInfo
+	public String getDiagnosisInfo() {
+		// TODO - implement Diagnosis.getDiagnosisInfo
 		throw new UnsupportedOperationException();
 	}
 

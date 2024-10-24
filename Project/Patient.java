@@ -6,6 +6,10 @@ import java.io.*;
 
 public class Patient extends User {
 
+	public Patient(String userId, String password, String name, String gender) {
+		super(userId, password, name, gender);
+	}
+
 	private String patientID;
 	private Date dateOfBirth;
 	private String bloodType;
@@ -40,6 +44,8 @@ public class Patient extends User {
 		throw new UnsupportedOperationException();
 	}
 	
+	//override displayMenu in User class
+	@Override
 	public void displayMenu() {
         if (isLoggedIn()) {
 			System.out.println("1. View Medical Record");

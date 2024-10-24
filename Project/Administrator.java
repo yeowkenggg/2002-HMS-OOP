@@ -6,9 +6,9 @@ import java.io.*;
 
 public class Administrator extends Staff {
 
-	public Administrator(String userId, String password, String name, String gender, String staffID, String role,
+	public Administrator(String userId, String password, String name, String gender, String role,
 			int age) {
-		super(userId, password, name, gender, staffID, role, age);
+		super(userId, password, name, gender, role, age);
 	}
 
 	public void manageStaff(String action, Staff staff) {
@@ -24,6 +24,7 @@ public class Administrator extends Staff {
 	/**
 	 * 
 	 * @param req
+	 * @param amount
 	 */
 	public void approveReplenishment(Medicine req, int amount) {
 		// TODO - implement Administrator.approveReplenishment
@@ -32,6 +33,7 @@ public class Administrator extends Staff {
 		throw new UnsupportedOperationException();
 	}
 	
+	//override displayMenu in User class
 	@Override
     public void displayMenu() {
         if (isLoggedIn()) {

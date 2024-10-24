@@ -1,20 +1,14 @@
 public class Staff extends User {
 
-	public Staff(String userId, String password, String name, String gender, String staffID, String role, int age) {
-		//TODO Auto-generated constructor stub
+	public Staff(String userId, String password, String name, String gender, String role, int age) {
 		super(userId, password, name, gender);  
-        this.staffID = staffID;
         this.role = role;
         this.age = age;
     }
 	
-	private String staffID;
 	private String role;
 	private int age;
 
-	public String getStaffID() {
-        return staffID;
-    }
 
     public String getRole() {
         return role;

@@ -7,14 +7,20 @@ public class Medicine {
 	private int stock;
 	private int alertLine;
 
+	public Medicine(String name, int stock, int alertLine){
+		this.name = name;
+		this.stock = stock;
+		this.alertLine = alertLine;
+	}
+
 	/**
 	 * 
 	 * @param amount
 	 */
+	//replenish method
 	public void replenish(int amount) {
 		this.stock += amount;
 		System.out.printf("Stock replenished. %d stocks added to %s. New amount: %d \n", amount, name, stock);
-		throw new UnsupportedOperationException();
 	}
 
 	public void adjustAlert(int newAlert) {
@@ -23,6 +29,7 @@ public class Medicine {
 		throw new UnsupportedOperationException();
 	}
 
+	//get info
 	public int getStock() {
 		return this.stock;
 	}
@@ -31,6 +38,7 @@ public class Medicine {
 		return this.name;
 	}
 
+	//to check if its below alert levels
 	public boolean alertReplenishment(){
 		return stock < alertLine;
 	}
