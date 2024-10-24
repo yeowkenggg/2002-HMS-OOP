@@ -41,5 +41,20 @@ public class Doctor extends Staff {
 		// TODO - implement Doctor.acceptAppointment
 		throw new UnsupportedOperationException();
 	}
+	
+	public void displayMenu() {
+        if (isLoggedIn()) {
+            System.out.println("View Patient Medical Records");
+			System.out.println("Update Patient Medical Records");
+			System.out.println("View Personal Schedule");
+			System.out.println("Set Availability for Appointments");
+			System.out.println("Accept or Decline Appointment Requests");
+			System.out.println("View Upcoming Appointments");
+			System.out.println("Record Appointment Outcome");
+        } else {
+            System.out.println("ERROR. PLEASE LOG IN!");
+        }
+    }
+	
 
 }
