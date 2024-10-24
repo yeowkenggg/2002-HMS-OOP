@@ -1,3 +1,6 @@
+import java.util.*;
+import java.io.*;
+
 public class Patient extends User {
 
 	private String patientID;

@@ -1,3 +1,6 @@
+import java.util.*;
+import java.io.*;
+
 public class Pharmacist extends Staff {
 
 	public List<Prescription> viewPrescriptionRecords() {
@@ -6,6 +9,7 @@ public class Pharmacist extends Staff {
 	}
 
 	/**
+	 * 
 	 * 
 	 * @param prescriptionID
 	 * @param status
@@ -19,7 +23,7 @@ public class Pharmacist extends Staff {
 	 * 
 	 * @param medicine
 	 */
-	public void replenishmentRequest(Medication medicine) {
+	public void replenishmentRequest(Medicine med) {
 		// TODO - implement Pharmacist.replenishmentRequest
 		throw new UnsupportedOperationException();
 	}

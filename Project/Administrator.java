@@ -1,3 +1,6 @@
+import java.util.*;
+import java.io.*;
+
 public class Administrator extends Staff {
 
 	/**
@@ -19,7 +22,7 @@ public class Administrator extends Staff {
 	 * 
 	 * @param req
 	 */
-	public void approveReplenishment(replenishmentRequest req) {
+	public void approveReplenishment(Medicine req) {
 		// TODO - implement Administrator.approveReplenishment
 		throw new UnsupportedOperationException();
 	}

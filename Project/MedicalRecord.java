@@ -1,3 +1,6 @@
+import java.util.*;
+import java.io.*;
+
 public class MedicalRecord {
 
 	private List<Diagnosis> diagnose;

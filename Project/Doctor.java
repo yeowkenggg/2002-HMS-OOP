@@ -1,3 +1,6 @@
+import java.util.*;
+import java.io.*;
+
 public class Doctor extends Staff {
 
 	private List<TimeSlot> availability;
