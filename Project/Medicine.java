@@ -7,10 +7,6 @@ public class Medicine {
 	private int stock;
 	private int alertLine;
 
-
-
-
-
 	/**
 	 * 
 	 * @param amount

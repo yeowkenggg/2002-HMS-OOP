@@ -6,6 +6,14 @@ public class ReplenishmentRequest {
 	private String pharmacistID;
 	private boolean isApproved;
 
+	public ReplenishmentRequest(String requestID, Medicine medicine, int requestedAmount, String pharmacistID) {
+        this.requestID = requestID;
+        this.medicine = medicine;
+        this.requestedAmount = requestedAmount;
+        this.pharmacistID = pharmacistID;
+        this.isApproved = false;  // default
+    }
+
 	public void approve() {
 		// TODO - implement ReplenishmentRequest.approve
 		this.isApproved = true;
@@ -14,12 +22,12 @@ public class ReplenishmentRequest {
 	}
 
 	public String getRequestID() {
-		return this.requestID;
+		return requestID;
 	}
 
 	public boolean isApproved() {
 		// TODO - implement ReplenishmentRequest.isApproved
 		return isApproved;
 	}
-
+ 
 }
