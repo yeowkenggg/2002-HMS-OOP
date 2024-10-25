@@ -26,7 +26,7 @@ public class Administrator extends Staff {
         for (ReplenishmentRequest request : ReplenishmentRequest.getRequests()) {
             if (!request.isApproved()) {
                 System.out.println("Request ID: " + request.getRequestID() + " | Medicine: " 
-                                    + request.getMedicine().getName() + " | Amount: " + request.getRequestedAmount());
+                                    + request.getMedicine().getName() + " | Amount: " + request.getRequestedAmount()+ " | Status: "+request.isApproved());
             }
         }
     }

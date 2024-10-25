@@ -33,7 +33,6 @@ public class User {
 
     //login implementation
 	public boolean login(String inputUser, String inputPass) {
-		// TODO - implement User.login 	
 		//Implement next time when we decide how to handle user accounts
 		//for now just default login codes
 		if (inputUser.equals(this.userId) && inputPass.equals(this.password)) {

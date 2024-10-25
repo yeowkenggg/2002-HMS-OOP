@@ -40,17 +40,25 @@ public class Pharmacist extends Staff {
 	public void replenishmentRequest(Medicine med, int amt) {
 		//stock < alertLine
 		if(med.alertReplenishment()){
+			for (ReplenishmentRequest request : ReplenishmentRequest.getRequests()) {
+				if (request.getMedicine().equals(med) && !request.isApproved()) {
+					System.out.println("A replenishment request for " + med.getName() + " is already pending by " + request.getPharmacistName() + ".");
+					return;  
+				}
+			}
 			//using time as a ID
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMHHmm");
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMHHmm"); //ddMMHHmmss
             String formattedDate = LocalDateTime.now().format(formatter);  
             String requestID = "R" + formattedDate;
 			//use getStaffID in staff class to get the pharmacist's ID
-			ReplenishmentRequest req = new ReplenishmentRequest(requestID, med, amt, getUserId());
+			ReplenishmentRequest req = new ReplenishmentRequest(requestID, med, amt, getUserId(), getName());
 
 			replenishmentReq.add(req);
+			System.out.println("===================");
 			System.out.println("Replenishment Req: "+ med.getName() +" has been submitted.");
 			System.out.println("Summary:");
 			System.out.printf("%d %s\n", amt, med.getName());
+			System.out.println("===================");
 		}
 		else{
 			System.out.println("Replenishment is not needed.");

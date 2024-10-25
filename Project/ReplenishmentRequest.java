@@ -9,17 +9,19 @@ public class ReplenishmentRequest {
 	private Medicine medicine;
 	private int requestedAmount;
 	private String pharmacistID;
+	private String pharmacistName;
 	private boolean isApproved;
 
 	//constructor
-	public ReplenishmentRequest(String requestID, Medicine medicine, int requestedAmount, String pharmacistID) {
+	public ReplenishmentRequest(String requestID, Medicine medicine, int requestedAmount, String pharmacistID, String pharmacistName) {
         this.requestID = requestID;
         this.medicine = medicine;
         this.requestedAmount = requestedAmount;
         this.pharmacistID = pharmacistID;
-        this.isApproved = false;  // default
+        this.pharmacistName = pharmacistName;
+        this.isApproved = false;
 
-		requests.add(this);
+        requests.add(this);  
     }
 
 	//approve and call replenish method to add qty into the medicine
@@ -46,9 +48,12 @@ public class ReplenishmentRequest {
         return requestedAmount;
     }
 
+	public String getPharmacistName() {  
+        return pharmacistName;
+    }
+
 	//check of status
 	public boolean isApproved() {
-		// TODO - implement ReplenishmentRequest.isApproved
 		return isApproved;
 	}
  
