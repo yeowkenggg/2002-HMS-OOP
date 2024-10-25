@@ -21,17 +21,31 @@ public class Administrator extends Staff {
 		throw new UnsupportedOperationException();
 	}
 
+	public void viewReplenishmentRequests() {
+        System.out.println("Pending Replenishment Requests:");
+        for (ReplenishmentRequest request : ReplenishmentRequest.getRequests()) {
+            if (!request.isApproved()) {
+                System.out.println("Request ID: " + request.getRequestID() + " | Medicine: " 
+                                    + request.getMedicine().getName() + " | Amount: " + request.getRequestedAmount());
+            }
+        }
+    }
+
 	/**
 	 * 
 	 * @param req
 	 * @param amount
 	 */
-	public void approveReplenishment(Medicine req, int amount) {
-		// TODO - implement Administrator.approveReplenishment
-		req.replenish(amount);
-
-		throw new UnsupportedOperationException();
-	}
+	public void approveReplenishment(String requestID) {
+        for (ReplenishmentRequest request : ReplenishmentRequest.getRequests()) {
+            if (request.getRequestID().equals(requestID) && !request.isApproved()) {
+                request.approve();
+                System.out.println("Replenishment request " + requestID + " has been approved.");
+                return;
+            }
+        }
+        System.out.println("Replenishment request not found or already approved.");
+    }
 	
 	//override displayMenu in User class
 	@Override

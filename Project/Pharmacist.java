@@ -1,5 +1,7 @@
 import java.util.*;
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Pharmacist extends Staff {
 
@@ -39,12 +41,14 @@ public class Pharmacist extends Staff {
 		//stock < alertLine
 		if(med.alertReplenishment()){
 			//using time as a ID
-			String requestID = UUID.randomUUID().toString();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMHHmm");
+            String formattedDate = LocalDateTime.now().format(formatter);  
+            String requestID = "R" + formattedDate;
 			//use getStaffID in staff class to get the pharmacist's ID
 			ReplenishmentRequest req = new ReplenishmentRequest(requestID, med, amt, getUserId());
 
 			replenishmentReq.add(req);
-			System.out.println("Replenishment Req Sent");
+			System.out.println("Replenishment Req: "+ med.getName() +" has been submitted.");
 			System.out.println("Summary:");
 			System.out.printf("%d %s\n", amt, med.getName());
 		}

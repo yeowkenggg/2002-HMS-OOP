@@ -31,7 +31,7 @@ public class Medicine {
 
 	//get info
 	public int getStock() {
-		return this.stock;
+		return stock;
 	}
 	
 	public String getName(){

@@ -1,4 +1,9 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class ReplenishmentRequest {
+	
+	private static List<ReplenishmentRequest> requests = new ArrayList<>();  // Shared across all instances
 
 	private String requestID;
 	private Medicine medicine;
@@ -13,22 +18,34 @@ public class ReplenishmentRequest {
         this.requestedAmount = requestedAmount;
         this.pharmacistID = pharmacistID;
         this.isApproved = false;  // default
+
+		requests.add(this);
     }
 
 	//approve and call replenish method to add qty into the medicine
 	public void approve() {
-		// TODO - implement ReplenishmentRequest.approve
 		this.isApproved = true;
 		medicine.replenish(requestedAmount);
-		throw new UnsupportedOperationException();
 	}
 
-	//get requestID
+
+	//get methods
+	public static List<ReplenishmentRequest> getRequests() {
+        return requests;
+    }
+
 	public String getRequestID() {
 		return requestID;
 	}
 
-	
+	public Medicine getMedicine() {
+        return medicine;
+    }
+
+    public int getRequestedAmount() {
+        return requestedAmount;
+    }
+
 	//check of status
 	public boolean isApproved() {
 		// TODO - implement ReplenishmentRequest.isApproved
