@@ -30,6 +30,11 @@ public class User {
     public String getGender() {
         return gender;
     }
+    
+    //Used for updating staff 
+    public void setName(String name) {
+        this.name = name;
+    }
 
     //login implementation
 	public boolean login(String inputUser, String inputPass) {
@@ -40,11 +45,27 @@ public class User {
             System.out.println("Login successful for: " + name);
             return true;
         } else {
-            System.out.println("Invalid credentials.");
             return false;
         }
     }
-	
+
+	public void loginMenu() {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("Welcome to the Hospital Management System");
+
+        while (!isLogged) {
+            System.out.print("Enter User ID: ");
+            String inputUserId = scanner.nextLine();
+            System.out.print("Enter Password: ");
+            String inputPassword = scanner.nextLine();
+
+            if (login(inputUserId, inputPassword)) {
+                isLogged = true;
+            }
+        }
+    }
+
     //method to change password
 	public void changePassword(String password) {
 		if(isLogged){

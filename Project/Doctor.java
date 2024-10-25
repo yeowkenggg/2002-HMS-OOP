@@ -36,13 +36,30 @@ public class Doctor extends Staff {
         return appointments;
     }
 	
-	public boolean isAvailable(TimeSlot timeSlot) {
+    public boolean isAvailable(TimeSlot timeSlot) {
+        System.out.println("Checking availability for Dr. " + getName() + " at " + timeSlot);
+        // check if the time slot is in the availability list
+        boolean isAvailableInList = false;
         for (TimeSlot slot : availability) {
             if (slot.isSameTimeSlot(timeSlot)) {
-                return true;
+                isAvailableInList = true;
+                break;
             }
         }
-        return false;
+        if (!isAvailableInList) {
+            System.out.println("Time slot is not in the availability list.");
+            return false;
+        }
+        // check if the time slot is already booked in appointments
+        for (Appointment appointment : appointments) {
+            if (appointment.getTimeSlot().isSameTimeSlot(timeSlot)) {
+                System.out.println("Time slot is already booked.");
+                return false;
+            }
+        }
+
+        System.out.println("Time slot is available.");
+        return true;
     }
 
 	/**
@@ -51,37 +68,52 @@ public class Doctor extends Staff {
 	 */
 	public void setAvailability(TimeSlot timeSlot) {
         availability.add(timeSlot);
-        System.out.println("Availability added: " + timeSlot);
+        System.out.println("Availability added for Dr. " + getName() + ": " + timeSlot);
+        System.out.println("Current availability for Dr. " + getName() + ": " + availability);
     }
+    
 
 	/**
 	 * 
-	 * @param req
+	 * @param appointment
 	 */
 	public void acceptAppointment(Appointment appointment) {
-        if (appointments.contains(appointment)) {
-            appointment.confirm();
-            System.out.println("Appointment " + appointment.getAppointmentID() + " accepted.");
+        if (appointment.getDoctorID().equals(this.getUserId())) {  // only doctor of their own ID can modify their own appointments
+            if (appointments.contains(appointment)) {
+                appointment.confirm();
+                System.out.println("Appointment " + appointment.getAppointmentID() + " accepted.");
+            } else {
+                System.out.println("No such appointment found.");
+            }
         } else {
-            System.out.println("No such appointment found.");
+            System.out.println("Access Denied: You are not authorized to accept this appointment.");
         }
     }
 
-	public void declineAppointment(Appointment appointment) {
-        if (appointments.contains(appointment)) {
-            appointment.setStatus("Declined");
-            System.out.println("Appointment " + appointment.getAppointmentID() + " declined.");
+    /**
+	 * 
+	 * @param appointment
+	 */
+    public void declineAppointment(Appointment appointment) {
+        if (appointment.getDoctorID().equals(this.getUserId())) {  // only doctor of their own ID can modify their own appointments
+            if (appointments.contains(appointment)) {
+                appointment.setStatus("Declined");
+                System.out.println("Appointment " + appointment.getAppointmentID() + " declined.");
+            } else {
+                System.out.println("No such appointment found.");
+            }
         } else {
-            System.out.println("No such appointment found.");
+            System.out.println("Access Denied: You are not authorized to decline this appointment.");
         }
     }
+    
 
 	public void addAppointment(Appointment appointment) {
         appointments.add(appointment);
     }
 
 	public void viewAppointments() {
-        System.out.println("Upcoming Appointments:");
+        System.out.println("Scheduled Appointments for Doctor ID: " + getUserId());
         for (Appointment appointment : appointments) {
             System.out.println(appointment);
         }

@@ -18,6 +18,7 @@ public class Patient extends User {
 	//constructor
     public Patient(String userId, String password, String name, String gender) {
         super(userId, password, name, gender);
+		this.patientID = userId;
         this.appointments = new ArrayList<>();
     }
 
@@ -44,19 +45,27 @@ public class Patient extends User {
 	}
 	
 	public void viewAppointments() {
-		System.out.println("Scheduled Appointments:");
-		for (Appointment appointment : appointments) {
-			System.out.println(appointment);
-		}
-	}
+        System.out.println("Scheduled Appointments");
+        for (Appointment appointment : appointments) {
+            if (appointment.getPatientID().equals(patientID)) {
+                System.out.println(appointment);
+            }
+        }
+    }
 	/**
 	 * 
-	 * @param appointmentID
+	 * @param appointment
 	 */
-	public void cancelAppointment(Appointment appointmentID) {
-		// TODO - implement Patient.cancelAppointment
-		throw new UnsupportedOperationException();
-	}
+	public void cancelAppointment(Appointment appointment) {
+        if (appointments.contains(appointment)) {
+            appointment.cancel();
+            appointments.remove(appointment);
+            System.out.println("Appointment with ID " + appointment.getAppointmentID() + " has been canceled.");
+        } else {
+            System.out.println("No such appointment found.");
+        }
+    }
+
 
 	public AppointmentOutcome viewAppointmentOutcome() {
 		// TODO - implement Patient.viewAppointmentOutcome

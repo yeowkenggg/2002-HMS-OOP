@@ -31,13 +31,14 @@ public class TimeSlot {
 	}
 
 	//make sure that no 2 same timeslot clashes
-	public boolean isSameTimeSlot(TimeSlot other){
-		 return this.date.equals(other.date) && this.time.equals(other.time);
-	}
+	public boolean isSameTimeSlot(TimeSlot other) {
+		return this.date.equals(other.date) && this.time.equals(other.time);
+	}	
 
 	//(maybe dont need)
-	public String toString(){
-		return "Date: " +date.toString() + "Time: " + time.toString();
+	@Override
+	public String toString() {
+		return date.toString() + " @ " + time.toString();
 	}
 
 }

@@ -5,12 +5,14 @@ public class Medicine {
 
 	private String name;
 	private int stock;
-	private int alertLine;
+	private int alertLevel;
+	private static List<Medicine> medicineList = new ArrayList<>();
 
-	public Medicine(String name, int stock, int alertLine){
+	public Medicine(String name, int stock, int alertLevel){
 		this.name = name;
 		this.stock = stock;
-		this.alertLine = alertLine;
+		this.alertLevel = alertLevel;
+		medicineList.add(this);
 	}
 
 	/**
@@ -23,11 +25,12 @@ public class Medicine {
 		System.out.printf("Stock replenished. %d stocks added to %s. New amount: %d \n", amount, name, stock);
 	}
 
-	public void adjustAlert(int newAlert) {
-		this.alertLine = newAlert;
-		System.out.printf("Alert for %s has been modified to %d\n", name, alertLine);
-		throw new UnsupportedOperationException();
+	public void adjustAlert(int newAlertLevel) {
+		this.alertLevel = newAlertLevel;
+		System.out.println("Alert for " + name + " has been modified to " + alertLevel);
+		
 	}
+	
 
 	//get info
 	public int getStock() {
@@ -35,11 +38,37 @@ public class Medicine {
 	}
 	
 	public String getName(){
-		return this.name;
+		return name;
 	}
+
+	public int getAlertLevel() {
+        return alertLevel;
+    }
 
 	//to check if its below alert levels
 	public boolean alertReplenishment(){
-		return stock < alertLine;
+		return stock < alertLevel;
 	}
+	public static List<Medicine> getAllMedicines() {
+        return medicineList;
+    }
+
+    public static Medicine findMedicineByName(String name) {
+        for (Medicine medicine : medicineList) {
+            if (medicine.getName().equalsIgnoreCase(name)) {
+                return medicine;
+            }
+        }
+        return null;  //if not found
+    }
+
+    public static void removeMedicine(String name) {
+        Medicine medicineToRemove = findMedicineByName(name);
+        if (medicineToRemove != null) {
+            medicineList.remove(medicineToRemove);
+            System.out.println("Medicine " + name + " removed.");
+        } else {
+            System.out.println("Medicine " + name + " not found.");
+        }
+    }
 }

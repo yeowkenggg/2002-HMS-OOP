@@ -5,75 +5,70 @@ import java.time.LocalTime;
 
 public class Main {
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
-        Administrator admin = new Administrator("A001", "admin123", "AdminUser", "Male", "Administrator", 40);
-        Doctor doctor = new Doctor("D001", "doctor123", "DTest", "Male", "Doctor", 45);
-        Patient patient = new Patient("P1001", "patient123", "PTest", "Female");
-
-        // doctor sets availability for a specific time slot
-        TimeSlot availableSlot = new TimeSlot(LocalDate.of(2024, 10, 26), LocalTime.of(10, 0));  
-        doctor.setAvailability(availableSlot);
-
-        System.out.println("\nPatient POV");
-        patient.scheduleAppointment(doctor, availableSlot);
-
-        System.out.println("\nDoctor POV");
-        doctor.viewAppointments();  
-        Appointment patientAppointment = doctor.getAppointments().get(0);  
-        doctor.acceptAppointment(patientAppointment);
-
-        // patient views their scheduled appointments
-        System.out.println("\nPatient POV");
-        patient.viewAppointments();  
-
-        // patient schedule same time slot 
-        System.out.println("\nPatient POV attempt same slot");
-        patient.scheduleAppointment(doctor, availableSlot);  
-
-        // doctor declines a different time slot (for testing)
-        System.out.println("\nDoctor POV (decline)");
-        TimeSlot unavailableSlot = new TimeSlot(LocalDate.of(2024, 10, 27), LocalTime.of(11, 0));  // Unavailable slot
-        Appointment newAppointment = new Appointment("A002", patient.getUserId(), doctor.getUserId(), unavailableSlot, "Pending");
-        doctor.declineAppointment(newAppointment);
-
-        // administrator views all appointments 
-        //System.out.println("\nAdministrator POV");
-        //admin.viewAppointment();
-    }
-
-
-
-
-
-
-
-
-
-
-
-       /* test for replenishment 
-
-        Administrator admin = new Administrator("A001", "admin123", "ATest", "Male", "Administrator", 40);
-        Pharmacist pharmacist1 = new Pharmacist("P0001", "pwd", "PTest", "M", "pharmacist", 40);
+        // Create an Administrator instance for testing
+        Administrator admin = new Administrator("A001", "pwd", "A1", "Female", "Administrator", 40);
+        
+        Pharmacist pharmacist1 = new Pharmacist("P0001", "pwd", "PTest", "M", "Pharmacist", 40);
         Pharmacist pharmacist2 = new Pharmacist("P0002", "pwd", "P2Test", "M", "Pharmacist", 35);
         Medicine panadol = new Medicine("Panadol", 10, 20);
         Medicine ibuprofen = new Medicine("Ibuprofen", 5, 10);
 
-        pharmacist1.login("P0001", "pwd");
-        pharmacist2.replenishmentRequest(panadol, 50);
+        Patient patient1 = new Patient("P1001", "pwd", "P1", "Female");
+        Patient patient2 = new Patient("P1002", "pwd", "P2", "Male");
+        Doctor doctor1 = new Doctor("D001", "pwd", "D1", "Male", "Doctor", 45);
+        TimeSlot slot1 = new TimeSlot(LocalDate.of(2024, 10, 26), LocalTime.of(10, 0));
+
+        admin.addStaffObj(doctor1);
+        admin.addStaffObj(pharmacist1);
+        admin.addStaffObj(pharmacist2);
+
+        doctor1.setAvailability(slot1);
+
+        System.out.println("\nP1 appointment D1");
+        patient1.scheduleAppointment(doctor1, slot1);  
+
+        System.out.println("\nP1 appts");
+        patient1.viewAppointments(); 
+
+        System.out.println("\nD1 appts");
+        doctor1.viewAppointments();  
+        Appointment patient1Appointment = doctor1.getAppointments().get(0);  
+        doctor1.acceptAppointment(patient1Appointment);
+        
         pharmacist1.replenishmentRequest(panadol, 50);
         pharmacist1.replenishmentRequest(ibuprofen, 50);
+        // Start login process
+        boolean loginSuccess = false;
+        System.out.println("HMS SC2002");
+        while (!loginSuccess) {
+            System.out.print("Enter User ID: ");
+            String inputUserId = scanner.nextLine();
+            System.out.print("Enter Password: ");
+            String inputPassword = scanner.nextLine();
 
-        System.out.println(panadol.getStock());
-        admin.viewReplenishmentRequests();
-        String requestID = "R25101621"; //Format in RddMMHHmm , seconds will be added in at the end to make sure its "unique"
-        admin.approveReplenishment(requestID);
-        System.out.println(panadol.getStock());
+            if (admin.login(inputUserId, inputPassword)) {
+                loginSuccess = true;
+                boolean isRunning = true;
+                while (isRunning) {
+                    admin.displayMenu();
+                    if (!admin.isLoggedIn()) {
+                        System.out.println("Session ended.");
+                        isRunning = false;
+                    }
+                }
+            } else {
+                System.out.println("Invalid credentials. Please try again.");
+                System.out.print("Do you want to try again? (y/n): ");
+                String retry = scanner.nextLine();
+                if (retry.equalsIgnoreCase("n")) {
+                    System.out.println("Exiting system.");
+                    break;
+                }
+            }
+        }
 
-        
-        admin.viewReplenishmentRequests();
-        
-        */
-        
+        scanner.close();
+    }
 }
-
