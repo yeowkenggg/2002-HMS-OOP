@@ -3,28 +3,52 @@ import java.util.*;
 import javax.swing.text.View;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Patient extends User {
-
-	public Patient(String userId, String password, String name, String gender) {
-		super(userId, password, name, gender);
-	}
 
 	private String patientID;
 	private Date dateOfBirth;
 	private String bloodType;
 	private String contactInfo;
 	private List<MedicalRecord> medicalRecords;
+	private List<Appointment> appointments; 
+
+	//constructor
+    public Patient(String userId, String password, String name, String gender) {
+        super(userId, password, name, gender);
+        this.appointments = new ArrayList<>();
+    }
+
 
 	/**
 	 * 
 	 * @param appointmentID
 	 */
-	public void scheduleAppointment(Appointment appointmentID) {
-		// TODO - implement Patient.scheduleAppointment
-		throw new UnsupportedOperationException();
+	public void scheduleAppointment(Doctor doctor, TimeSlot timeSlot) {
+			
+		// Check if the doctor is available for the given time slot
+		if (doctor.isAvailable(timeSlot)) {
+			//using time as a ID
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMHHmm"); //ddMMHHmmss
+            String formattedDate = LocalDateTime.now().format(formatter);  
+            String requestID = "R" + formattedDate;
+			Appointment appointment = new Appointment(requestID, this.patientID, doctor.getUserId(), timeSlot, "Pending");
+			appointments.add(appointment);
+			doctor.addAppointment(appointment);
+			System.out.println("Appointment scheduled with Dr. " + doctor.getName() + " on " + timeSlot);
+		} else {
+			System.out.println("The doctor is not available for the selected time slot.");
+		}
 	}
-
+	
+	public void viewAppointments() {
+		System.out.println("Scheduled Appointments:");
+		for (Appointment appointment : appointments) {
+			System.out.println(appointment);
+		}
+	}
 	/**
 	 * 
 	 * @param appointmentID

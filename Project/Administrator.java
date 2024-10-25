@@ -17,8 +17,7 @@ public class Administrator extends Staff {
 	}
 
 	public List<Appointment> viewAppointment() {
-		// TODO - implement Administrator.viewAppointment
-		throw new UnsupportedOperationException();
+		//return appointments;
 	}
 
 	public void viewReplenishmentRequests() {

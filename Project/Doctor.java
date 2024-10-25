@@ -3,11 +3,15 @@ import java.io.*;
 
 public class Doctor extends Staff {
 
-	public Doctor(String userId, String password, String name, String gender, String role, int age) {
-		super(userId, password, name, gender, role, age);
-	}
-
 	private List<TimeSlot> availability;
+    private List<Appointment> appointments;
+
+	//constructor
+    public Doctor(String userId, String password, String name, String gender, String role, int age) {
+        super(userId, password, name, gender, role, age);
+        this.availability = new ArrayList<>();
+        this.appointments = new ArrayList<>();
+    }
 
 	/**
 	 * 
@@ -28,23 +32,60 @@ public class Doctor extends Staff {
 		throw new UnsupportedOperationException();
 	}
 
+	public List<Appointment> getAppointments() {
+        return appointments;
+    }
+	
+	public boolean isAvailable(TimeSlot timeSlot) {
+        for (TimeSlot slot : availability) {
+            if (slot.isSameTimeSlot(timeSlot)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 	/**
 	 * 
 	 * @param timeSlot
 	 */
 	public void setAvailability(TimeSlot timeSlot) {
-		// TODO - implement Doctor.setAvailability
-		throw new UnsupportedOperationException();
-	}
+        availability.add(timeSlot);
+        System.out.println("Availability added: " + timeSlot);
+    }
 
 	/**
 	 * 
 	 * @param req
 	 */
-	public void acceptAppointment(Appointment req) {
-		// TODO - implement Doctor.acceptAppointment
-		throw new UnsupportedOperationException();
-	}
+	public void acceptAppointment(Appointment appointment) {
+        if (appointments.contains(appointment)) {
+            appointment.confirm();
+            System.out.println("Appointment " + appointment.getAppointmentID() + " accepted.");
+        } else {
+            System.out.println("No such appointment found.");
+        }
+    }
+
+	public void declineAppointment(Appointment appointment) {
+        if (appointments.contains(appointment)) {
+            appointment.setStatus("Declined");
+            System.out.println("Appointment " + appointment.getAppointmentID() + " declined.");
+        } else {
+            System.out.println("No such appointment found.");
+        }
+    }
+
+	public void addAppointment(Appointment appointment) {
+        appointments.add(appointment);
+    }
+
+	public void viewAppointments() {
+        System.out.println("Upcoming Appointments:");
+        for (Appointment appointment : appointments) {
+            System.out.println(appointment);
+        }
+    }
 	
 	//override displayMenu in User class
 	@Override
