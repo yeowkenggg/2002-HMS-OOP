@@ -5,33 +5,62 @@ import java.time.format.DateTimeFormatter;
 
 public class Pharmacist extends Staff {
 
-	//to be able to store replenishmentRequest
-	 private List<ReplenishmentRequest> replenishmentReq;
-
+	private List<ReplenishmentRequest> replenishmentReq = new ArrayList<>();
+	
 	public Pharmacist(String userId, String password, String name, String gender, String role,
 			int age) {
 		super(userId, password, name, gender, role, age);
-		this.replenishmentReq = new ArrayList<>();
 	}
 
-	public List<Prescription> viewPrescriptionRecords() {
-		// TODO - implement Pharmacist.viewPrescriptionRecords
-		throw new UnsupportedOperationException();
-	}
+	public void viewPrescriptionRecords() {
+        System.out.println("\nPrescription Records:");
+        List<Prescription> prescriptions = Prescription.getAllPrescriptions();
 
-	
+        if (prescriptions.isEmpty()) {
+            System.out.println("No prescriptions available.");
+        } else {
+            for (Prescription prescription : prescriptions) {
+                System.out.println(prescription);
+            }
+        }
+    }
+
+	public void viewPendingPrescriptionRecords() {
+        System.out.println("\nPrescription Records:");
+        List<Prescription> prescriptions = Prescription.getAllPrescriptions();
+
+        if (prescriptions.isEmpty()) {
+            System.out.println("No prescriptions available.");
+        } else {
+            for (Prescription prescription : prescriptions) {
+				if(prescription.getStatus() == "Pending"){                
+					System.out.println(prescription);
+				}
+            }
+        }
+    }
 
 	/**
 	 * 
 	 * 
 	 * @param prescriptionID
-	 * @param status
 	 */
-	public void updateStatus(String prescriptionID, String status) {
-		// TODO - implement Pharmacist.updateStatus
-		throw new UnsupportedOperationException();
-	}
-
+	public void updatePrescriptionStatus(String prescriptionID) {
+        // find the prescription by ID
+        for (Prescription prescription : Prescription.getAllPrescriptions()) {
+            if (prescription.getPrescriptionID().equals(prescriptionID)) {
+                // update the status only if it’s pending
+                if (prescription.getStatus().equalsIgnoreCase("Pending")) {
+                    prescription.updateStatus("Dispensed");
+                    System.out.println("Prescription " + prescriptionID + " status updated to Dispensed.");
+                } else {
+                    System.out.println("Prescription " + prescriptionID + " has already been dispensed.");
+                }
+                return;
+            }
+        }
+        System.out.println("Prescription with ID " + prescriptionID + " not found.");
+    }
 	/**
 	 * 
 	 * @param medicine

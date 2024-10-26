@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        // Create an Administrator instance for testing
+        // create instances
         Administrator admin = new Administrator("A001", "pwd", "A1", "Female", "Administrator", 40);
         
         Pharmacist pharmacist1 = new Pharmacist("P0001", "pwd", "PTest", "M", "Pharmacist", 40);
@@ -17,15 +17,18 @@ public class Main {
 
         Patient patient1 = new Patient("P1001", "pwd", "P1", "Female");
         Patient patient2 = new Patient("P1002", "pwd", "P2", "Male");
+
+        //timeslot test
         Doctor doctor1 = new Doctor("D001", "pwd", "D1", "Male", "Doctor", 45);
         TimeSlot slot1 = new TimeSlot(LocalDate.of(2024, 10, 26), LocalTime.of(10, 0));
 
+        //to avoid going through the entire menu 
         admin.addStaffObj(doctor1);
         admin.addStaffObj(pharmacist1);
         admin.addStaffObj(pharmacist2);
-
         doctor1.setAvailability(slot1);
 
+        //schedule test
         System.out.println("\nP1 appointment D1");
         patient1.scheduleAppointment(doctor1, slot1);  
 
@@ -37,8 +40,23 @@ public class Main {
         Appointment patient1Appointment = doctor1.getAppointments().get(0);  
         doctor1.acceptAppointment(patient1Appointment);
         
+        //replenishment test
         pharmacist1.replenishmentRequest(panadol, 50);
         pharmacist1.replenishmentRequest(ibuprofen, 50);
+
+        //prescription test
+        List<Medicine> prescriptionMeds1 = new ArrayList<>();
+        prescriptionMeds1.add(panadol);
+        prescriptionMeds1.add(ibuprofen);
+        Prescription prescription1 = new Prescription("PR001", prescriptionMeds1, "Pending");
+
+        List<Medicine> prescriptionMeds2 = new ArrayList<>();
+        prescriptionMeds2.add(ibuprofen);
+        Prescription prescription2 = new Prescription("PR002", prescriptionMeds2, "Dispensed");
+
+        pharmacist1.updatePrescriptionStatus("PR001");
+        pharmacist1.viewPendingPrescriptionRecords();
+
         // Start login process
         boolean loginSuccess = false;
         System.out.println("HMS SC2002");

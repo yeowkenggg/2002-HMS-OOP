@@ -49,6 +49,7 @@ public class Medicine {
 	public boolean alertReplenishment(){
 		return stock < alertLevel;
 	}
+
 	public static List<Medicine> getAllMedicines() {
         return medicineList;
     }
@@ -71,4 +72,9 @@ public class Medicine {
             System.out.println("Medicine " + name + " not found.");
         }
     }
+
+	@Override
+    public String toString() {
+		return name;
+	}
 }

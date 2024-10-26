@@ -148,18 +148,53 @@ public class Administrator extends Staff {
     private void addStaff() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\n--- Add New Staff ---");
+    
         System.out.print("Enter User ID: ");
         String userId = scanner.nextLine();
+    
         System.out.print("Enter Password: ");
         String password = scanner.nextLine();
+    
         System.out.print("Enter Name: ");
         String name = scanner.nextLine();
-        System.out.print("Enter Gender (Male/Female): ");
-        String gender = scanner.nextLine();
-        System.out.print("Enter Role (Doctor/Pharmacist): ");
-        String role = scanner.nextLine();
+    
+        // input gender, check against custom exceptions
+        String gender = "";
+        boolean validGender = false;
+        while (!validGender) {
+            System.out.print("Enter Gender (Male/Female): ");
+            gender = scanner.nextLine();
+            try {
+                if (!gender.equalsIgnoreCase("Male") && !gender.equalsIgnoreCase("Female")) {
+                    throw new InvalidGenderException("Invalid input for gender. Please enter 'Male' or 'Female'.");
+                }
+                validGender = true;
+            } catch (InvalidGenderException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    
+        // input role, check against custom exceptions
+        String role = "";
+        boolean validRole = false;
+        while (!validRole) {
+            System.out.print("Enter Role (Doctor/Pharmacist): ");
+            role = scanner.nextLine();
+            try {
+                if (!role.equalsIgnoreCase("Doctor") && !role.equalsIgnoreCase("Pharmacist")) {
+                    throw new InvalidRoleException("Invalid input for role. Please enter 'Doctor' or 'Pharmacist'.");
+                }
+                validRole = true;
+            } catch (InvalidRoleException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    
         System.out.print("Enter Age: ");
         int age = scanner.nextInt();
+        scanner.nextLine();
+    
+        //create staff
         new Staff(userId, password, name, gender, role, age);
         System.out.println("Staff member added: " + name + " (ID: " + userId + ")");
     }
@@ -324,6 +359,18 @@ public class Administrator extends Staff {
                 default:
                     System.out.println("Invalid option.");
             }
+        }
+    }
+    //custom exceptions
+    public class InvalidGenderException extends Exception {
+        public InvalidGenderException(String message) {
+            super(message);
+        }
+    }
+    
+    public class InvalidRoleException extends Exception {
+        public InvalidRoleException(String message) {
+            super(message);
         }
     }
 }

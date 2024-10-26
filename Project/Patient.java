@@ -25,7 +25,8 @@ public class Patient extends User {
 
 	/**
 	 * 
-	 * @param appointmentID
+	 * @param doctor
+	 * @param timeSlot
 	 */
 	public void scheduleAppointment(Doctor doctor, TimeSlot timeSlot) {
 			
@@ -73,9 +74,25 @@ public class Patient extends User {
 	}	
 	
 	public void updateContactInfo() {
-		// TODO - implement Patient.updateContactInfo
-		throw new UnsupportedOperationException();
-	}
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter new contact information (e.g., phone number, email): ");
+        String newContactInfo = scanner.nextLine();
+
+        if (!newContactInfo.isEmpty()) {
+            this.contactInfo = newContactInfo;
+            System.out.println("Contact information updated successfully to: " + contactInfo);
+        } else {
+            System.out.println("Invalid input. Contact information not updated.");
+        }
+    }
+	
+    public String getContactInfo() {
+        return contactInfo;
+    }
+
+	public void displayContactInfo() {
+        System.out.println("Current Contact Info: " + contactInfo);
+    }
 	
 	//override displayMenu in User class
 	@Override
