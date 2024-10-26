@@ -62,15 +62,14 @@ public class Prescription {
     }
 
 	//change the status from pending to dispensed
-	public void updateStatus(String status) {
-		if(status.equals("Pending")){
-			this.status = "Dispensed";
-		}
-		else{
-			System.out.println("This prescription has already been dispensed.");
-		}
-		System.out.println("Prescription status updated to: " + this.status);
-	}
+	public void updateStatus() {
+        if ("Pending".equals(this.status)) {
+            this.status = "Dispensed";
+            System.out.println("Prescription " + prescriptionID + " status updated to Dispensed.");
+        } else {
+            System.out.println("This prescription has already been dispensed.");
+        }
+    }
 
     @Override
     public String toString() {

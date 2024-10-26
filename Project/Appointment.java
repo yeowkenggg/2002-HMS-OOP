@@ -10,17 +10,21 @@ public class Appointment {
 	private String doctorID;
 	private TimeSlot timeSlot;
 	private String status;
+    private AppointmentOutcome outcome;
 
-	public Appointment(String appointmentID, String patientID, String doctorID, TimeSlot timeSlot, String status) {
+
+    public Appointment(String appointmentID, String patientID, String doctorID, TimeSlot timeSlot, String status) {
         this.appointmentID = appointmentID;
         this.patientID = patientID;
         this.doctorID = doctorID;
         this.timeSlot = timeSlot;
         this.status = status;
+        this.outcome = null;  //no outcome initially
 
         allAppointments.add(this);
     }
 	
+    
 	public String getAppointmentID() {
         return appointmentID;
     }
@@ -45,6 +49,14 @@ public class Appointment {
         this.status = status;
     }
 
+    public void setOutcome(AppointmentOutcome outcome) { 
+        this.outcome = outcome; 
+    }
+
+    public AppointmentOutcome getOutcome() { 
+        return outcome; 
+    }
+
     public void confirm() {
         this.status = "Confirmed";
     }
@@ -59,6 +71,9 @@ public class Appointment {
 
     @Override
     public String toString() {
-        return "Appointment ID: " + appointmentID + ", Doctor ID: " + doctorID + ", Time: " + timeSlot + " - Status: " + status;
+        return "Appointment ID: " + appointmentID + 
+               ", Doctor ID: " + doctorID + 
+               ", Time: " + timeSlot + 
+               ", Status: " + status ;
     }
 }

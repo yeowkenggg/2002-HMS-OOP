@@ -46,21 +46,14 @@ public class Pharmacist extends Staff {
 	 * @param prescriptionID
 	 */
 	public void updatePrescriptionStatus(String prescriptionID) {
-        // find the prescription by ID
-        for (Prescription prescription : Prescription.getAllPrescriptions()) {
-            if (prescription.getPrescriptionID().equals(prescriptionID)) {
-                // update the status only if it’s pending
-                if (prescription.getStatus().equalsIgnoreCase("Pending")) {
-                    prescription.updateStatus("Dispensed");
-                    System.out.println("Prescription " + prescriptionID + " status updated to Dispensed.");
-                } else {
-                    System.out.println("Prescription " + prescriptionID + " has already been dispensed.");
-                }
-                return;
-            }
-        }
-        System.out.println("Prescription with ID " + prescriptionID + " not found.");
-    }
+		for (Prescription prescription : Prescription.getAllPrescriptions()) {
+			if (prescription.getPrescriptionID().equals(prescriptionID)) {
+				prescription.updateStatus();  
+				return;
+			}
+		}
+		System.out.println("Prescription with ID " + prescriptionID + " not found.");
+	}
 	/**
 	 * 
 	 * @param medicine

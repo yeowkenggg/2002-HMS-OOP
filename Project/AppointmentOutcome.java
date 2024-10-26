@@ -1,19 +1,45 @@
 import java.util.*;
 import java.io.*;
+import java.time.LocalDate;
 
 public class AppointmentOutcome {
+	
+	private static List<AppointmentOutcome> allOutcomes = new ArrayList<>();  
 
-	private String appointmentID;
+	private Appointment appointment;
 	private String services;
 	private String notes;
 	private Prescription prescription;
-	private Date appointmentDate;
+	private LocalDate appointmentDate;
 
-	public String getInfo() {
-		// TODO - implement AppointmentOutcome.getInfo
-		throw new UnsupportedOperationException();
-	}
+	//constructor
+	public AppointmentOutcome(Appointment appointment, String services, String notes, Prescription prescription, LocalDate localDate) {
+        this.appointment = appointment;
+        this.services = services;
+        this.notes = notes;
+        this.prescription = prescription;
+        this.appointmentDate = localDate;
 
+        allOutcomes.add(this); 
+    }
+
+	public Appointment getAppointment() {
+        return appointment;
+    }
+
+	public static List<AppointmentOutcome> getAllOutcomes() {
+        return allOutcomes;
+    }
+
+	public static List<AppointmentOutcome> getOutcomesByPatientID(String patientID) {
+        List<AppointmentOutcome> patientOutcomes = new ArrayList<>();
+        for (AppointmentOutcome outcome : allOutcomes) {
+            if (outcome.getAppointment().getPatientID().equals(patientID)) {
+                patientOutcomes.add(outcome);
+            }
+        }
+        return patientOutcomes;
+    }
 	/**
 	 * 
 	 * @param services
@@ -22,6 +48,9 @@ public class AppointmentOutcome {
 		this.services = services;
 	}
 
+	public String getServices() {
+        return services;
+    }
 	/**
 	 * 
 	 * @param notes
@@ -30,10 +59,17 @@ public class AppointmentOutcome {
 		this.notes = notes;
 	}
 
+	public String getNotes() {
+        return notes;
+    }
+
 	public Prescription getPrescriptrion() {
-		// TODO - implement AppointmentOutcome.getPrescriptrion
-		throw new UnsupportedOperationException();
+		return prescription;
 	}
+
+	public LocalDate getAppointmentDate() {
+        return appointmentDate;
+    }
 
 	/**
 	 * 
@@ -43,4 +79,13 @@ public class AppointmentOutcome {
 		this.prescription = prescription;
 	}
 
+	public String toString() {
+		return "======= Appointment Outcome =======\n" +
+			   "Appointment ID: " + appointment.getAppointmentID() +
+			   "\nServices: " + services +
+			   "\nNotes: " + notes +
+			   "\nPrescription: " + (prescription != null ? prescription : "No Prescription") +
+			   "\nAppointment Date: " + appointmentDate +
+			   "\n=================================";
+	}
 }

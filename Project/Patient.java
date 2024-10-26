@@ -68,10 +68,18 @@ public class Patient extends User {
     }
 
 
-	public AppointmentOutcome viewAppointmentOutcome() {
-		// TODO - implement Patient.viewAppointmentOutcome
-		throw new UnsupportedOperationException();
-	}	
+	public void viewAppointmentOutcome() {
+        List<AppointmentOutcome> outcomes = AppointmentOutcome.getOutcomesByPatientID(this.getUserId());
+
+        if (outcomes.isEmpty()) {
+            System.out.println("No appointment outcomes available.");
+        } else {
+            for (AppointmentOutcome outcome : outcomes) {
+                System.out.println(outcome);  // toString() will format the output
+            }
+        }
+    }
+	
 	
 	public void updateContactInfo() {
         Scanner scanner = new Scanner(System.in);

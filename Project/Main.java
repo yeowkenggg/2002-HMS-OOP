@@ -29,6 +29,7 @@ public class Main {
         doctor1.setAvailability(slot1);
 
         //schedule test
+        System.out.println("Schedule Test");
         System.out.println("\nP1 appointment D1");
         patient1.scheduleAppointment(doctor1, slot1);  
 
@@ -40,11 +41,14 @@ public class Main {
         Appointment patient1Appointment = doctor1.getAppointments().get(0);  
         doctor1.acceptAppointment(patient1Appointment);
         
+
         //replenishment test
+        System.out.println("\nReplenish Test");
         pharmacist1.replenishmentRequest(panadol, 50);
         pharmacist1.replenishmentRequest(ibuprofen, 50);
 
         //prescription test
+        System.out.println("\nPrescription Test");
         List<Medicine> prescriptionMeds1 = new ArrayList<>();
         prescriptionMeds1.add(panadol);
         prescriptionMeds1.add(ibuprofen);
@@ -55,7 +59,23 @@ public class Main {
         Prescription prescription2 = new Prescription("PR002", prescriptionMeds2, "Dispensed");
 
         pharmacist1.updatePrescriptionStatus("PR001");
-        pharmacist1.viewPendingPrescriptionRecords();
+
+        //appt outcome
+        System.out.println("\nOutcome Test");
+        System.out.println("Patient POV");
+        AppointmentOutcome outcome = new AppointmentOutcome(patient1Appointment, "Consultation", "Routine check-up", prescription1, LocalDate.now());
+        patient1Appointment.setOutcome(outcome);
+        patient1.viewAppointmentOutcome();
+        patient2.viewAppointmentOutcome();
+
+        System.out.println("Staff POV");
+        for (Appointment appointment : Appointment.getAllAppointments()) {
+            System.out.println(appointment);  // Display appointment details
+            if (appointment.getOutcome() != null) {
+                System.out.println("Outcome:\n" + appointment.getOutcome());  // Format outcome with updated toString
+            }
+        }
+
 
         // Start login process
         boolean loginSuccess = false;
