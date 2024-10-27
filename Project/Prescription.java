@@ -17,11 +17,6 @@ public class Prescription {
         allPrescriptions.add(this);
     }
 
-	// to return the list of medicine
-	public List<Medicine> getMedicines() {
-        return medicine;
-    }
-
     //check if medicine exists in the list
 	public boolean hasMedicine(Medicine med) {
         return medicine.contains(med);

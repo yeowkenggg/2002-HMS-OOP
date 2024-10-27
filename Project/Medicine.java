@@ -37,6 +37,11 @@ public class Medicine {
 		return stock;
 	}
 	
+	//for updateMedicine stock
+	public void setStock(int stock){
+		this.stock = stock;
+	}
+
 	public String getName(){
 		return name;
 	}

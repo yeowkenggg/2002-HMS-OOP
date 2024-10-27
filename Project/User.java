@@ -30,8 +30,11 @@ public class User {
     public String getGender() {
         return gender;
     }
-    
-    //Used for updating staff 
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+    //Used for updating names in sublclasses 
     public void setName(String name) {
         this.name = name;
     }
@@ -41,17 +44,15 @@ public class User {
 		//Implement next time when we decide how to handle user accounts
 		//for now just default login codes
 		if (inputUser.equals(this.userId) && inputPass.equals(this.password)) {
-            isLogged = true;  
+            isLogged = true;
             System.out.println("Login successful for: " + name);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
 	public void loginMenu() {
         Scanner scanner = new Scanner(System.in);
-        
         System.out.println("Welcome to the Hospital Management System");
 
         while (!isLogged) {
@@ -60,27 +61,39 @@ public class User {
             System.out.print("Enter Password: ");
             String inputPassword = scanner.nextLine();
 
-            if (login(inputUserId, inputPassword)) {
-                isLogged = true;
+            if (!login(inputUserId, inputPassword)) {
+                System.out.print("Would you like to try again? (y/n): ");
+                String retry = scanner.nextLine();
+                if (retry.equalsIgnoreCase("n")) {
+                    System.out.println("Exiting system..");
+                    break;
+                }
             }
         }
     }
 
     //method to change password
-	public void changePassword(String password) {
-		if(isLogged){
-			this.password = password;
-			System.out.println("Password changed.");
-		}
-		else{
-			System.out.println("Please login.");
-		}
-	}
+	public void changePassword(String newPassword) {
+        if (isLogged) {
+            if (newPassword == null || newPassword.trim().isEmpty()) {
+                System.out.println("Password cannot be empty. Try again.");
+                return;
+            }
+            this.password = newPassword;
+            System.out.println("Password successfully changed.");
+        } else {
+            System.out.println("Please log in to change your password.");
+        }
+    }
 
-    //change bool of islogged into false to 'logout'
-	public void logout(){
-		if(isLogged) this.isLogged = false;
-	}
+    public void logout() {
+        if (isLogged) {
+            isLogged = false;
+            System.out.println("You have been logged out.");
+        } else {
+            System.out.println("You are not logged in.");
+        }
+    }
 
     //check status of login
 	public boolean isLoggedIn() {

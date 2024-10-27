@@ -35,7 +35,6 @@ public class TimeSlot {
 		return this.date.equals(other.date) && this.time.equals(other.time);
 	}	
 
-	//(maybe dont need)
 	@Override
 	public String toString() {
 		return date.toString() + " @ " + time.toString();

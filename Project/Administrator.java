@@ -1,7 +1,4 @@
 import java.util.*;
-
-import javax.swing.text.View;
-
 import java.io.*;
 
 public class Administrator extends Staff {
@@ -24,10 +21,11 @@ public class Administrator extends Staff {
 	public void viewReplenishmentRequests() {
         System.out.println("Pending Replenishment Requests:");
         for (ReplenishmentRequest request : ReplenishmentRequest.getRequests()) {
-            if (!request.isApproved()) {
-                System.out.println("Request ID: " + request.getRequestID() + " | Medicine: " 
-                                    + request.getMedicine().getName() + " | Amount: " + request.getRequestedAmount()+ " | Status: "+request.isApproved());
-            }
+            String status = request.isApproved() ? "Approved" : "Pending";
+            System.out.println("Request ID: " + request.getRequestID() 
+                               + " | Medicine: " + request.getMedicine().getName() 
+                               + " | Amount: " + request.getRequestedAmount()
+                               + " | Status: " + status);
         }
     }
 
@@ -96,17 +94,7 @@ public class Administrator extends Staff {
         }
     }
 
-    // methods to add doctor/pharmacist without going through the whole menu
-    public void addStaffObj(Staff staff) {
-        Staff.getAllStaff().add(staff);
-        System.out.println(staff.getRole() + " added: " + staff.getName() + " (ID: " + staff.getUserId() + ")");
-    }
-
-    public void addMedObj(Medicine med){
-        Medicine.getAllMedicines().add(med);
-        System.out.println("Added: " + med.getName());
-    }
-
+ 
    
 
     //menu for CRUD staff
@@ -234,7 +222,7 @@ public class Administrator extends Staff {
         Staff.removeStaffById(userId);
     }
 
-    private void viewAllStaff() {
+    public void viewAllStaff() {
         System.out.println("\n--- All Staff Members ---");
         for (Staff staff : Staff.getAllStaff()) {
             System.out.println("ID: " + staff.getUserId() + ", Name: " + staff.getName() + ", Role: " + staff.getRole());
@@ -292,10 +280,128 @@ public class Administrator extends Staff {
     }
 
 
+    public void viewMedicines() {
+        System.out.println("\n=== All Medicines ===");
+        for (Medicine med : Medicine.getAllMedicines()) {
+            System.out.println("Name: " + med.getName() + ", Stock: " + med.getStock() + ", Alert Level: " + med.getAlertLevel());
+        }
+    }
+
+    public void addMedicine() {
+        Scanner scanner = new Scanner(System.in);
+    
+        try {
+            System.out.print("Enter Medicine Name: ");
+            String name = scanner.nextLine().trim();
+    
+            // Check if the medicine already exists in the inventory
+            if (Medicine.findMedicineByName(name) != null) {
+                System.out.println("Error: Medicine with the name '" + name + "' already exists in the inventory.");
+                return;
+            }
+    
+            System.out.print("Enter Initial Stock: ");
+            int stock = scanner.nextInt();
+    
+            System.out.print("Enter Stock Alert Level: ");
+            int alertLevel = scanner.nextInt();
+    
+            // checking values
+            if (stock < 0 || alertLevel < 0) {
+                System.out.println("Error: Stock and alert levels must be non-negative.");
+                return;
+            }
+    
+            Medicine newMedicine = new Medicine(name, stock, alertLevel);
+            System.out.println("Medicine added: " + newMedicine.getName() + " with stock " + newMedicine.getStock() + " and alert level " + newMedicine.getAlertLevel());
+        } catch (InputMismatchException e) {
+            System.out.println("Error: Invalid input. Please enter numeric values for stock and alert level.");
+            scanner.nextLine(); // clear away invalid input
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+    
+
+    public void updateMedicineStock() {
+        Scanner scanner = new Scanner(System.in);
+    
+        try {
+            System.out.print("Enter Medicine Name to Update Stock: ");
+            String name = scanner.nextLine().trim();
+    
+            Medicine medicine = Medicine.findMedicineByName(name);
+    
+            if (medicine == null) {
+                System.out.println("Error: Medicine '" + name + "' not found in inventory.");
+                return;
+            }
+    
+            System.out.print("Enter New Stock Amount: ");
+            int newStock = scanner.nextInt();
+    
+            if (newStock < 0) {
+                System.out.println("Error: Stock amount cannot be negative.");
+                return;
+            }
+    
+            // Set the stock directly to the input amount
+            medicine.setStock(newStock);
+            System.out.println("Updated stock for " + medicine.getName() + " to " + newStock + ".");
+        } catch (InputMismatchException e) {
+            System.out.println("Error: Invalid input. Please enter a numeric value for stock.");
+            scanner.nextLine(); // Clear the invalid input
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+    
+
+    public void updateStockAlertLevel() {
+        Scanner scanner = new Scanner(System.in);
+    
+        try {
+            System.out.print("Enter Medicine Name to Update Alert Level: ");
+            String name = scanner.nextLine().trim();
+    
+            Medicine medicine = Medicine.findMedicineByName(name);
+    
+            if (medicine == null) {
+                System.out.println("Error: Medicine '" + name + "' not found in inventory.");
+                return;
+            }
+    
+            System.out.print("Enter New Stock Alert Level: ");
+            int newAlertLevel = scanner.nextInt();
+    
+            if (newAlertLevel < 0) {
+                System.out.println("Error: Alert level cannot be negative.");
+                return;
+            }
+    
+            medicine.adjustAlert(newAlertLevel);
+            System.out.println("Updated alert level for " + medicine.getName() + " to " + newAlertLevel + ".");
+        } catch (InputMismatchException e) {
+            System.out.println("Error: Invalid input. Please enter a numeric value for the alert level.");
+            scanner.nextLine(); 
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+    
+
+    public void removeMedicine() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Medicine Name to Remove: ");
+        String removeName = scanner.nextLine();
+        Medicine.removeMedicine(removeName);
+    }
+
+    // Display menu for managing medicines with options calling individual methods
     private void manageMedicines() {
         Scanner scanner = new Scanner(System.in);
         boolean managing = true;
-    
+
         while (managing) {
             System.out.println("\n--- Medicine Management ---");
             System.out.println("1. View All Medicines");
@@ -305,53 +411,25 @@ public class Administrator extends Staff {
             System.out.println("5. Remove Medicine");
             System.out.println("6. Return to Main Menu");
             System.out.print("Choose an option (1-6): ");
-    
+
             int option = scanner.nextInt();
             scanner.nextLine();
-    
+
             switch (option) {
                 case 1:
-                    for (Medicine med : Medicine.getAllMedicines()) {
-                        System.out.println("Name: " + med.getName() + ", Stock: " + med.getStock() + ", Alert Level: " + med.getAlertLevel());
-                    }
+                    viewMedicines();
                     break;
                 case 2:
-                    System.out.print("Enter Medicine Name: ");
-                    String name = scanner.nextLine();
-                    System.out.print("Enter Initial Stock: ");
-                    int stock = scanner.nextInt();
-                    System.out.print("Enter Stock Alert Level: ");
-                    int alertLevel = scanner.nextInt();
-                    new Medicine(name, stock, alertLevel);  // Automatically adds to medicineList
+                    addMedicine();
                     break;
                 case 3:
-                    System.out.print("Enter Medicine Name to Update Stock: ");
-                    String updateName = scanner.nextLine();
-                    System.out.print("Enter Stock to Add: ");
-                    int stockToAdd = scanner.nextInt();
-                    Medicine medToUpdate = Medicine.findMedicineByName(updateName);
-                    if (medToUpdate != null) {
-                        medToUpdate.replenish(stockToAdd);
-                    } else {
-                        System.out.println("Medicine not found.");
-                    }
+                    updateMedicineStock();
                     break;
                 case 4:
-                    System.out.print("Enter Medicine Name to Update Alert Level: ");
-                    String alertName = scanner.nextLine();
-                    System.out.print("Enter New Stock Alert Level: ");
-                    int newAlertLevel = scanner.nextInt();
-                    Medicine medToAdjust = Medicine.findMedicineByName(alertName);
-                    if (medToAdjust != null) {
-                        medToAdjust.adjustAlert(newAlertLevel);
-                    } else {
-                        System.out.println("Medicine not found.");
-                    }
+                    updateStockAlertLevel();
                     break;
                 case 5:
-                    System.out.print("Enter Medicine Name to Remove: ");
-                    String removeName = scanner.nextLine();
-                    Medicine.removeMedicine(removeName);
+                    removeMedicine();
                     break;
                 case 6:
                     managing = false;
@@ -361,6 +439,7 @@ public class Administrator extends Staff {
             }
         }
     }
+
     //custom exceptions
     public class InvalidGenderException extends Exception {
         public InvalidGenderException(String message) {

@@ -49,8 +49,12 @@ public class Appointment {
         this.status = status;
     }
 
-    public void setOutcome(AppointmentOutcome outcome) { 
-        this.outcome = outcome; 
+    public void setOutcome(AppointmentOutcome outcome) {
+        this.outcome = outcome;
+        MedicalRecord record = MedicalRecord.getRecordByPatientID(patientID);
+        if (record != null) {
+            record.addAppointmentOutcome(outcome);
+        }
     }
 
     public AppointmentOutcome getOutcome() { 

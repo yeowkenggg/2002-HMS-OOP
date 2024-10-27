@@ -69,7 +69,7 @@ public class Pharmacist extends Staff {
 				}
 			}
 			//using time as a ID
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMHHmm"); //ddMMHHmmss
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMHHmmss"); //ddMMHHmmss
             String formattedDate = LocalDateTime.now().format(formatter);  
             String requestID = "R" + formattedDate;
 			//use getStaffID in staff class to get the pharmacist's ID
