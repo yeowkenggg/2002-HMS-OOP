@@ -1,20 +1,24 @@
-import java.util.*;
-import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Pharmacist extends Staff {
+public class Pharmacist extends Staff implements IUser {
 
-	private List<ReplenishmentRequest> replenishmentReq = new ArrayList<>();
-	
-	public Pharmacist(String userId, String password, String name, String gender, String role,
-			int age) {
+    private PrescriptionManager prescriptionManager;
+    private IInventoryManager inventoryManager;
+    private List<ReplenishmentRequest> replenishmentRequests;
+
+    public Pharmacist(String userId, String password, String name, String gender, String role, int age, 
+                  IInventoryManager inventoryManager, PrescriptionManager prescriptionManager) {
 		super(userId, password, name, gender, role, age);
+		this.inventoryManager = inventoryManager;
+		this.prescriptionManager = prescriptionManager;
+		this.replenishmentRequests = new ArrayList<>();
 	}
-
-	public void viewPrescriptionRecords() {
+    public void viewPrescriptionRecords() {
         System.out.println("\nPrescription Records:");
-        List<Prescription> prescriptions = Prescription.getAllPrescriptions();
+        List<Prescription> prescriptions = prescriptionManager.getAllPrescriptions();
 
         if (prescriptions.isEmpty()) {
             System.out.println("No prescriptions available.");
@@ -25,80 +29,84 @@ public class Pharmacist extends Staff {
         }
     }
 
-	public void viewPendingPrescriptionRecords() {
-        System.out.println("\nPrescription Records:");
-        List<Prescription> prescriptions = Prescription.getAllPrescriptions();
+    public void viewPendingPrescriptionRecords() {
+        System.out.println("\nPending Prescription Records:");
+        List<Prescription> pendingPrescriptions = prescriptionManager.getPendingPrescriptions();
 
-        if (prescriptions.isEmpty()) {
-            System.out.println("No prescriptions available.");
+        if (pendingPrescriptions.isEmpty()) {
+            System.out.println("No pending prescriptions available.");
         } else {
-            for (Prescription prescription : prescriptions) {
-				if(prescription.getStatus() == "Pending"){                
-					System.out.println(prescription);
-				}
+            for (Prescription prescription : pendingPrescriptions) {
+                System.out.println(prescription);
             }
         }
     }
 
-	/**
-	 * 
-	 * 
-	 * @param prescriptionID
-	 */
-	public void updatePrescriptionStatus(String prescriptionID) {
-		for (Prescription prescription : Prescription.getAllPrescriptions()) {
-			if (prescription.getPrescriptionID().equals(prescriptionID)) {
-				prescription.updateStatus();  
-				return;
-			}
-		}
-		System.out.println("Prescription with ID " + prescriptionID + " not found.");
-	}
-	/**
-	 * 
-	 * @param medicine
-	 * @param amt
-	 */
-	public void replenishmentRequest(Medicine med, int amt) {
-		//stock < alertLine
-		if(med.alertReplenishment()){
-			for (ReplenishmentRequest request : ReplenishmentRequest.getRequests()) {
-				if (request.getMedicine().equals(med) && !request.isApproved()) {
-					System.out.println("A replenishment request for " + med.getName() + " is already pending by " + request.getPharmacistName() + ".");
-					return;  
-				}
-			}
-			//using time as a ID
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMHHmmss"); //ddMMHHmmss
-            String formattedDate = LocalDateTime.now().format(formatter);  
-            String requestID = "R" + formattedDate;
-			//use getStaffID in staff class to get the pharmacist's ID
-			ReplenishmentRequest req = new ReplenishmentRequest(requestID, med, amt, getUserId(), getName());
+    public void updatePrescriptionStatus(String prescriptionID) {
+        if (!prescriptionManager.updatePrescriptionStatus(prescriptionID)) {
+            System.out.println("Prescription with ID " + prescriptionID + " not found.");
+        }
+    }
 
-			replenishmentReq.add(req);
-			System.out.println("===================");
-			System.out.println("Replenishment Req: "+ med.getName() +" has been submitted.");
-			System.out.println("Summary:");
-			System.out.printf("%d %s\n", amt, med.getName());
-			System.out.println("===================");
-		}
-		else{
-			System.out.println("Replenishment is not needed.");
-		}
-	}
+    public void replenishmentRequest(String medicineName, int amt) {
+        Medicine medicine = inventoryManager.findMedicineByName(medicineName);
 
-	//view all replenishment made by pharmacist
-	public List<ReplenishmentRequest> getReplenishmentRequests(){
-		return replenishmentReq;
-	}
+        if (medicine == null) {
+            System.out.println("Medicine " + medicineName + " not found in inventory.");
+            return;
+        }
 
-	public void displayMenu() {
+        if (inventoryManager.needsReplenishment(medicine)) {
+            boolean alreadyRequested = false;
+            for (ReplenishmentRequest request : replenishmentRequests) {
+                if (request.getMedicine().equals(medicine) && !request.isApproved()) {
+                    alreadyRequested = true;
+                    break;
+                }
+            }
+
+            if (alreadyRequested) {
+                System.out.println("A replenishment request for " + medicine.getName() + " is already pending.");
+                return;
+            }
+
+            // Creating a new request
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMHHmmss");
+            String requestID = "R" + LocalDateTime.now().format(formatter);
+            ReplenishmentRequest request = new ReplenishmentRequest(requestID, medicine, amt, getUserId(), getName());
+
+            replenishmentRequests.add(request);  // Track this request locally for the pharmacist
+            System.out.println("Replenishment Request Submitted: " + amt + " units of " + medicine.getName());
+        } else {
+            System.out.println("Replenishment is not needed for " + medicine.getName() + ".");
+        }
+    }
+
+    public void viewInventory() {
+        System.out.println("\n=== Current Inventory ===");
+        inventoryManager.viewMedicines();
+    }
+
+    public void viewReplenishmentRequests() {
+        System.out.println("Replenishment Requests by Pharmacist:");
+        for (ReplenishmentRequest request : replenishmentRequests) {
+            String status = request.isApproved() ? "Approved" : "Pending";
+            System.out.println("Request ID: " + request.getRequestID() + ", Medicine: " 
+                               + request.getMedicine().getName() + ", Amount: " + request.getRequestedAmount()
+                               + ", Status: " + status);
+        }
+    }
+
+    @Override
+    public void displayMenu() {
         if (isLoggedIn()) {
-            System.out.println("1. View Appointment Outcome Record ");
-			System.out.println("2. Update Prescription Status");
-			System.out.println("3. View Medication Inventory");
-			System.out.println("4. Submit Replenishment Request ");
-			System.out.println("5. Logout");
+            System.out.println("1. View Prescription Records");
+            System.out.println("2. View Pending Prescription Records");
+            System.out.println("3. Update Prescription Status");
+            System.out.println("4. View Medication Inventory");
+            System.out.println("5. Submit Replenishment Request");
+            System.out.println("6. View Replenishment Requests");
+            System.out.println("7. Logout");
         } else {
             System.out.println("ERROR. PLEASE LOG IN!");
         }

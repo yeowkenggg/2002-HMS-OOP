@@ -45,6 +45,10 @@ public class Medicine {
 	public String getName(){
 		return name;
 	}
+	
+	public void setAlertLevel(int alertLevel) {
+        this.alertLevel = alertLevel;
+    }
 
 	public int getAlertLevel() {
         return alertLevel;
