@@ -108,7 +108,7 @@ public class Pharmacist extends Staff implements IUser {
             System.out.println("6. View Replenishment Requests");
             System.out.println("7. Logout");
         } else {
-            System.out.println("ERROR. PLEASE LOG IN!");
+            System.out.println("ERROR. PLEASE LOG IN! (Pharmacist)");
         }
     }
 }

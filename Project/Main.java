@@ -170,6 +170,7 @@ public class Main {
         System.out.println("Test Case 25: First-Time Login and Password Change");
         if (patient1.login("P001", "patientPwd")) {
             patient1.changePassword("newPatientPwd");
+            patient1.logout();
         }
 
         // Test Case 26: Login with Incorrect Credentials
@@ -179,5 +180,9 @@ public class Main {
         }
 
         scanner.close();
+        pharmacist1.displayMenu();
+        doctor1.displayMenu();
+        patient1.displayMenu();
+        admin.displayMenu();
     }
 }

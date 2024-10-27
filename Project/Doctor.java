@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-public class Doctor extends Staff {
+public class Doctor extends Staff implements IUser {
 
 	private List<TimeSlot> availability;
     private List<Appointment> appointments;
@@ -173,7 +173,7 @@ public class Doctor extends Staff {
 			System.out.println("View Upcoming Appointments");
 			System.out.println("Record Appointment Outcome");
         } else {
-            System.out.println("ERROR. PLEASE LOG IN!");
+            System.out.println("ERROR. PLEASE LOG IN! (Doctor)");
         }
     }
 	

@@ -42,7 +42,7 @@ public class Administrator extends Staff implements IUser {
             }
             scanner.close();
         } else {
-            System.out.println("ERROR: Please log in first.");
+            System.out.println("ERROR: Please log in first. (Admin)");
         }
     }
 

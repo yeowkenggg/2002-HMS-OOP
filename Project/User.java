@@ -100,12 +100,4 @@ public class User {
         return isLogged;
     }
 	
-    //template for subclasses
-	public void displayMenu() {
-        if (isLogged) {
-            System.out.println("Menu.");
-        } else {
-            System.out.println("Please log in.");
-        }
-    }
 }

@@ -167,7 +167,7 @@ public class Patient extends User implements IUser, IAppointmentManager {
             System.out.println("8. View Past Appointment Outcome Records");
             System.out.println("9. Logout");
         } else {
-            System.out.println("ERROR. PLEASE LOG IN!");
+            System.out.println("ERROR. PLEASE LOG IN! (Patient)");
         }
     }
 
