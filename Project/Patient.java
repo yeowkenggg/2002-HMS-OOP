@@ -1,18 +1,16 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-public class Patient extends User implements IUser, IAppointmentManager {
-    
+public class Patient extends User implements IUser {
+
     private String patientID;
     private LocalDate dateOfBirth;
     private String bloodType;
     private String contactInfo;
-    private MedicalRecord medicalRecord;
-    private List<Appointment> appointments; 
+    private List<Appointment> appointments;
 
-    // Constructor
+    // constructor
     public Patient(String userId, String password, String name, String gender, LocalDate dateOfBirth, String bloodType, String contactInfo) {
         super(userId, password, name, gender);
         this.patientID = userId;
@@ -20,140 +18,49 @@ public class Patient extends User implements IUser, IAppointmentManager {
         this.bloodType = bloodType;
         this.contactInfo = contactInfo;
         this.appointments = new ArrayList<>();
-        this.medicalRecord = new MedicalRecord(userId, name, dateOfBirth, gender, bloodType, contactInfo);
+        
+        MedicalRecord medicalRecord = new MedicalRecord(userId, name, dateOfBirth, gender, bloodType, contactInfo);
         MedicalRecord.addRecord(medicalRecord);
     }
 
-    // Schedule an appointment with a doctor
-    public void scheduleAppointment(Doctor doctor, TimeSlot timeSlot) {
-        if (doctor.isAvailable(timeSlot)) {
-            String requestID = "R" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMHHmmss"));
-            Appointment appointment = new Appointment(requestID, this.patientID, doctor.getUserId(), timeSlot, "Pending");
-            appointments.add(appointment);
-            doctor.addAppointment(appointment);
-            System.out.println("Appointment scheduled with Dr. " + doctor.getName() + " on " + timeSlot);
-        } else {
-            System.out.println("The doctor is not available for the selected time slot.");
-        }
+    // Getters and Setters
+    public String getPatientID() {
+        return patientID;
     }
 
-    // View all scheduled appointments
-    public void viewAppointments() {
-        System.out.println("\nScheduled Appointments:");
-        for (Appointment appointment : appointments) {
-            System.out.println(appointment);
-        }
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    // Cancel an appointment
-    public void cancelAppointment(Appointment appointment, Doctor doctor) {
-        if (appointments.contains(appointment)) {
-            appointment.cancel();
-            appointments.remove(appointment);
-            System.out.println("Appointment with ID " + appointment.getAppointmentID() + " has been canceled.");
-
-            if (doctor != null) {
-                doctor.cancelAppointment(appointment);
-            }
-        } else {
-            System.out.println("No such appointment found.");
-        }
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
-    // View outcomes of past appointments
-    public void viewAppointmentOutcome() {
-        List<AppointmentOutcome> outcomes = AppointmentOutcome.getOutcomesByPatientID(this.getUserId());
-        if (outcomes.isEmpty()) {
-            System.out.println("No appointment outcomes available.");
-        } else {
-            for (AppointmentOutcome outcome : outcomes) {
-                System.out.println(outcome);
-            }
-        }
+    public String getBloodType() {
+        return bloodType;
     }
 
-    // Update contact information
-    public void updateContactInfo(String newContactInfo) {
-        if (!newContactInfo.isEmpty()) {
-            this.contactInfo = newContactInfo;
-            medicalRecord.setContactInfo(newContactInfo);
-            System.out.println("Contact information updated successfully to: " + contactInfo);
-        } else {
-            System.out.println("Invalid input. Contact information not updated.");
-        }
+    public String getContactInfo() {
+        return contactInfo;
     }
 
-    // Update name
-    public void updateName(String newName) {
-        if (!newName.isEmpty()) {
-            this.setName(newName);
-            medicalRecord.setName(newName);
-            System.out.println("Name updated to: " + newName);
-        } else {
-            System.out.println("Name cannot be empty.");
-        }
+    public void setContactInfo(String contactInfo) {
+        this.contactInfo = contactInfo;
     }
 
-    // Update gender
-    public void updateGender(String newGender) {
-        if (newGender.equalsIgnoreCase("Male") || newGender.equalsIgnoreCase("Female")) {
-            this.setGender(newGender);
-            medicalRecord.setGender(newGender);
-            System.out.println("Gender updated to: " + newGender);
-        } else {
-            System.out.println("Invalid gender input.");
-        }
+    public List<Appointment> getAppointments() {
+        return new ArrayList<>(appointments);
     }
 
-    // Update date of birth
-    public void updateDateOfBirth(LocalDate newDateOfBirth) {
-        this.dateOfBirth = newDateOfBirth;
-        medicalRecord.setDateOfBirth(newDateOfBirth);
-        System.out.println("Date of birth updated to: " + newDateOfBirth);
+    public void addAppointment(Appointment appointment) {
+        appointments.add(appointment);
     }
 
-    // View medical record
-    public void viewMedicalRecord() {
-        medicalRecord.viewMedicalRecord();
+    public void removeAppointment(Appointment appointment) {
+        appointments.remove(appointment);
     }
 
-    // View available slots for a doctor
-    public void viewAvailableSlots(Doctor doctor) {
-        System.out.println("Available Appointment Slots for Dr. " + doctor.getName() + ":");
-        for (TimeSlot slot : doctor.getAvailability()) {
-            if (doctor.isAvailable(slot)) {
-                System.out.println(slot);
-            }
-        }
-    }
-
-    // Reschedule an appointment
-    public void rescheduleAppointment(Appointment appointment, TimeSlot newTimeSlot, Doctor doctor) {
-        if (appointments.contains(appointment)) {
-            if (doctor.isAvailable(newTimeSlot)) {
-                appointment.setStatus("Rescheduled");
-                appointments.remove(appointment);
-
-                Appointment newAppointment = new Appointment(
-                    appointment.getAppointmentID(),
-                    appointment.getPatientID(),
-                    appointment.getDoctorID(),
-                    newTimeSlot,
-                    "Confirmed"
-                );
-                appointments.add(newAppointment);
-                doctor.addAppointment(newAppointment);
-
-                System.out.println("Appointment rescheduled successfully to " + newTimeSlot);
-            } else {
-                System.out.println("The selected time slot is not available for rescheduling.");
-            }
-        } else {
-            System.out.println("No such appointment found to reschedule.");
-        }
-    }
-    
-    // Override display menu method for patient-specific menu
+    // Display patient-specific menu
     @Override
     public void displayMenu() {
         if (isLoggedIn()) {
@@ -169,10 +76,5 @@ public class Patient extends User implements IUser, IAppointmentManager {
         } else {
             System.out.println("ERROR. PLEASE LOG IN! (Patient)");
         }
-    }
-
-    
-    public List<Appointment> getAppointments() {
-        return new ArrayList<>(appointments);
     }
 }

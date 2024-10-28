@@ -1,5 +1,6 @@
 import java.util.*;
 import java.io.*;
+import java.time.LocalDateTime;
 
 public class Appointment {
 
@@ -44,6 +45,10 @@ public class Appointment {
     public TimeSlot getTimeSlot(){
         return timeSlot;
     }
+    
+    public void setTimeSlot(TimeSlot newTimeSlot) {
+        this.timeSlot = newTimeSlot;
+    }
 
     public void setStatus(String status) {
         this.status = status;
@@ -80,4 +85,15 @@ public class Appointment {
                ", Time: " + timeSlot + 
                ", Status: " + status ;
     }
+
+    public boolean isPast() {
+        LocalDateTime appointmentDateTime = LocalDateTime.of(this.timeSlot.getDate(), this.timeSlot.getTime());
+        return appointmentDateTime.isBefore(LocalDateTime.now());
+    }
+    
+    public boolean isUpcoming() {
+        LocalDateTime appointmentDateTime = LocalDateTime.of(this.timeSlot.getDate(), this.timeSlot.getTime());
+        return appointmentDateTime.isAfter(LocalDateTime.now());
+    }
+
 }

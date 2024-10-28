@@ -7,10 +7,12 @@ import java.time.format.DateTimeFormatter;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        // Initialize managers
+
+        // Initialize managers and services
         IInventoryManager inventoryManager = new MedicineInventoryManager();
         StaffManager staffManager = new StaffManager();
         PrescriptionManager prescriptionManager = new PrescriptionManager();
+        PatientService patientService = new PatientService();
 
         // Initialize roles
         Administrator admin = new Administrator("A001", "adminPwd", "Admin", "Female", "Administrator", 45, inventoryManager, staffManager);
@@ -41,40 +43,57 @@ public class Main {
 
         // Test Case 1: View Medical Record
         System.out.println("Test Case 1: View Medical Record");
-        patient1.viewMedicalRecord();
+        patientService.viewMedicalRecord(patient1);
 
         // Test Case 2: Update Contact Information
         System.out.println("\nTest Case 2: Update Personal Information");
-        patient1.updateContactInfo("98765432");
+        patientService.updateContactInfo(patient1, "98765432");
+        patientService.viewMedicalRecord(patient1);
 
         // Test Case 3: View Available Appointment Slots
         System.out.println("\nTest Case 3: View Available Appointment Slots");
-        patient1.viewAvailableSlots(doctor1);
+        patientService.viewAvailableSlots(doctor1);
 
         // Test Case 4: Schedule an Appointment
         System.out.println("\nTest Case 4: Schedule an Appointment");
-        patient1.scheduleAppointment(doctor1, slot1);
-        patient1.viewAppointments();
+        patientService.scheduleAppointment(patient1, doctor1, slot1);
+        patientService.viewAppointments(patient1);
 
         // Test Case 5: Reschedule an Appointment
         System.out.println("\nTest Case 5: Reschedule an Appointment");
         TimeSlot newSlot = new TimeSlot(LocalDate.now().plusDays(2), LocalTime.of(11, 0));
         doctor1.setAvailability(newSlot);
-        patient1.rescheduleAppointment(patient1.getAppointments().get(0), newSlot, doctor1);
-        patient1.viewAppointments();
+        patientService.rescheduleAppointment(patient1, patient1.getAppointments().get(0), newSlot, doctor1);
+        patientService.viewAppointments(patient1);
 
         // Test Case 6: Cancel an Appointment
         System.out.println("\nTest Case 6: Cancel an Appointment");
-        patient1.cancelAppointment(patient1.getAppointments().get(0), doctor1);
-        patient1.viewAppointments();
+        patientService.cancelAppointment(patient1, patient1.getAppointments().get(0), doctor1);
+        patientService.viewAppointments(patient1);
 
         // Test Case 7: View Scheduled Appointments
         System.out.println("\nTest Case 7: View Scheduled Appointments");
-        patient1.viewAppointments();
+        // Simulate 2 more appointments before showing
+        TimeSlot slot2 = new TimeSlot(LocalDate.now().plusDays(3), LocalTime.of(14, 0));
+        TimeSlot slot3 = new TimeSlot(LocalDate.now().plusDays(4), LocalTime.of(9, 0));
+        doctor1.setAvailability(slot2);
+        doctor1.setAvailability(slot3);
+        patientService.scheduleAppointment(patient1, doctor1, slot2);
+        patientService.scheduleAppointment(patient1, doctor1, slot3);
+        System.out.println("\nApt Print");
+        patientService.viewAppointments(patient1);
 
         // Test Case 8: View Past Appointment Outcome Records
         System.out.println("\nTest Case 8: View Past Appointment Outcome Records");
-        patient1.viewAppointmentOutcome();
+        AppointmentOutcome outcome1 = new AppointmentOutcome(
+            patient1.getAppointments().get(0),
+            "Testing before doctor to show here",
+            "No issues",
+            prescription,
+            LocalDate.now()
+        );
+        doctor1.updatePatientRecord(patient1.getUserId(), outcome1);
+        patientService.viewAppointmentOutcome(patient1);
 
         // ========================== Doctor Actions ==========================
         System.out.println("\n=== Doctor Actions ===");
@@ -89,16 +108,17 @@ public class Main {
         if (patient1.getAppointments().isEmpty()) {
             TimeSlot slot = new TimeSlot(LocalDate.now().plusDays(1), LocalTime.of(9, 0));
             doctor1.setAvailability(slot);
-            patient1.scheduleAppointment(doctor1, slot);
+            patientService.scheduleAppointment(patient1, doctor1, slot);
         }
-        AppointmentOutcome outcome = new AppointmentOutcome(
-            patient1.getAppointments().get(0), 
-            "Routine check-up", 
-            "No issues", 
-            prescription, 
+        AppointmentOutcome outcome2 = new AppointmentOutcome(
+            patient1.getAppointments().get(0),
+            "Routine check-up",
+            "No issues",
+            prescription,
             LocalDate.now()
         );
-        doctor1.updatePatientRecord(patient1.getUserId(), outcome);
+        doctor1.updatePatientRecord(patient1.getUserId(), outcome2);
+
         // Test Case 11: View Personal Schedule
         System.out.println("\nTest Case 11: View Personal Schedule");
         doctor1.viewAppointments();
@@ -112,7 +132,7 @@ public class Main {
         Appointment appointment1 = new Appointment("APT001", patient1.getUserId(), doctor1.getUserId(), slot1, "Pending");
         doctor1.addAppointment(appointment1);
         doctor1.acceptAppointment(appointment1);
-        patient1.viewAppointments();
+        patientService.viewAppointments(patient1);
 
         // Test Case 14: View Upcoming Appointments
         System.out.println("\nTest Case 14: View Upcoming Appointments");
