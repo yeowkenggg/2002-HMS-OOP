@@ -9,14 +9,14 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         // Initialize managers and services
-        IInventoryManager inventoryManager = new MedicineInventoryManager();
-        StaffManager staffManager = new StaffManager();
+        MedicineManagementService inventoryManager = new MedicineManagementService();
+        StaffManagementService staffManager = new StaffManagementService();
         PrescriptionManager prescriptionManager = new PrescriptionManager();
-        PatientService patientService = new PatientService();
-        DoctorService doctorService = new DoctorService();  // Initialize DoctorService
+        PatientService patientService = new PatientService(); 
+        DoctorService doctorService = new DoctorService(patientService);
 
         // Initialize roles
-        Administrator admin = new Administrator("A001", "adminPwd", "Admin", "Female", "Administrator", 45, inventoryManager, staffManager);
+        Administrator admin = new Administrator("A001", "adminPwd", "Admin", "Female", "Administrator", 45, staffManager,inventoryManager);
         Doctor doctor1 = new Doctor("D001", "doctorPwd", "Doctor", "Male", "Doctor", 40);
         Pharmacist pharmacist1 = new Pharmacist("P0001", "pharmaPwd", "Pharmacist", "Male", "Pharmacist", 35, inventoryManager, prescriptionManager);
         Patient patient1 = new Patient("P001", "patientPwd", "Patient", "Male", LocalDate.of(1995, 5, 20), "O+", "12345678");
@@ -25,6 +25,7 @@ public class Main {
         staffManager.addStaff(admin);
         staffManager.addStaff(doctor1);
         staffManager.addStaff(pharmacist1);
+        patientService.addPatient(patient1);
 
         // Inventory and Prescription Setup
         inventoryManager.addMedicine("Panadol", 10, 20);
@@ -53,34 +54,35 @@ public class Main {
 
         // Test Case 3: View Available Appointment Slots
         System.out.println("\nTest Case 3: View Available Appointment Slots");
-        patientService.viewAvailableSlots(doctor1);
+        patientService.viewAvailableSlots(doctorService, doctor1);
 
         // Test Case 4: Schedule an Appointment
         System.out.println("\nTest Case 4: Schedule an Appointment");
-        patientService.scheduleAppointment(patient1, doctor1, slot1);
+        patientService.scheduleAppointment(patient1, doctorService, doctor1, slot1);
+        patientService.scheduleAppointment(patient1, doctorService, doctor1, slot1);
         patientService.viewAppointments(patient1);
 
         // Test Case 5: Reschedule an Appointment
         System.out.println("\nTest Case 5: Reschedule an Appointment");
         TimeSlot newSlot = new TimeSlot(LocalDate.now().plusDays(2), LocalTime.of(11, 0));
         doctorService.setAvailability(doctor1, newSlot);
-        patientService.rescheduleAppointment(patient1, patient1.getAppointments().get(0), newSlot, doctor1);
+        patientService.rescheduleAppointment(patient1, patient1.getAppointments().get(0), doctorService, newSlot, doctor1);
         patientService.viewAppointments(patient1);
 
         // Test Case 6: Cancel an Appointment
         System.out.println("\nTest Case 6: Cancel an Appointment");
-        patientService.cancelAppointment(patient1, patient1.getAppointments().get(0), doctor1);
+        patientService.cancelAppointment(patient1, patient1.getAppointments().get(0), doctorService, doctor1);
         patientService.viewAppointments(patient1);
 
         // Test Case 7: View Scheduled Appointments
         System.out.println("\nTest Case 7: View Scheduled Appointments");
         // Simulate 2 more appointments before showing
-        TimeSlot slot2 = new TimeSlot(LocalDate.now().plusDays(3), LocalTime.of(14, 0));
+        TimeSlot slot2 = new TimeSlot(LocalDate.now().plusDays(3), LocalTime.of(11, 0));
         TimeSlot slot3 = new TimeSlot(LocalDate.now().plusDays(4), LocalTime.of(9, 0));
         doctorService.setAvailability(doctor1, slot2);
         doctorService.setAvailability(doctor1, slot3);
-        patientService.scheduleAppointment(patient1, doctor1, slot2);
-        patientService.scheduleAppointment(patient1, doctor1, slot3);
+        patientService.scheduleAppointment(patient1, doctorService, doctor1, newSlot);
+        patientService.scheduleAppointment(patient1, doctorService, doctor1, slot3);
         patientService.viewAppointments(patient1);
 
         // Test Case 8: View Past Appointment Outcome Records
@@ -115,6 +117,7 @@ public class Main {
             LocalDate.now()
         );
         doctorService.updatePatientRecord(doctor1, patient1.getUserId(), outcome2);
+        doctorService.viewPatientRecord(doctor1, patient1.getUserId());
 
         // Test Case 11: View Personal Schedule
         System.out.println("\nTest Case 11: View Personal Schedule");
@@ -140,6 +143,7 @@ public class Main {
         doctorService.updatePatientRecord(doctor1, patient1.getUserId(), new AppointmentOutcome(
             appointment1, "Follow-up", "Routine", prescription, LocalDate.now().plusDays(1)
         ));
+        patientService.viewAppointmentOutcome(patient1);
 
         // ========================== Pharmacist Actions ==========================
         System.out.println("\n=== Pharmacist Actions ===");
@@ -171,7 +175,7 @@ public class Main {
 
         // Test Case 21: View Appointments Details
         System.out.println("\nTest Case 21: View Appointments Details");
-        admin.viewAppointment();
+        //patientService.viewAppointments();
 
         // Test Case 22: View and Manage Medication Inventory
         System.out.println("\nTest Case 22: View and Manage Medication Inventory");
@@ -180,7 +184,8 @@ public class Main {
 
         // Test Case 23: Approve Replenishment Requests
         System.out.println("\nTest Case 23: Approve Replenishment Requests");
-        admin.approveReplenishment("R" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMHHmmss")));
+        inventoryManager.approveReplenishment("R" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMHHmmss")));
+        inventoryManager.viewMedicines();
 
         // ========================== Login System and Password Management ==========================
         System.out.println("\n=== Login System and Password Management ===");
@@ -189,8 +194,13 @@ public class Main {
         System.out.println("Test Case 25: First-Time Login and Password Change");
         if (patient1.login("P001", "patientPwd")) {
             patient1.changePassword("newPatientPwd");
+            System.out.println(patient1.isLoggedIn());
             patient1.logout();
         }
+        System.out.println(patient1.isLoggedIn());
+        patient1.login("P001", "newPatientPwd");
+        System.out.println(patient1.isLoggedIn());
+        patient1.logout();
 
         // Test Case 26: Login with Incorrect Credentials
         System.out.println("\nTest Case 26: Login with Incorrect Credentials");
@@ -198,6 +208,8 @@ public class Main {
             System.out.println("Login failed with incorrect password.");
         }
 
+        
+        System.out.println("");
         scanner.close();
         pharmacist1.displayMenu();
         doctor1.displayMenu();

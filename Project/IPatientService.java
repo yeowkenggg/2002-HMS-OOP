@@ -9,14 +9,14 @@ public interface IPatientService {
 
     void viewMedicalRecord(Patient patient);
     void viewAppointmentOutcome(Patient patient);
-    
-    void scheduleAppointment(Patient patient, Doctor doctor, TimeSlot timeSlot);
-    void rescheduleAppointment(Patient patient, Appointment appointment, TimeSlot newTimeSlot, Doctor doctor);
-    void cancelAppointment(Patient patient, Appointment appointment, Doctor doctor);
     void viewAppointments(Patient patient);
+    void addPatient(Patient patient);
+    void scheduleAppointment(Patient patient, DoctorService doctorService, Doctor doctor, TimeSlot timeSlot);
+    void rescheduleAppointment(Patient patient, Appointment appointment, DoctorService doctorService, TimeSlot newTimeSlot, Doctor doctor);
+    void cancelAppointment(Patient patient, Appointment appointment, DoctorService doctorService, Doctor doctor);
     List<Appointment> getUpcomingAppointments(Patient patient);  
     List<Appointment> getPastAppointments(Patient patient);     
     Appointment getAppointmentDetails(Patient patient, String appointmentID);
 
-    void viewAvailableSlots(Doctor doctor);
+    void viewAvailableSlots(DoctorService doctorService, Doctor doctor);
 }

@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class PrescriptionManager {
+public class PrescriptionManager implements IPrescriptionManager {
 
     private List<Prescription> prescriptions;
 

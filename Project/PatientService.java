@@ -6,7 +6,12 @@ import java.util.List;
 
 public class PatientService implements IPatientService {
 
-    DoctorService doctorService = new DoctorService();
+    private List<Patient> patientList;
+
+    // Constructor to initialize the patient list
+    public PatientService() {
+        this.patientList = new ArrayList<>();
+    }
 
     @Override
     public void viewMedicalRecord(Patient patient) {
@@ -73,30 +78,36 @@ public class PatientService implements IPatientService {
             System.out.println("Invalid date of birth.");
         }
     }
+    
+    public List<Patient> getAllPatients() {
+        return new ArrayList<>(patientList); // Returning a copy to avoid modification of the original list
+    }
+
+    public Patient findPatientById(String patientID) {
+        for (Patient patient : getAllPatients()) {
+            if (patient.getPatientID().equals(patientID)) {
+                return patient;
+            }
+        }
+        return null;
+    }
 
     @Override
-    public void viewAvailableSlots(Doctor doctor) {
+    public void viewAvailableSlots(DoctorService doctorService, Doctor doctor) {
         System.out.println("Available Slots for Dr. " + doctor.getName() + ":");
-        for (TimeSlot slot : doctor.getAvailability()) {
-            if (doctorService.isAvailable(doctor, slot)) {
-                System.out.println(slot);
-            }
+        List<TimeSlot> availableSlots = doctorService.getAvailability(doctor);
+        for (TimeSlot slot : availableSlots) {
+            System.out.println(slot);
         }
     }
 
     @Override
-    public void scheduleAppointment(Patient patient, Doctor doctor, TimeSlot timeSlot) {
+    public void scheduleAppointment(Patient patient, DoctorService doctorService, Doctor doctor, TimeSlot timeSlot) {
         if (doctorService.isAvailable(doctor, timeSlot)) {
-            String requestID = "APT" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMHHmmss"));
-            Appointment appointment = new Appointment(
-                requestID, 
-                patient.getUserId(), 
-                doctor.getUserId(), 
-                timeSlot, 
-                "Pending" //When creation, appt is pending
-            );
-            patient.addAppointment(appointment);  // Adds to patient record
-            doctorService.addAppointment(doctor, appointment);   // Adds to doctor schedule
+            String appointmentID = "APT" + System.currentTimeMillis();
+            Appointment appointment = new Appointment(appointmentID, patient.getUserId(), doctor.getUserId(), timeSlot, "Pending");
+            patient.addAppointment(appointment);
+            doctorService.addAppointment(doctor, appointment);
             System.out.println("Scheduled appointment for " + patient.getName() + " with Dr. " + doctor.getName() + " at " + timeSlot);
         } else {
             System.out.println("Doctor is unavailable at the selected time slot.");
@@ -104,7 +115,7 @@ public class PatientService implements IPatientService {
     }
 
     @Override
-    public void rescheduleAppointment(Patient patient, Appointment appointment, TimeSlot newTimeSlot, Doctor doctor) {
+    public void rescheduleAppointment(Patient patient, Appointment appointment, DoctorService doctorService, TimeSlot newTimeSlot, Doctor doctor) {
         if (doctorService.isAvailable(doctor, newTimeSlot)) {
             appointment.setTimeSlot(newTimeSlot);
             appointment.setStatus("Rescheduled");
@@ -115,13 +126,21 @@ public class PatientService implements IPatientService {
     }
 
     @Override
-    public void cancelAppointment(Patient patient, Appointment appointment, Doctor doctor) {
+    public void cancelAppointment(Patient patient, Appointment appointment, DoctorService doctorService, Doctor doctor) {
         if (patient.getAppointments().contains(appointment)) {
-            patient.removeAppointment(appointment);  // Remove from patient's records
-            doctorService.cancelAppointment(doctor, appointment);    // Free the doctor's slot
+            patient.removeAppointment(appointment);
+            doctorService.cancelAppointment(doctor, appointment);
             System.out.println("Appointment with ID " + appointment.getAppointmentID() + " has been canceled.");
         } else {
             System.out.println("Appointment not found for the patient.");
+        }
+    }
+    
+    @Override
+    public void addPatient(Patient patient) {
+        if (!patientList.contains(patient)) {
+            patientList.add(patient);
+            System.out.println("Patient added: " + patient.getName() + " (ID: " + patient.getUserId() + ")");
         }
     }
 

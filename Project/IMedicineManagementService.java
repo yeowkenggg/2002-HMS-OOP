@@ -1,7 +1,6 @@
 import java.util.List;
 
-public interface IInventoryManager {
-
+public interface IMedicineManagementService {
     void addMedicine(String name, int stock, int alertLevel);
     boolean needsReplenishment(Medicine medicine);
     void viewMedicines();
@@ -10,4 +9,5 @@ public interface IInventoryManager {
     void removeMedicine(String name);
     Medicine findMedicineByName(String name);
     List<Medicine> getAllMedicines();
+    void displayMedicineManagementMenu();
 }

@@ -1,7 +1,12 @@
 import java.util.List;
 
-public class DoctorService {
+public class DoctorService implements IDoctorService {
+    private PatientService patientService;  // Reference to PatientService
 
+    // Constructor accepting PatientService reference
+    public DoctorService(PatientService patientService) {
+        this.patientService = patientService;
+    }
     public void viewPatientRecord(Doctor doctor, String patientID) {
         if (!doctor.getAssignedPatientIDs().contains(patientID)) {
             System.out.println("Access denied. Patient is not under your care.");
@@ -55,15 +60,26 @@ public class DoctorService {
         if (appointment.getDoctorID().equals(doctor.getUserId()) && doctor.getAppointments().contains(appointment)) {
             appointment.confirm();
             System.out.println("Appointment " + appointment.getAppointmentID() + " accepted.");
-            
-            // assign the doctor to the patient if there isnt one so he can access other functions
+    
             if (!doctor.getAssignedPatientIDs().contains(appointment.getPatientID())) {
                 assignPatient(doctor, appointment.getPatientID());
+            }
+            Patient patient = patientService.findPatientById(appointment.getPatientID());
+            if (patient != null) {
+                if (!patient.getAppointments().contains(appointment)) {
+                    patient.addAppointment(appointment);
+                    System.out.println("Appointment added to Patient " + patient.getName() + "'s record.");
+                } else {
+                    System.out.println("Appointment already exists in the patient's record.");
+                }
+            } else {
+                System.out.println("Patient with ID " + appointment.getPatientID() + " not found.");
             }
         } else {
             System.out.println("Access Denied: You are not authorized to accept this appointment.");
         }
     }
+    
     public void declineAppointment(Doctor doctor, Appointment appointment) {
         if (appointment.getDoctorID().equals(doctor.getUserId()) && doctor.getAppointments().contains(appointment)) {
             appointment.setStatus("Declined");
@@ -122,5 +138,12 @@ public class DoctorService {
         }
         doctor.getAvailability().add(timeSlot);
         System.out.println("Availability added for Dr. " + doctor.getName() + ": " + timeSlot);
+    }
+    public List<TimeSlot> getAvailability(Doctor doctor) {
+        return doctor.getAvailability(); 
+    }
+
+    public List<String> getAssignedPatientIDs(Doctor doctor) {
+        return doctor.getAssignedPatientIDs(); 
     }
 }

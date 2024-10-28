@@ -33,24 +33,7 @@ public class Staff extends User {
         return staffList;
     }
 
-    public static Staff findStaffById(String userId) {
-        for (Staff staff : staffList) {
-            if (staff.getUserId().equals(userId)) {
-                return staff;
-            }
-        }
-        return null;
-    }
-
-    public static void removeStaffById(String userId) {
-        Staff staffToRemove = findStaffById(userId);
-        if (staffToRemove != null) {
-            staffList.remove(staffToRemove);
-            System.out.println("Removed staff member: " + staffToRemove.getName() + " (ID: " + userId + ")");
-        } else {
-            System.out.println("Staff member with ID " + userId + " not found.");
-        }
-    }
+    
     
 
     
