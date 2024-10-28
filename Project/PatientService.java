@@ -6,6 +6,8 @@ import java.util.List;
 
 public class PatientService implements IPatientService {
 
+    DoctorService doctorService = new DoctorService();
+
     @Override
     public void viewMedicalRecord(Patient patient) {
         MedicalRecord record = MedicalRecord.getRecordByPatientID(patient.getUserId());
@@ -76,7 +78,7 @@ public class PatientService implements IPatientService {
     public void viewAvailableSlots(Doctor doctor) {
         System.out.println("Available Slots for Dr. " + doctor.getName() + ":");
         for (TimeSlot slot : doctor.getAvailability()) {
-            if (doctor.isAvailable(slot)) {
+            if (doctorService.isAvailable(doctor, slot)) {
                 System.out.println(slot);
             }
         }
@@ -84,7 +86,7 @@ public class PatientService implements IPatientService {
 
     @Override
     public void scheduleAppointment(Patient patient, Doctor doctor, TimeSlot timeSlot) {
-        if (doctor.isAvailable(timeSlot)) {
+        if (doctorService.isAvailable(doctor, timeSlot)) {
             String requestID = "APT" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMHHmmss"));
             Appointment appointment = new Appointment(
                 requestID, 
@@ -94,7 +96,7 @@ public class PatientService implements IPatientService {
                 "Pending" //When creation, appt is pending
             );
             patient.addAppointment(appointment);  // Adds to patient record
-            doctor.addAppointment(appointment);   // Adds to doctor schedule
+            doctorService.addAppointment(doctor, appointment);   // Adds to doctor schedule
             System.out.println("Scheduled appointment for " + patient.getName() + " with Dr. " + doctor.getName() + " at " + timeSlot);
         } else {
             System.out.println("Doctor is unavailable at the selected time slot.");
@@ -103,7 +105,7 @@ public class PatientService implements IPatientService {
 
     @Override
     public void rescheduleAppointment(Patient patient, Appointment appointment, TimeSlot newTimeSlot, Doctor doctor) {
-        if (doctor.isAvailable(newTimeSlot)) {
+        if (doctorService.isAvailable(doctor, newTimeSlot)) {
             appointment.setTimeSlot(newTimeSlot);
             appointment.setStatus("Rescheduled");
             System.out.println("Rescheduled appointment to " + newTimeSlot);
@@ -116,7 +118,7 @@ public class PatientService implements IPatientService {
     public void cancelAppointment(Patient patient, Appointment appointment, Doctor doctor) {
         if (patient.getAppointments().contains(appointment)) {
             patient.removeAppointment(appointment);  // Remove from patient's records
-            doctor.cancelAppointment(appointment);    // Free the doctor's slot
+            doctorService.cancelAppointment(doctor, appointment);    // Free the doctor's slot
             System.out.println("Appointment with ID " + appointment.getAppointmentID() + " has been canceled.");
         } else {
             System.out.println("Appointment not found for the patient.");

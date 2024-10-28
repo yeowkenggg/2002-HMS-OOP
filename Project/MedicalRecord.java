@@ -79,7 +79,7 @@ public class MedicalRecord {
             System.out.println(outcome);
         }
     }
-    System.out.println("=====================");
+    System.out.println("");
 }
 
 

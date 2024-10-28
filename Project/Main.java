@@ -13,6 +13,7 @@ public class Main {
         StaffManager staffManager = new StaffManager();
         PrescriptionManager prescriptionManager = new PrescriptionManager();
         PatientService patientService = new PatientService();
+        DoctorService doctorService = new DoctorService();  // Initialize DoctorService
 
         // Initialize roles
         Administrator admin = new Administrator("A001", "adminPwd", "Admin", "Female", "Administrator", 45, inventoryManager, staffManager);
@@ -36,7 +37,7 @@ public class Main {
         prescriptionManager.addPrescription(prescription);
 
         TimeSlot slot1 = new TimeSlot(LocalDate.now().plusDays(1), LocalTime.of(10, 0));
-        doctor1.setAvailability(slot1);
+        doctorService.setAvailability(doctor1, slot1);
 
         // ========================== Patient Actions ==========================
         System.out.println("\n=== Patient Actions ===");
@@ -62,7 +63,7 @@ public class Main {
         // Test Case 5: Reschedule an Appointment
         System.out.println("\nTest Case 5: Reschedule an Appointment");
         TimeSlot newSlot = new TimeSlot(LocalDate.now().plusDays(2), LocalTime.of(11, 0));
-        doctor1.setAvailability(newSlot);
+        doctorService.setAvailability(doctor1, newSlot);
         patientService.rescheduleAppointment(patient1, patient1.getAppointments().get(0), newSlot, doctor1);
         patientService.viewAppointments(patient1);
 
@@ -76,23 +77,24 @@ public class Main {
         // Simulate 2 more appointments before showing
         TimeSlot slot2 = new TimeSlot(LocalDate.now().plusDays(3), LocalTime.of(14, 0));
         TimeSlot slot3 = new TimeSlot(LocalDate.now().plusDays(4), LocalTime.of(9, 0));
-        doctor1.setAvailability(slot2);
-        doctor1.setAvailability(slot3);
+        doctorService.setAvailability(doctor1, slot2);
+        doctorService.setAvailability(doctor1, slot3);
         patientService.scheduleAppointment(patient1, doctor1, slot2);
         patientService.scheduleAppointment(patient1, doctor1, slot3);
-        System.out.println("\nApt Print");
         patientService.viewAppointments(patient1);
 
         // Test Case 8: View Past Appointment Outcome Records
         System.out.println("\nTest Case 8: View Past Appointment Outcome Records");
+        doctorService.assignPatient(doctor1, patient1.getUserId());
+
         AppointmentOutcome outcome1 = new AppointmentOutcome(
             patient1.getAppointments().get(0),
-            "Testing before doctor to show here",
+            "Testing outcome entry",
             "No issues",
             prescription,
             LocalDate.now()
         );
-        doctor1.updatePatientRecord(patient1.getUserId(), outcome1);
+        doctorService.updatePatientRecord(doctor1, patient1.getUserId(), outcome1);
         patientService.viewAppointmentOutcome(patient1);
 
         // ========================== Doctor Actions ==========================
@@ -100,16 +102,11 @@ public class Main {
 
         // Test Case 9: View Patient Medical Records
         System.out.println("Test Case 9: View Patient Medical Records");
-        doctor1.assignPatient(patient1.getUserId());
-        doctor1.viewPatientRecord(patient1.getUserId());
+        doctorService.assignPatient(doctor1, patient1.getUserId());
+        doctorService.viewPatientRecord(doctor1, patient1.getUserId());
 
         // Test Case 10: Update Patient Medical Records
         System.out.println("\nTest Case 10: Update Patient Medical Records");
-        if (patient1.getAppointments().isEmpty()) {
-            TimeSlot slot = new TimeSlot(LocalDate.now().plusDays(1), LocalTime.of(9, 0));
-            doctor1.setAvailability(slot);
-            patientService.scheduleAppointment(patient1, doctor1, slot);
-        }
         AppointmentOutcome outcome2 = new AppointmentOutcome(
             patient1.getAppointments().get(0),
             "Routine check-up",
@@ -117,30 +114,32 @@ public class Main {
             prescription,
             LocalDate.now()
         );
-        doctor1.updatePatientRecord(patient1.getUserId(), outcome2);
+        doctorService.updatePatientRecord(doctor1, patient1.getUserId(), outcome2);
 
         // Test Case 11: View Personal Schedule
         System.out.println("\nTest Case 11: View Personal Schedule");
-        doctor1.viewAppointments();
+        doctorService.viewAppointments(doctor1);
 
         // Test Case 12: Set Availability for Appointments
         System.out.println("\nTest Case 12: Set Availability for Appointments");
-        doctor1.setAvailability(new TimeSlot(LocalDate.now().plusDays(3), LocalTime.of(10, 0)));
+        doctorService.setAvailability(doctor1, new TimeSlot(LocalDate.now().plusDays(3), LocalTime.of(10, 0)));
 
         // Test Case 13: Accept or Decline Appointment Requests
         System.out.println("\nTest Case 13: Accept or Decline Appointment Requests");
         Appointment appointment1 = new Appointment("APT001", patient1.getUserId(), doctor1.getUserId(), slot1, "Pending");
-        doctor1.addAppointment(appointment1);
-        doctor1.acceptAppointment(appointment1);
+        doctorService.addAppointment(doctor1, appointment1);
+        doctorService.acceptAppointment(doctor1, appointment1);
         patientService.viewAppointments(patient1);
 
         // Test Case 14: View Upcoming Appointments
         System.out.println("\nTest Case 14: View Upcoming Appointments");
-        doctor1.viewAppointments();
+        doctorService.viewAppointments(doctor1);
 
         // Test Case 15: Record Appointment Outcome
         System.out.println("\nTest Case 15: Record Appointment Outcome");
-        doctor1.updatePatientRecord(patient1.getUserId(), new AppointmentOutcome(appointment1, "Follow-up", "Routine", prescription, LocalDate.now().plusDays(1)));
+        doctorService.updatePatientRecord(doctor1, patient1.getUserId(), new AppointmentOutcome(
+            appointment1, "Follow-up", "Routine", prescription, LocalDate.now().plusDays(1)
+        ));
 
         // ========================== Pharmacist Actions ==========================
         System.out.println("\n=== Pharmacist Actions ===");
