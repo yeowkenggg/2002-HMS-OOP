@@ -91,8 +91,8 @@ public class Patient extends User implements IUser {
         appointmentManager.rescheduleAppointment(this, appointment, newTimeSlot, doctor);
     }
 
-    public void cancelAppointment(Appointment appointment, Doctor doctor) {
-        appointmentManager.cancelAppointment(doctor, this, appointment);
+    public void cancelAppointment(Appointment appointment) {
+        appointmentManager.cancelAppointment(appointment, this);
     }
 
     public void viewScheduledAppointments() {

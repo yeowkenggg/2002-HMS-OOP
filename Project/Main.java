@@ -18,6 +18,7 @@ public class Main {
         AppointmentManager appointmentManager = new AppointmentManager(null, null, null);
         
         TimeSlot slot1 = new TimeSlot(LocalDate.now().plusDays(1), LocalTime.of(10, 0));
+        TimeSlot slot2 = new TimeSlot(LocalDate.now().plusDays(2), LocalTime.of(10, 0));
         
 
         prescriptionManager.setMedicineManager(medicineManager);
@@ -44,9 +45,10 @@ public class Main {
         UserManager userManager = new UserManager(allUsers, doctorManager, appointmentManager);
         Doctor doctor1 = doctorManager.findDoctorById("D001");
         doctorManager.setAvailability(doctor1, slot1);
+        doctorManager.setAvailability(doctor1, slot2);
         boolean isAvailable = doctorManager.isAvailable(doctor1, slot1);
         System.out.println("Is available: " + isAvailable);
-        
+
         userManager.loginUser();  
     }
 }

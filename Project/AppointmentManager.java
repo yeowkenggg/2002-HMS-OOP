@@ -313,19 +313,33 @@ public class AppointmentManager implements IAppointmentManager {
     @Override
     // we need both patient and doctor as parameters to check if they are the correct person asking for the cancellation.
     // in implementation, we will get doctorID when its patient side, and vice versa.
-    public void cancelAppointment(Doctor doctor, Patient patient, Appointment appointment) {
-        if (appointment.getDoctorID().equals(doctor.getUserId()) && appointment.getPatientID().equals(patient.getUserId())) {
-            if (patient.getAppointments().contains(appointment) && doctor.getAppointments().contains(appointment)) {
-                appointment.cancel();
-                patient.removeAppointment(appointment);
-                doctor.removeAppointment(appointment); 
-                doctorManager.setAvailability(doctor, appointment.getTimeSlot());
-                System.out.println("Appointment with ID " + appointment.getAppointmentID() + " has been canceled.");
-            } else {
-                System.out.println("Appointment not found for the patient or doctor.");
+    public void cancelAppointment(Appointment appointment, User caller) {
+        if (caller instanceof Doctor) {
+            Doctor doctor = (Doctor) caller;
+            if (appointment.getDoctorID().equals(doctor.getUserId())) {
+                Patient patient = patientManager.findPatientById(appointment.getPatientID());
+                if (patient != null) {
+                    // Cancel appointment for both doctor and patient
+                    appointment.cancel();
+                    patient.removeAppointment(appointment);
+                    doctor.removeAppointment(appointment);
+                    doctorManager.setAvailability(doctor, appointment.getTimeSlot());
+                    System.out.println("Appointment with ID " + appointment.getAppointmentID() + " has been canceled.");
+                }
             }
-        } else {
-            System.out.println("Access Denied: You are not authorized to cancel this appointment.");
+        } else if (caller instanceof Patient) {
+            Patient patient = (Patient) caller;
+            if (appointment.getPatientID().equals(patient.getUserId())) {
+                Doctor doctor = doctorManager.findDoctorById(appointment.getDoctorID());
+                if (doctor != null) {
+                    // Cancel appointment for both patient and doctor
+                    appointment.cancel();
+                    patient.removeAppointment(appointment);
+                    doctor.removeAppointment(appointment);
+                    doctorManager.setAvailability(doctor, appointment.getTimeSlot());
+                    System.out.println("Appointment with ID " + appointment.getAppointmentID() + " has been canceled.");
+                }
+            }
         }
     }
 

@@ -97,7 +97,7 @@ public class DoctorManager implements IDoctorManager {
 
     public void removeAvailability(Doctor doctor, TimeSlot timeSlot) {
         if (doctor.getAvailability().remove(timeSlot)) {
-            System.out.println("Time slot " + timeSlot + " removed from Dr. " + doctor.getName() + "'s availability.");
+            
         } else {
             System.out.println("Time slot " + timeSlot + " not found in Dr. " + doctor.getName() + "'s availability.");
         }
@@ -123,7 +123,7 @@ public class DoctorManager implements IDoctorManager {
 
     public void removeAppointment(Doctor doctor, Appointment appointment) {
         if (doctor.getAppointments().remove(appointment)) {
-            System.out.println("Appointment removed from Dr. " + doctor.getName() + "'s schedule.");
+            
         } else {
             System.out.println("Appointment not found in Dr. " + doctor.getName() + "'s schedule.");
         }
