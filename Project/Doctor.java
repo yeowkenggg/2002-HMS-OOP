@@ -20,18 +20,27 @@ public class Doctor extends Staff implements IUser {
     }
 
     public List<Appointment> getAppointments() {
-        return appointments;
+        return this.appointments;
     }
 
     public List<String> getAssignedPatientIDs() {
         return assignedPatientIDs;
     }
 
+    public void addAppointment(Appointment appointment) {
+        appointments.add(appointment);
+    }
+
+    public void removeAppointment(Appointment appointment) {
+        appointments.remove(appointment);
+    }
    
 
     @Override
     public void displayMenu() {
         if (isLoggedIn()) {
+            
+            System.out.println("\n--- Doctor Menu ---");
             System.out.println("1. View Patient Medical Records");
             System.out.println("2. Update Patient Medical Records");
             System.out.println("3. View Personal Schedule");

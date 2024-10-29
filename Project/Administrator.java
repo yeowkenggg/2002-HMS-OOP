@@ -2,22 +2,27 @@ import java.util.Scanner;
 import java.util.List;
 
 public class Administrator extends Staff implements IUser {
-    private StaffManagementService staffManagementService;
-    private MedicineManagementService medicineManagementService;
+    private StaffManager staffManager;
+    private MedicineManager medicineManager;
 
     public Administrator(String userId, String password, String name, String gender, String role, int age, 
-                         StaffManagementService staffManagementService, MedicineManagementService medicineManagementService) {
+                         StaffManager staffManager, MedicineManager medicineManager) {
         super(userId, password, name, gender, role, age);
-        this.staffManagementService = staffManagementService;
-        this.medicineManagementService = medicineManagementService;
+        this.staffManager = staffManager;
+        this.medicineManager = medicineManager;
+    }
+
+    public void setStaffManager(StaffManager sm){
+        this.staffManager = sm;
+    }
+
+    public void setMedicineManager(MedicineManager mm){
+        this.medicineManager = mm;
     }
 
     @Override
     public void displayMenu() {
         if (isLoggedIn()) {
-            Scanner scanner = new Scanner(System.in);
-            boolean running = true;
-            while (running) {
                 System.out.println("\n--- Administrator Menu ---");
                 System.out.println("1. Manage Hospital Staff");
                 System.out.println("2. Manage Medication Inventory");
@@ -25,34 +30,17 @@ public class Administrator extends Staff implements IUser {
                 System.out.println("4. View Appointments Detail");
                 System.out.println("5. Logout");
                 System.out.print("Choose an option (1-5): ");
-                
-                int choice = scanner.nextInt();
-                scanner.nextLine();
-
-                switch (choice) {
-                    case 1 -> staffManagementService.displayStaffManagementMenu();
-                    case 2 -> medicineManagementService.displayMedicineManagementMenu(); // Delegate to the service
-                    case 3 -> approveReplenishmentMenu();
-                    case 4 -> viewAppointmentDetails();
-                    case 5 -> {
-                        System.out.println("Logging out...");
-                        logout();
-                        running = false;
-                    }
-                    default -> System.out.println("Invalid option. Please choose between 1 and 5.");
-                }
-            }
         } else {
             System.out.println("ERROR: Please log in first. (Admin)");
         }
     }
 
     private void approveReplenishmentMenu() {
-        medicineManagementService.viewReplenishmentRequests();
+        medicineManager.viewReplenishmentRequests();
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter Replenishment Request ID to approve: ");
         String requestId = scanner.nextLine();
-        medicineManagementService.approveReplenishment(requestId);
+        medicineManager.approveReplenishment(requestId);
     }
 
     private void viewAppointmentDetails() {

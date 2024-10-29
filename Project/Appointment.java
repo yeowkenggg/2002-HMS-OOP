@@ -55,12 +55,21 @@ public class Appointment {
     }
 
     public void setOutcome(AppointmentOutcome outcome) {
+        if (this.outcome != null) {
+            return;
+        }
         this.outcome = outcome;
+        
         MedicalRecord record = MedicalRecord.getRecordByPatientID(patientID);
         if (record != null) {
-            record.addAppointmentOutcome(outcome);
+            if (!record.getAppointmentOutcomes().contains(outcome)) {
+                record.addAppointmentOutcome(outcome);
+            } else {
+                System.out.println("Outcome already exists in the patient record for Patient ID: " + patientID);
+            }
         }
     }
+    
 
     public AppointmentOutcome getOutcome() { 
         return outcome; 

@@ -71,17 +71,7 @@ public class Medicine {
         }
         return null;  //if not found
     }
-
-    public static void removeMedicine(String name) {
-        Medicine medicineToRemove = findMedicineByName(name);
-        if (medicineToRemove != null) {
-            medicineList.remove(medicineToRemove);
-            System.out.println("Medicine " + name + " removed.");
-        } else {
-            System.out.println("Medicine " + name + " not found.");
-        }
-    }
-
+	
 	@Override
     public String toString() {
 		return name;

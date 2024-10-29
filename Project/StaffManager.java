@@ -1,20 +1,65 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Predicate;
 
-public class StaffManagementService {
+public class StaffManager implements IStaffManager{
     private List<Staff> staffList;
+    private MedicineManager inventoryManager;
+    private PrescriptionManager prescriptionManager;
+    private PharmacistManager pharmacistManager;
 
-    public StaffManagementService() {
+    public StaffManager() {
         this.staffList = new ArrayList<>();
     }
 
-    // Initialize with an existing list of staff members
-    public StaffManagementService(List<Staff> initialStaffList) {
-        this.staffList = new ArrayList<>(initialStaffList);
+    public List<Staff> getAllStaff() {
+        return new ArrayList<>(staffList); // Return a copy to prevent direct modification
     }
 
+    // Initialize with an existing list of staff members
+    public StaffManager(List<Staff> initialStaffList) {
+        this.staffList = new ArrayList<>(initialStaffList);
+        this.inventoryManager = new MedicineManager();
+        this.prescriptionManager = new PrescriptionManager(inventoryManager);
+        this.pharmacistManager = new PharmacistManager(prescriptionManager, inventoryManager);
+    }
+
+    public void loadStaffFromCSV(String filePath) {
+        try (Scanner scanner = new Scanner(new File(filePath))) {
+            if (scanner.hasNextLine()) {
+                scanner.nextLine();
+            }
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] data = line.split(",");
+
+                if (data.length >= 6) {
+                    String userId = data[0];
+                    String name = data[1];
+                    String password = data[2];
+                    String role = data[3];
+                    String gender = data[4];
+                    int age = Integer.parseInt(data[5]);
+
+                    Staff newStaff;
+                    if ("Doctor".equalsIgnoreCase(role)) {
+                        newStaff = new Doctor(userId, password, name, gender, role, age);
+                    } else {
+                        newStaff = new Pharmacist(userId, password, name, gender, role, age, pharmacistManager);
+                    }
+
+                    addStaff(newStaff);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + filePath);
+            e.printStackTrace();
+        }
+    }
     public void displayStaffManagementMenu() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("STAFF MANAGEMENT");
@@ -41,7 +86,7 @@ public class StaffManagementService {
     // CRUD Operations for Staff
     public void addStaff(Staff staff) {
         staffList.add(staff);
-        System.out.println("Staff member added: " + staff.getName() + " (ID: " + staff.getUserId() + ")");
+        System.out.println("Staff member added: " + staff.getName() + " (ID: " + staff.getUserId() + " Role: "+ staff.getRole());
     }
 
     public void addStaffMenu() {
@@ -69,10 +114,10 @@ public class StaffManagementService {
         if ("Doctor".equalsIgnoreCase(role)) {
             newStaff = new Doctor(userId, password, name, gender, "Doctor", age);
         } else if ("Pharmacist".equalsIgnoreCase(role)) {
-            // Placeholder: assuming the pharmacist requires additional services (dependency injection)
-            MedicineManagementService inventoryManager = new MedicineManagementService();
-            PrescriptionManager prescriptionManager = new PrescriptionManager();
-            newStaff = new Pharmacist(userId, password, name, gender, "Pharmacist", age, inventoryManager, prescriptionManager);
+            MedicineManager inventoryManager = new MedicineManager();
+            PrescriptionManager prescriptionManager = new PrescriptionManager(inventoryManager);
+            PharmacistManager pharmacistManager = new PharmacistManager(prescriptionManager, inventoryManager);
+            newStaff = new Pharmacist(userId, password, name, gender, "Pharmacist", age, pharmacistManager);
         } else {
             System.out.println("Invalid role, only Doctor or Pharmacist allowed.");
             return;
@@ -125,7 +170,7 @@ public class StaffManagementService {
     public void viewAllStaff() {
         System.out.println("\n--- All Staff Members ---");
         for (Staff staff : staffList) {
-            System.out.println("ID: " + staff.getUserId() + ", Name: " + staff.getName() + ", Role: " + staff.getRole());
+            System.out.println("ID: " + staff.getUserId() + ", Name: " + staff.getName() + ", Role: " + staff.getRole() + ", Gender: " + staff.getGender() + ", Age: " + staff.getAge());
         }
     }
 

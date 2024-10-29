@@ -1,16 +1,16 @@
-import java.util.*;
-import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Prescription {
 
-	private String prescriptionID;
-	private List<Medicine> medicine;
-	private String status;
+    private String prescriptionID;
+    private List<Medicine> medicine;
+    private String status;
 
     private static List<Prescription> allPrescriptions = new ArrayList<>();
 
-	//constructor
-	public Prescription(String prescriptionID, List<Medicine> medicine, String status) {
+    //constructor
+    public Prescription(String prescriptionID, List<Medicine> medicine, String status) {
         this.prescriptionID = prescriptionID;
         this.medicine = medicine; 
         this.status = status;
@@ -18,16 +18,16 @@ public class Prescription {
     }
 
     //check if medicine exists in the list
-	public boolean hasMedicine(Medicine med) {
+    public boolean hasMedicine(Medicine med) {
         return medicine.contains(med);
     }
-	
-	//get prescription id 
-	public String getPrescriptionID() {
+    
+    //get prescription id 
+    public String getPrescriptionID() {
         return prescriptionID;
     }
 
-	//get status
+    //get status
     public String getStatus() {
         return status;
     }
@@ -36,28 +36,8 @@ public class Prescription {
         return allPrescriptions;
     }
 
-	//adding medicine, checks if there are duplicated as well
-	public void addMedicine(Medicine med) {
-        if (!medicine.contains(med)) {
-            medicine.add(med);
-            System.out.println(med.getName() + " added to the prescription.");
-        } else {
-            System.out.println(med.getName() + " is already in the prescription.");
-        }
-    }
-
-	//removing medicine, check if it even exists in the list of medicine as as well
-	public void removeMedicine(Medicine med) {
-        if (medicine.contains(med)) {
-            medicine.remove(med);
-            System.out.println(med.getName() + " has been removed from the prescription.");
-        } else {
-            System.out.println(med.getName() + " is not in the prescription.");
-        }
-    }
-
-	//change the status from pending to dispensed
-	public void updateStatus() {
+    //change the status from pending to dispensed
+    public void updateStatus() {
         if ("Pending".equals(this.status)) {
             this.status = "Dispensed";
             System.out.println("Prescription " + prescriptionID + " status updated to Dispensed.");
@@ -68,7 +48,6 @@ public class Prescription {
 
     @Override
     public String toString() {
-        return "Prescription ID: " + prescriptionID + ", Medicines: " + medicine + " Status: " + status;
+        return "Medicines: " + medicine + " Status: " + status;
     }
-	
 }

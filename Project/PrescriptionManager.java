@@ -4,23 +4,29 @@ import java.util.List;
 public class PrescriptionManager implements IPrescriptionManager {
 
     private List<Prescription> prescriptions;
+    private MedicineManager medicineManager;
 
-    public PrescriptionManager() {
+    public PrescriptionManager(MedicineManager medicineManager) {
         this.prescriptions = new ArrayList<>();
+        this.medicineManager = medicineManager;
     }
 
-    // Add a new prescription to the system
+    public void setMedicineManager(MedicineManager mm){
+        this.medicineManager = mm;
+    }
+
+    @Override
     public void addPrescription(Prescription prescription) {
         prescriptions.add(prescription);
         System.out.println("Prescription added: " + prescription);
     }
 
-    // Retrieve all prescriptions
+    @Override
     public List<Prescription> getAllPrescriptions() {
         return new ArrayList<>(prescriptions);  // return a copy to prevent direct modification
     }
 
-    // Retrieve only pending prescriptions
+    @Override
     public List<Prescription> getPendingPrescriptions() {
         List<Prescription> pendingPrescriptions = new ArrayList<>();
         for (Prescription prescription : prescriptions) {
@@ -31,11 +37,11 @@ public class PrescriptionManager implements IPrescriptionManager {
         return pendingPrescriptions;
     }
 
-    // Update the status of a prescription by ID
+    @Override
     public boolean updatePrescriptionStatus(String prescriptionID) {
         for (Prescription prescription : prescriptions) {
             if (prescription.getPrescriptionID().equals(prescriptionID)) {
-                prescription.updateStatus();  // Assuming updateStatus handles status transition
+                prescription.updateStatus();  
                 System.out.println("Prescription status updated: " + prescription);
                 return true;
             }
@@ -44,7 +50,7 @@ public class PrescriptionManager implements IPrescriptionManager {
         return false;
     }
 
-    // Additional methods if needed for more functionality
+    @Override
     public Prescription findPrescriptionById(String prescriptionID) {
         for (Prescription prescription : prescriptions) {
             if (prescription.getPrescriptionID().equals(prescriptionID)) {
@@ -54,6 +60,7 @@ public class PrescriptionManager implements IPrescriptionManager {
         return null;
     }
 
+    @Override
     public void removePrescription(String prescriptionID) {
         prescriptions.removeIf(prescription -> prescription.getPrescriptionID().equals(prescriptionID));
         System.out.println("Prescription with ID " + prescriptionID + " removed.");

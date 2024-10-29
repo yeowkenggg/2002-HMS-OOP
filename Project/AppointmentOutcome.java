@@ -4,8 +4,7 @@ import java.time.LocalDate;
 
 public class AppointmentOutcome {
 	
-	private static List<AppointmentOutcome> allOutcomes = new ArrayList<>();  
-
+	
 	private Appointment appointment;
 	private String services;
 	private String notes;
@@ -20,26 +19,13 @@ public class AppointmentOutcome {
         this.prescription = prescription;
         this.appointmentDate = localDate;
 
-        allOutcomes.add(this); 
     }
 
 	public Appointment getAppointment() {
         return appointment;
     }
 
-	public static List<AppointmentOutcome> getAllOutcomes() {
-        return allOutcomes;
-    }
-
-	public static List<AppointmentOutcome> getOutcomesByPatientID(String patientID) {
-        List<AppointmentOutcome> patientOutcomes = new ArrayList<>();
-        for (AppointmentOutcome outcome : allOutcomes) {
-            if (outcome.getAppointment().getPatientID().equals(patientID)) {
-                patientOutcomes.add(outcome);
-            }
-        }
-        return patientOutcomes;
-    }
+	
 	/**
 	 * 
 	 * @param services
@@ -78,6 +64,27 @@ public class AppointmentOutcome {
 	public void setPrescription(Prescription prescription) {
 		this.prescription = prescription;
 	}
+	
+	public String getDetails() {
+		StringBuilder details = new StringBuilder();
+		details.append("======= Appointment Outcome =======\n");
+		details.append("Appointment ID: ").append(appointment.getAppointmentID()).append("\n");
+		details.append("Services: ").append(services != null && !services.isEmpty() ? services : "None").append("\n");
+		details.append("Notes: ").append(notes != null && !notes.isEmpty() ? notes : "None").append("\n");
+	
+		if (prescription != null) {
+			details.append("Prescription: ").append(prescription).append("\n");
+		} else {
+			details.append("Prescription: No Prescription Issued\n");
+		}
+	
+		details.append("Appointment Date: ").append(appointmentDate).append("\n");
+		details.append("=================================");
+		return details.toString();
+	}
+	
+	
+
 
 	public String toString() {
 		return "======= Appointment Outcome =======\n" +

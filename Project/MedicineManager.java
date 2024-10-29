@@ -2,19 +2,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class MedicineManagementService implements IMedicineManagementService {
+public class MedicineManager implements IMedicineManager {
     private List<Medicine> medicines;
 
-    public MedicineManagementService() {
+    public MedicineManager() {
         this.medicines = new ArrayList<>();
     }
 
     @Override
     public void addMedicine(String name, int stock, int alertLevel) {
+        Medicine existingMedicine = findMedicineByName(name);
+        if (existingMedicine != null) {
+            System.out.println("Medicine with name " + name + " already exists in the inventory.");
+            return;
+        }
         Medicine medicine = new Medicine(name, stock, alertLevel);
         medicines.add(medicine);
         System.out.println("Medicine added: " + name + " with stock " + stock + " and alert level " + alertLevel);
     }
+
 
     @Override
     public boolean needsReplenishment(Medicine medicine) {
@@ -50,11 +56,16 @@ public class MedicineManagementService implements IMedicineManagementService {
             System.out.println("Medicine '" + name + "' not found in inventory.");
         }
     }
-
+    
     @Override
     public void removeMedicine(String name) {
-        medicines.removeIf(med -> med.getName().equalsIgnoreCase(name));
-        System.out.println("Medicine " + name + " has been removed from the inventory.");
+        Medicine medicineToRemove = findMedicineByName(name);
+        if (medicineToRemove != null) {
+            medicines.remove(medicineToRemove);
+            System.out.println("Medicine " + name + " removed.");
+        } else {
+            System.out.println("Medicine '" + name + "' not found in inventory.");
+        }
     }
 
     @Override

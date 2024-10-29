@@ -1,24 +1,21 @@
-import java.util.*;
-import java.io.*;
+public abstract class User {
 
-public class User {
+    private String userId;
+    private String password;
+    private String name;
+    private String gender;
+    private boolean isLogged;
 
-	private String userId;
-	private String password;
-	private String name;
-	private String gender;
-	private boolean isLogged;
-
-    //constructor
+    // Constructor
     public User(String userId, String password, String name, String gender) {
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.gender = gender;
-        this.isLogged = false;  // Default 
+        this.isLogged = false;  // Default status is not logged in
     }
 
-    //get infos
+    // Getters for user info
     public String getUserId() {
         return userId;
     }
@@ -31,49 +28,18 @@ public class User {
         return gender;
     }
 
+    // Setters for user info
     public void setGender(String gender) {
         this.gender = gender;
     }
-    //Used for updating names in sublclasses 
+
     public void setName(String name) {
         this.name = name;
     }
 
-    //login implementation
-	public boolean login(String inputUser, String inputPass) {
-		//Implement next time when we decide how to handle user accounts
-		//for now just default login codes
-		if (inputUser.equals(this.userId) && inputPass.equals(this.password)) {
-            isLogged = true;
-            System.out.println("Login successful for: " + name);
-            return true;
-        }
-        return false;
-    }
+    public abstract void displayMenu();
 
-	public void loginMenu() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Welcome to the Hospital Management System");
-
-        while (!isLogged) {
-            System.out.print("Enter User ID: ");
-            String inputUserId = scanner.nextLine();
-            System.out.print("Enter Password: ");
-            String inputPassword = scanner.nextLine();
-
-            if (!login(inputUserId, inputPassword)) {
-                System.out.print("Would you like to try again? (y/n): ");
-                String retry = scanner.nextLine();
-                if (retry.equalsIgnoreCase("n")) {
-                    System.out.println("Exiting system..");
-                    break;
-                }
-            }
-        }
-    }
-
-    //method to change password
-	public void changePassword(String newPassword) {
+    public void changePassword(String newPassword) {
         if (isLogged) {
             if (newPassword == null || newPassword.trim().isEmpty()) {
                 System.out.println("Password cannot be empty. Try again.");
@@ -86,6 +52,14 @@ public class User {
         }
     }
 
+    public void setLoggedIn(boolean status) {
+        this.isLogged = status;
+    }
+
+    public boolean checkPassword(String inputPassword) {
+        return this.password.equals(inputPassword);
+    }
+    
     public void logout() {
         if (isLogged) {
             isLogged = false;
@@ -95,9 +69,11 @@ public class User {
         }
     }
 
-    //check status of login
-	public boolean isLoggedIn() {
+    public boolean isLoggedIn() {
         return isLogged;
     }
-	
+
+    protected String getPassword() {
+        return password;
+    }
 }

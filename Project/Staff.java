@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Staff extends User {
+public abstract class Staff extends User {
 
 	public Staff(String userId, String password, String name, String gender, String role, int age) {
 		super(userId, password, name, gender);  
@@ -33,8 +33,8 @@ public class Staff extends User {
         return staffList;
     }
 
+    @Override
+    public abstract void displayMenu();
     
-    
-
     
 }

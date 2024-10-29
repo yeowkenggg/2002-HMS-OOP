@@ -9,18 +9,24 @@ public class Patient extends User implements IUser {
     private String bloodType;
     private String contactInfo;
     private List<Appointment> appointments;
+    private MedicalRecord medicalRecord;
+    private PatientManager patientManager;
+    private AppointmentManager appointmentManager;
+
 
     // constructor
-    public Patient(String userId, String password, String name, String gender, LocalDate dateOfBirth, String bloodType, String contactInfo) {
+    public Patient(String userId, String password, String name, String gender, LocalDate dateOfBirth, String bloodType, String contactInfo, PatientManager patientManager, AppointmentManager appointmentManager) {
         super(userId, password, name, gender);
         this.patientID = userId;
         this.dateOfBirth = dateOfBirth;
         this.bloodType = bloodType;
         this.contactInfo = contactInfo;
         this.appointments = new ArrayList<>();
+        this.patientManager = patientManager;
+        this.appointmentManager = appointmentManager;
         
-        MedicalRecord medicalRecord = new MedicalRecord(userId, name, dateOfBirth, gender, bloodType, contactInfo);
-        MedicalRecord.addRecord(medicalRecord);
+        this.medicalRecord = new MedicalRecord(userId, name, dateOfBirth, gender, bloodType, contactInfo);
+        MedicalRecord.addRecord(this.medicalRecord);
     }
 
     // Getters and Setters
@@ -60,10 +66,49 @@ public class Patient extends User implements IUser {
         appointments.remove(appointment);
     }
 
+    public MedicalRecord getMedicalRecord() {
+        return medicalRecord;
+    }
+
+    ////////////////////
+    public void viewMedicalRecord(){
+        patientManager.viewMedicalRecord(this);
+    }
+    
+    public void updateContactInfo(String newContactInfo) {
+        patientManager.updateContactInfo(this, newContactInfo);
+    }
+
+    public void viewAvailableAppointmentSlots(Doctor doctor) {
+        appointmentManager.viewAvailableSlots(doctor);
+    }
+
+    public void scheduleAppointment(Doctor doctor, TimeSlot timeSlot) {
+        appointmentManager.scheduleAppointment(this, doctor, timeSlot);
+    }
+
+    public void rescheduleAppointment(Appointment appointment, TimeSlot newTimeSlot, Doctor doctor) {
+        appointmentManager.rescheduleAppointment(this, appointment, newTimeSlot, doctor);
+    }
+
+    public void cancelAppointment(Appointment appointment, Doctor doctor) {
+        appointmentManager.cancelAppointment(doctor, this, appointment);
+    }
+
+    public void viewScheduledAppointments() {
+        appointmentManager.viewAppointments(this);
+    }
+
+    public void viewPastAppointmentOutcomes() {
+        appointmentManager.viewAppointmentOutcome(this);
+    }
+
     // Display patient-specific menu
     @Override
     public void displayMenu() {
         if (isLoggedIn()) {
+            
+            System.out.println("\n--- Patient Menu ---");
             System.out.println("1. View Medical Record");
             System.out.println("2. Update Personal Information");
             System.out.println("3. View Available Appointment Slots");
