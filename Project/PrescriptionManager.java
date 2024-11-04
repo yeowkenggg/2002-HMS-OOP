@@ -46,7 +46,6 @@ public class PrescriptionManager implements IPrescriptionManager {
                 return true;
             }
         }
-        System.out.println("Prescription with ID " + prescriptionID + " not found.");
         return false;
     }
 

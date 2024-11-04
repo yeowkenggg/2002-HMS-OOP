@@ -4,12 +4,14 @@ import java.util.List;
 public class Administrator extends Staff implements IUser {
     private StaffManager staffManager;
     private MedicineManager medicineManager;
+    private AdminService adminService;
 
     public Administrator(String userId, String password, String name, String gender, String role, int age, 
                          StaffManager staffManager, MedicineManager medicineManager) {
         super(userId, password, name, gender, role, age);
         this.staffManager = staffManager;
         this.medicineManager = medicineManager;
+        this.adminService = new AdminService(medicineManager);
     }
 
     public void setStaffManager(StaffManager sm){
@@ -35,15 +37,19 @@ public class Administrator extends Staff implements IUser {
         }
     }
 
-    private void approveReplenishmentMenu() {
-        medicineManager.viewReplenishmentRequests();
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter Replenishment Request ID to approve: ");
-        String requestId = scanner.nextLine();
-        medicineManager.approveReplenishment(requestId);
+    public void manageHospitalStaff() {
+        staffManager.displayStaffManagementMenu();
     }
 
-    private void viewAppointmentDetails() {
+    public void manageMedicationInventory() {
+        medicineManager.displayMedicineManagementMenu();
+    }
+
+    public void approveReplenishmentRequests() {
+        adminService.approveReplenishmentRequests();
+    }
+
+    public void viewAppointmentDetails() {
         List<Appointment> appointments = Appointment.getAllAppointments();
         System.out.println("All Appointments in the System:");
         for (Appointment appointment : appointments) {

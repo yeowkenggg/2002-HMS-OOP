@@ -5,18 +5,20 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         List<Appointment> allAppointments = new ArrayList<>();
-        
-        // Initialize managers and services
+        List<User> sharedUserList = new ArrayList<>();
+        List<Staff> initialStaffList = new ArrayList<>();
+        // Initialize managers 
         MedicineManager medicineManager = new MedicineManager();
-        StaffManager staffManager = new StaffManager();
         PrescriptionManager prescriptionManager = new PrescriptionManager(null);
         PatientManager patientManager = new PatientManager(null);
-        DoctorManager doctorManager = new DoctorManager(staffManager);
+        DoctorManager doctorManager = new DoctorManager(null);
         DiagnosisManager diagnosisManager = new DiagnosisManager();
         TreatmentManager treatmentManager = new TreatmentManager();
         PharmacistManager pharmacistManager = new PharmacistManager(null, null);
         AppointmentManager appointmentManager = new AppointmentManager(null, null, null);
-        
+        UserManager userManager = new UserManager(sharedUserList, doctorManager, appointmentManager);
+        StaffManager staffManager = new StaffManager(initialStaffList, sharedUserList, userManager);
+
         TimeSlot slot1 = new TimeSlot(LocalDate.now().plusDays(1), LocalTime.of(10, 0));
         TimeSlot slot2 = new TimeSlot(LocalDate.now().plusDays(2), LocalTime.of(10, 0));
         
@@ -28,21 +30,23 @@ public class Main {
         appointmentManager.setAppList(allAppointments);
         appointmentManager.setDoctorManager(doctorManager);
         appointmentManager.setPatientManager(patientManager);
-        
+        doctorManager.setStaffManager(staffManager);
 
-        String staffFilePath = "Project\\Staff_List.csv";  
-        String patientFilePath = "Project\\Patient_List.csv";  
+
+
+        String staffFilePath = "2002\\Project\\Staff_List.csv";  
+        String patientFilePath = "2002\\Project\\Patient_List.csv";  
+        String medicineFilePath = "2002\\Project\\Medicine_List.csv";  
 
         CSVImportManager.importStaffData(staffFilePath, staffManager, medicineManager, pharmacistManager);
         CSVImportManager.importPatientData(patientFilePath, patientManager, appointmentManager);
+        CSVImportManager.importMedicineData(medicineFilePath, medicineManager);
 
-        List<User> allUsers = new ArrayList<>();
-        allUsers.addAll(staffManager.getAllStaff());
-        allUsers.addAll(patientManager.getAllPatientsPrv());
+        sharedUserList.addAll(staffManager.getAllStaff());
+        sharedUserList.addAll(patientManager.getAllPatientsPrv());
 
         staffManager.viewAllStaff();
 
-        UserManager userManager = new UserManager(allUsers, doctorManager, appointmentManager);
         Doctor doctor1 = doctorManager.findDoctorById("D001");
         doctorManager.setAvailability(doctor1, slot1);
         doctorManager.setAvailability(doctor1, slot2);
@@ -230,7 +234,7 @@ public class Main {
         // Test Case 15: Record Appointment Outcome
         System.out.println("\nTest Case 15: Record Appointment Outcome");
         appointmentManager.viewAppointmentOutcome(patient1);
-        appointmentManager.recordAppointmentOutcome(
+        appointmentManager.recordAppointmentOutcome(A
             doctor1,
             patient1.getUserId(),
             appointment1.getAppointmentID(),

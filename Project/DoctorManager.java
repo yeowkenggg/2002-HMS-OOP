@@ -13,6 +13,10 @@ public class DoctorManager implements IDoctorManager {
         staffManager.addStaff(doctor); 
     }
 
+    public void setStaffManager(StaffManager sm){
+        this.staffManager = sm;
+    }
+
     public List<Doctor> getAllDoctors() {
         List<Doctor> doctorList = new ArrayList<>();
         for (Staff staff : staffManager.getAllStaff()) {

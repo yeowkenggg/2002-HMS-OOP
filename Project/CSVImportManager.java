@@ -43,7 +43,6 @@ public class CSVImportManager {
 
     public static void importPatientData(String filePath, PatientManager patientManager, AppointmentManager appointmentManager) {
         try (Scanner scanner = new Scanner(new File(filePath))) {
-            // Skip header line if exists
             if (scanner.hasNextLine()) {
                 scanner.nextLine();
             }
@@ -69,6 +68,34 @@ public class CSVImportManager {
             }
         } catch (FileNotFoundException e) {
             System.out.println("File not found: " + filePath);
+            e.printStackTrace();
+        }
+    }
+
+    public static void importMedicineData(String filePath, MedicineManager medicineManager) {
+        try (Scanner scanner = new Scanner(new File(filePath))) {
+            if (scanner.hasNextLine()) {
+                scanner.nextLine();
+            }
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] data = line.split(",");
+
+                if (data.length >= 3) {
+                    String name = data[0];
+                    int stock = Integer.parseInt(data[1]);
+                    int alertLevel = Integer.parseInt(data[2]);
+
+                    // Add medicine to the manager
+                    medicineManager.addMedicine(name, stock, alertLevel);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + filePath);
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid data format in the file: " + filePath);
             e.printStackTrace();
         }
     }

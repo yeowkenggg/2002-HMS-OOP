@@ -73,7 +73,11 @@ public abstract class User {
         return isLogged;
     }
 
-    protected String getPassword() {
+    //protected String getPassword() {
+    //    return password;
+    //}
+     
+    public String getPassword(){
         return password;
     }
 }

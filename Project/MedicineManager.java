@@ -91,11 +91,15 @@ public class MedicineManager implements IMedicineManager {
         System.out.println("3. Update Medicine Stock");
         System.out.println("4. Update Stock Alert Level");
         System.out.println("5. Remove Medicine");
-        System.out.print("Choose an option (1-5): ");
+        System.out.println("6. Return");
+        System.out.print("Choose an option (1-6): ");
 
         int option = scanner.nextInt();
         scanner.nextLine();
 
+        if (option ==(6)) {
+            return; 
+        }
         switch (option) {
             case 1 -> viewMedicines();
             case 2 -> addMedicineMenu();
@@ -171,4 +175,15 @@ public class MedicineManager implements IMedicineManager {
         }
         System.out.println("Replenishment request not found or already approved.");
     }
+
+    public List<ReplenishmentRequest> getPendingReplenishmentRequests() {
+        List<ReplenishmentRequest> pendingRequests = new ArrayList<>();
+        for (ReplenishmentRequest request : ReplenishmentRequest.getRequests()) {
+            if (!request.isApproved()) {
+                pendingRequests.add(request);
+            }
+        }
+        return pendingRequests;
+    }
+    
 }

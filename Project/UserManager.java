@@ -23,20 +23,21 @@ public class UserManager {
 
     public void loginUser() {
         Scanner scanner = new Scanner(System.in);
-
+    
         System.out.print("Enter User ID: ");
         String userId = scanner.nextLine();
-
+    
         System.out.print("Enter Password: ");
         String password = scanner.nextLine();
-
+    
         for (User user : users) {
+            //used for debugging
+            //System.out.println("Checking User ID: " + user.getUserId()); 
+            //System.out.println("Stored Password: " + user.getPassword()); 
             if (user.getUserId().equals(userId) && user.checkPassword(password)) {
-                // Successful login, set logged in status
                 user.setLoggedIn(true);
                 System.out.println("Login successful for user: " + user.getName());
-
-                // Determine the type of user and display the appropriate menu
+                // Display appropriate menu based on user type
                 if (user instanceof Doctor) {
                     handleDoctorMenu((Doctor) user);
                 } else if (user instanceof Administrator) {
@@ -46,15 +47,17 @@ public class UserManager {
                 } else if (user instanceof Patient) {
                     handlePatientMenu((Patient) user);
                 }
-                return; // Exit after successful login and menu display
+                return; // Exit after successful login
             }
-            
         }
-
-        // If we complete the loop without finding the user, it means login failed
         System.out.println("Invalid credentials. Please try again.");
-        loginUser();
+        loginUser(); // Retry login
     }
+
+    public List<User> getUsers() {
+        return users;
+    }
+    
     private void handleDoctorMenu(Doctor doctor) {
         Scanner scanner = new Scanner(System.in);
         while (doctor.isLoggedIn()) {
@@ -88,7 +91,8 @@ public class UserManager {
                         break;
                     case 8:
                         doctor.logout();
-                        break;
+                        loginUser();
+                        return;
                     default:
                         System.out.println("Invalid choice. Please try again.");
                         break;
@@ -120,14 +124,15 @@ public class UserManager {
                         admin.approveReplenishmentRequests();
                         break;
                     case 4:
-                        admin.viewAppointmentsDetail();
+                        admin.viewAppointmentDetails();
                         break;
                     case 5:
-                        admin.logout();
-                        break;
+                        admin.logout();   
+                        loginUser(); 
+                        return;
                     default:
                         System.out.println("Invalid choice. Please try again.");
-                        break;
+                        continue;
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please enter a number.");
@@ -135,6 +140,7 @@ public class UserManager {
             }
         }
     }
+    
 
     private void handlePharmacistMenu(Pharmacist pharmacist) {
         Scanner scanner = new Scanner(System.in);
@@ -171,11 +177,12 @@ public class UserManager {
                         pharmacist.viewReplenishmentRequests();
                         break;
                     case 7:
-                        pharmacist.logout();
+                        pharmacist.logout();     
+                        loginUser();
                         break;
                     default:
                         System.out.println("Invalid choice. Please try again.");
-                        break;
+                        continue;
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please enter a number.");
@@ -370,7 +377,7 @@ public class UserManager {
     
                 default:
                     System.out.println("Invalid choice. Please try again.");
-                    break;
+                    continue;
             }
         }
     }

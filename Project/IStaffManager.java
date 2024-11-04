@@ -7,7 +7,7 @@ public interface IStaffManager {
     
     void updateStaff();
     
-    void removeStaff();
+    void removeStaff(UserManager userManager);
     
     void viewAllStaff();
 

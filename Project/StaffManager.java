@@ -1,15 +1,18 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Predicate;
 
 public class StaffManager implements IStaffManager{
     private List<Staff> staffList;
+    private List<User> userList;
     private MedicineManager inventoryManager;
     private PrescriptionManager prescriptionManager;
-    private PharmacistManager pharmacistManager;
+    private PharmacistManager pharmacistManager; 
+    private UserManager userManager;
 
     public StaffManager() {
         this.staffList = new ArrayList<>();
@@ -20,13 +23,18 @@ public class StaffManager implements IStaffManager{
     }
 
     // Initialize with an existing list of staff members
-    public StaffManager(List<Staff> initialStaffList) {
+    public StaffManager(List<Staff> initialStaffList, List<User> userList, UserManager userManager) {
         this.staffList = new ArrayList<>(initialStaffList);
+        this.userList = userList; // Assign the shared user list
         this.inventoryManager = new MedicineManager();
         this.prescriptionManager = new PrescriptionManager(inventoryManager);
         this.pharmacistManager = new PharmacistManager(prescriptionManager, inventoryManager);
-    }
+        this.userManager = userManager;
 
+        for (Staff staff : initialStaffList) {
+            this.userList.add(staff);
+        }
+    }
     public void loadStaffFromCSV(String filePath) {
         try (Scanner scanner = new Scanner(new File(filePath))) {
             if (scanner.hasNextLine()) {
@@ -53,6 +61,7 @@ public class StaffManager implements IStaffManager{
                     }
 
                     addStaff(newStaff);
+
                 }
             }
         } catch (FileNotFoundException e) {
@@ -68,15 +77,21 @@ public class StaffManager implements IStaffManager{
         System.out.println("3. Remove Staff");
         System.out.println("4. View All Staff");
         System.out.println("5. Filter Staff");
-        System.out.print("Enter an action (1-5): ");
+        System.out.println("6. Return");
+        System.out.print("Enter an action (1-6): ");
+        
         
         int action = scanner.nextInt();
         scanner.nextLine();
 
+        if (action == (6)) {
+            return; // Exit the method
+        }
+
         switch (action) {
             case 1 -> addStaffMenu();
             case 2 -> updateStaff();
-            case 3 -> removeStaff();
+            case 3 -> removeStaff(userManager);
             case 4 -> viewAllStaff();
             case 5 -> filterStaffMenu();
             default -> System.out.println("Invalid action.");
@@ -85,13 +100,16 @@ public class StaffManager implements IStaffManager{
 
     // CRUD Operations for Staff
     public void addStaff(Staff staff) {
+        userList.add(staff);
         staffList.add(staff);
-        System.out.println("Staff member added: " + staff.getName() + " (ID: " + staff.getUserId() + " Role: "+ staff.getRole());
     }
+    
+   
 
     public void addStaffMenu() {
-        Scanner scanner = new Scanner(System.in);
+    Scanner scanner = new Scanner(System.in);
 
+    try {
         System.out.print("Enter User ID: ");
         String userId = scanner.nextLine();
 
@@ -102,10 +120,12 @@ public class StaffManager implements IStaffManager{
         String name = scanner.nextLine();
 
         System.out.print("Enter Gender (Male/Female): ");
-        String gender = scanner.nextLine();
+        String gender = scanner.nextLine().trim();
+        validateGender(gender);
 
         System.out.print("Enter Role (Doctor/Pharmacist): ");
-        String role = scanner.nextLine();
+        String role = scanner.nextLine().trim();
+        validateRole(role);
 
         System.out.print("Enter Age: ");
         int age = scanner.nextInt();
@@ -114,46 +134,88 @@ public class StaffManager implements IStaffManager{
         if ("Doctor".equalsIgnoreCase(role)) {
             newStaff = new Doctor(userId, password, name, gender, "Doctor", age);
         } else if ("Pharmacist".equalsIgnoreCase(role)) {
-            MedicineManager inventoryManager = new MedicineManager();
-            PrescriptionManager prescriptionManager = new PrescriptionManager(inventoryManager);
-            PharmacistManager pharmacistManager = new PharmacistManager(prescriptionManager, inventoryManager);
             newStaff = new Pharmacist(userId, password, name, gender, "Pharmacist", age, pharmacistManager);
         } else {
-            System.out.println("Invalid role, only Doctor or Pharmacist allowed.");
-            return;
+            throw new InvalidRoleException("Invalid role. Only 'Doctor' or 'Pharmacist' is allowed.");
         }
 
         addStaff(newStaff);
+        System.out.println("Staff member added: " + newStaff.getName() + " (ID: " + newStaff.getUserId() + ")");
+
+        } catch (InvalidRoleException | InvalidGenderException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter the correct data type.");
+            scanner.nextLine(); // Clear the buffer
+        }
     }
+
+
 
 
     public void updateStaff() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter User ID of Staff to Update: ");
         String userId = scanner.nextLine();
-
+    
         Staff staff = findStaffById(userId);
         if (staff == null) {
             System.out.println("Staff member with ID " + userId + " not found.");
             return;
         }
-
-        System.out.print("Enter New Name (leave blank to keep current): ");
-        String name = scanner.nextLine();
-
-        System.out.print("Enter New Role (leave blank to keep current): ");
-        String role = scanner.nextLine();
-
-        System.out.print("Enter New Age (or 0 to keep current): ");
-        int age = scanner.nextInt();
-
-        if (!name.isEmpty()) staff.setName(name);
-        if (!role.isEmpty()) staff.setRole(role);
-        if (age > 0) staff.setAge(age);
-        System.out.println("Updated staff member: " + staff.getName() + " (ID: " + staff.getUserId() + ")");
+    
+        try {
+            System.out.print("Enter New Name (leave blank to keep current): ");
+            String name = scanner.nextLine();
+    
+            System.out.print("Enter New Role (leave blank to keep current): ");
+            String role = scanner.nextLine();
+            
+            if (!role.isEmpty() && !role.equalsIgnoreCase(staff.getRole())) {
+                validateRole(role);
+    
+                //if change role, object is still an instance of the old role
+                //create a new instance of object and replace it
+                Staff newStaff;
+                if ("Doctor".equalsIgnoreCase(role)) {
+                    newStaff = new Doctor(staff.getUserId(), staff.getPassword(), name.isEmpty() ? staff.getName() : name, staff.getGender(), "Doctor", staff.getAge());
+                } else if ("Pharmacist".equalsIgnoreCase(role)) {
+                    newStaff = new Pharmacist(staff.getUserId(), staff.getPassword(), name.isEmpty() ? staff.getName() : name, staff.getGender(), "Pharmacist", staff.getAge(), pharmacistManager);
+                } else {
+                    throw new InvalidRoleException("Invalid role provided.");
+                }
+                int index = staffList.indexOf(staff);
+                staffList.set(index, newStaff);
+                userList.set(userList.indexOf(staff), newStaff);
+                System.out.println("Role updated. Staff member changed to: " + newStaff.getName() + " (ID: " + newStaff.getUserId() + ", Role: " + newStaff.getRole() + ")");
+        
+            }
+    
+            if (!name.isEmpty()) {
+                staff.setName(name);
+            }
+    
+            System.out.print("Enter New Age (or 0 to keep current): ");
+            String ageInput = scanner.nextLine();
+            if (!ageInput.isEmpty()) {
+                int age = Integer.parseInt(ageInput);
+                if (age > 0) {
+                    staff.setAge(age);
+                }
+            }
+    
+            System.out.println("Updated staff member: " + staff.getName() + " (ID: " + staff.getUserId() + ")");
+        } catch (InvalidRoleException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid age input. Please enter a valid number.");
+        }
     }
+    
+    
+    
 
-    public void removeStaff() {
+    public void removeStaff(UserManager userManager) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter User ID of Staff to Remove: ");
         String userId = scanner.nextLine();
@@ -161,11 +223,13 @@ public class StaffManager implements IStaffManager{
         Staff staff = findStaffById(userId);
         if (staff != null) {
             staffList.remove(staff);
+            userManager.getUsers().removeIf(user -> user.getUserId().equals(userId));
             System.out.println("Staff member with ID " + userId + " removed.");
         } else {
             System.out.println("Staff member with ID " + userId + " not found.");
         }
     }
+    
 
     public void viewAllStaff() {
         System.out.println("\n--- All Staff Members ---");
@@ -176,36 +240,67 @@ public class StaffManager implements IStaffManager{
 
     public void filterStaffMenu() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("\nFilter Staff By:");
-        System.out.println("1. Role");
-        System.out.println("2. Gender");
-        System.out.println("3. Age");
-        System.out.println("4. Show All");
-        System.out.print("Choose an option (1-4): ");
-        
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-
-        switch (choice) {
-            case 1 -> {
-                System.out.print("Enter role to filter by (e.g., Doctor, Pharmacist): ");
-                String role = scanner.nextLine();
-                filterStaff(staff -> staff.getRole().equalsIgnoreCase(role), "Role: " + role);
+        while (true) { 
+            try {
+                System.out.println("\nFilter Staff By:");
+                System.out.println("1. Role");
+                System.out.println("2. Gender");
+                System.out.println("3. Age");
+                System.out.println("4. Show All");
+                System.out.println("5. Return");
+                System.out.print("Choose an option (1-5): ");
+                
+                String input = scanner.nextLine(); 
+    
+                if (input.equalsIgnoreCase("5")) {
+                    return; 
+                }
+    
+                int choice;
+                try {
+                    choice = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number between 1 and 5.");
+                    continue; 
+                }
+    
+                switch (choice) {
+                    case 1 -> {
+                        System.out.print("Enter role to filter by (e.g., Doctor, Pharmacist): ");
+                        String role = scanner.nextLine();
+                        filterStaff(staff -> staff.getRole().equalsIgnoreCase(role), "Role: " + role);
+                    }
+                    case 2 -> {
+                        System.out.print("Enter gender to filter by (Male/Female): ");
+                        String gender = scanner.nextLine();
+                        
+                        if (!gender.equalsIgnoreCase("Male") && !gender.equalsIgnoreCase("Female")) {
+                            System.out.println("Invalid gender. Please enter 'Male' or 'Female'.");
+                            continue; 
+                        }
+                        filterStaff(staff -> staff.getGender().equalsIgnoreCase(gender), "Gender: " + gender);
+                    }
+                    case 3 -> {
+                        System.out.print("Enter age to filter by: ");
+                        int age;
+                        try {
+                            age = Integer.parseInt(scanner.nextLine());
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input. Please enter a valid age.");
+                            continue; 
+                        }
+                        filterStaff(staff -> staff.getAge() == age, "Age: " + age);
+                    }
+                    case 4 -> viewAllStaff();
+                    default -> System.out.println("Invalid choice. Please enter a number between 1 and 5.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                scanner.nextLine(); 
             }
-            case 2 -> {
-                System.out.print("Enter gender to filter by (Male/Female): ");
-                String gender = scanner.nextLine();
-                filterStaff(staff -> staff.getGender().equalsIgnoreCase(gender), "Gender: " + gender);
-            }
-            case 3 -> {
-                System.out.print("Enter age to filter by: ");
-                int age = scanner.nextInt();
-                filterStaff(staff -> staff.getAge() == age, "Age: " + age);
-            }
-            case 4 -> viewAllStaff();
-            default -> System.out.println("Invalid choice.");
         }
     }
+    
 
     // Utility functions for staff operations
     public Staff findStaffById(String userId) {
@@ -227,4 +322,30 @@ public class StaffManager implements IStaffManager{
             }
         }
     }
+
+    public class InvalidRoleException extends Exception {
+        public InvalidRoleException(String message) {
+            super(message);
+        }
+    }
+    
+    public class InvalidGenderException extends Exception {
+        public InvalidGenderException(String message) {
+            super(message);
+        }
+    }
+
+    private void validateGender(String gender) throws InvalidGenderException {
+        if (!"Male".equalsIgnoreCase(gender) && !"Female".equalsIgnoreCase(gender)) {
+            throw new InvalidGenderException("Invalid gender. Only 'Male' or 'Female' is allowed.");
+        }
+    }
+
+    private void validateRole(String role) throws InvalidRoleException {
+        if (!"Doctor".equalsIgnoreCase(role) && !"Pharmacist".equalsIgnoreCase(role)) {
+            throw new InvalidRoleException("Invalid role. Only 'Doctor' or 'Pharmacist' is allowed.");
+        }
+    }
+
+    
 }

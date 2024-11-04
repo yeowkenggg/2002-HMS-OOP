@@ -56,5 +56,10 @@ public class ReplenishmentRequest {
 	public boolean isApproved() {
 		return isApproved;
 	}
+	
+	public String toString() {
+        return "Request ID: " + requestID + ", Medicine: " + medicine.getName() +
+               ", Requested Amount: " + requestedAmount + ", Status: " + (isApproved ? "Approved" : "Pending");
+    }
  
 }
