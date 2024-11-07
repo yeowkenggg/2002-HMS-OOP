@@ -4,7 +4,7 @@ public interface IMedicineManager {
 
     void addMedicine(String name, int stock, int alertLevel);
 
-    boolean needsReplenishment(Medicine medicine);
+    boolean needsReplenishment(String name);
 
     void viewMedicines();
 

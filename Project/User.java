@@ -5,6 +5,7 @@ public abstract class User {
     private String name;
     private String gender;
     private boolean isLogged;
+    private boolean firstLogin = true;
 
     // Constructor
     public User(String userId, String password, String name, String gender) {
@@ -40,26 +41,27 @@ public abstract class User {
     public abstract void displayMenu();
 
     public void changePassword(String newPassword) {
-        if (isLogged) {
-            if (newPassword == null || newPassword.trim().isEmpty()) {
-                System.out.println("Password cannot be empty. Try again.");
-                return;
-            }
-            this.password = newPassword;
-            System.out.println("Password successfully changed.");
-        } else {
-            System.out.println("Please log in to change your password.");
-        }
+        this.password = newPassword;
+        this.firstLogin = false;
     }
 
     public void setLoggedIn(boolean status) {
         this.isLogged = status;
     }
 
+    public void setFirstLogin(boolean firstLogin) {
+        this.firstLogin = firstLogin;
+    }
+
+    public boolean isFirstLogin() {
+        return firstLogin;
+    }
+
     public boolean checkPassword(String inputPassword) {
         return this.password.equals(inputPassword);
     }
     
+
     public void logout() {
         if (isLogged) {
             isLogged = false;
@@ -73,9 +75,6 @@ public abstract class User {
         return isLogged;
     }
 
-    //protected String getPassword() {
-    //    return password;
-    //}
      
     public String getPassword(){
         return password;

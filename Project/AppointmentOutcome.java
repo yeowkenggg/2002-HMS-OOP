@@ -88,11 +88,11 @@ public class AppointmentOutcome {
 
 	public String toString() {
 		return "======= Appointment Outcome =======\n" +
-			   "Appointment ID: " + appointment.getAppointmentID() +
-			   "\nServices: " + services +
-			   "\nNotes: " + notes +
-			   "\nPrescription: " + (prescription != null ? prescription : "No Prescription") +
-			   "\nAppointment Date: " + appointmentDate +
-			   "\n=================================";
+				"Appointment Date: " + appointmentDate +
+			    "\nAppointment ID: " + appointment.getAppointmentID() +
+				"\nServices: " + services +
+				"\nPrescription: " + (prescription != null ? prescription : "No Prescription") +
+				"\nNotes: " + notes +
+				"\n=================================";
 	}
 }

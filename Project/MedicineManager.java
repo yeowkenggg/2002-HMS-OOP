@@ -21,10 +21,18 @@ public class MedicineManager implements IMedicineManager {
         System.out.println("Medicine added: " + name + " with stock " + stock + " and alert level " + alertLevel);
     }
 
+    public List<Medicine> getInventory() {
+        return medicines;
+    }
 
     @Override
-    public boolean needsReplenishment(Medicine medicine) {
-        return medicine.getStock() <= medicine.getAlertLevel();
+    public boolean needsReplenishment(String name) {
+        Medicine medicine = findMedicineByName(name);
+        if (medicine != null) {
+            return medicine.getStock() <= medicine.getAlertLevel();
+        }
+        System.out.println("Medicine '" + name + "' not found in inventory.");
+        return false;
     }
 
     @Override
@@ -125,34 +133,60 @@ public class MedicineManager implements IMedicineManager {
     }
 
     private void updateMedicineStockMenu() {
+        Medicine selectedMedicine = selectMedicineByIndex();
+        if (selectedMedicine == null) return;
+    
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter Medicine Name to Update Stock: ");
-        String name = scanner.nextLine().trim();
-
-        System.out.print("Enter New Stock Amount: ");
-        int newStock = scanner.nextInt();
-
-        updateMedicineStock(name, newStock);
+        System.out.print("Enter new stock amount: ");
+        int newStock;
+        try {
+            newStock = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid stock amount. Please enter a valid number.");
+            return;
+        }
+    
+        updateMedicineStock(selectedMedicine.getName(), newStock);
+        System.out.println("Updated stock for " + selectedMedicine.getName() + " to " + newStock + " units.");
     }
+    
+    
 
     private void updateStockAlertLevelMenu() {
+        Medicine selectedMedicine = selectMedicineByIndex();
+        if (selectedMedicine == null) return; 
+    
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter Medicine Name to Update Alert Level: ");
-        String name = scanner.nextLine().trim();
-
-        System.out.print("Enter New Stock Alert Level: ");
-        int newAlertLevel = scanner.nextInt();
-
-        updateStockAlertLevel(name, newAlertLevel);
+        System.out.print("Enter new stock alert level: ");
+        int newAlertLevel;
+        try {
+            newAlertLevel = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid alert level. Please enter a valid number.");
+            return;
+        }
+    
+        updateStockAlertLevel(selectedMedicine.getName(), newAlertLevel);
     }
+    
 
     private void removeMedicineMenu() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter Medicine Name to Remove: ");
-        String name = scanner.nextLine();
-
-        removeMedicine(name);
+        try {
+            Medicine selectedMedicine = selectMedicineByIndex();
+            
+            if (selectedMedicine == null) {
+                System.out.println("No medicine selected or invalid index.");
+                return;
+            }
+            
+            removeMedicine(selectedMedicine.getName());
+            System.out.println("Removed medicine: " + selectedMedicine.getName());
+            
+        } catch (Exception e) {
+            System.out.println("Error removing medicine: " + e.getMessage());
+        }
     }
+    
 
     public void viewReplenishmentRequests() {
         System.out.println("Pending Replenishment Requests:");
@@ -185,5 +219,58 @@ public class MedicineManager implements IMedicineManager {
         }
         return pendingRequests;
     }
+
+    public boolean isAvailable(String medicineName) {
+        return medicines.stream()
+                .anyMatch(medicine -> medicine.getName().equalsIgnoreCase(medicineName));
+    }
+
+    public void displayInventory() {
+        System.out.println("\n=== Inventory ===");
+        for (int i = 0; i < medicines.size(); i++) {
+            Medicine med = medicines.get(i);
+            System.out.println(i + ": Name: " + med.getName());
+        }
+    }
+
+    public Medicine getMedicineByIndex(int index) {
+        if (index >= 0 && index < medicines.size()) {
+            return medicines.get(index);
+        }
+        System.out.println("Invalid index. Please select a valid medicine.");
+        return null;
+    }
     
+    
+    //will call this method a few time repeatedly, so might as well make a method for it
+    private Medicine selectMedicineByIndex() {
+        Scanner scanner = new Scanner(System.in);
+        List<Medicine> inventory = getInventory();
+        
+        System.out.println("\n--- Medicine Inventory ---");
+        for (int i = 0; i < inventory.size(); i++) {
+            Medicine medicine = inventory.get(i);
+            System.out.println(i + ": " + medicine.getName() + " (Stock: " + medicine.getStock() + ", Alert Level: " + medicine.getAlertLevel() + ")");
+        }
+    
+        System.out.print("Enter the index of the medicine: ");
+        int index;
+        try {
+            index = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid number.");
+            return null;
+        }
+    
+        if (index < 0 || index >= inventory.size()) {
+            System.out.println("Invalid index. Please select a valid medicine.");
+            return null;
+        }
+    
+        return inventory.get(index);
+    }
+    
+    
+
 }
+

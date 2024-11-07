@@ -1,20 +1,50 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Scanner;
 
 public class DoctorManager implements IDoctorManager {
 
     private StaffManager staffManager;
+    private PrescriptionManager prescriptionManager; 
 
-    public DoctorManager(StaffManager staffManager) {
+    public DoctorManager(StaffManager staffManager, PrescriptionManager prescriptionManager) {
         this.staffManager = staffManager;
-    }
-
-    public void addDoctor(Doctor doctor) {
-        staffManager.addStaff(doctor); 
+        this.prescriptionManager = prescriptionManager;
     }
 
     public void setStaffManager(StaffManager sm){
         this.staffManager = sm;
+    }
+
+    public void setPrescriptionManager(PrescriptionManager pm) {
+        this.prescriptionManager = pm;
+    }
+
+    public void recordAppointmentOutcome(Doctor doctor, String patientID, String appointmentID, 
+        String services, String notes, Prescription prescription) {
+        // Retrieve the patient's MedicalRecord
+        MedicalRecord record = MedicalRecord.getRecordByPatientID(patientID);
+
+        if (record != null) {
+        // Step 1: Add prescription to the patient’s MedicalRecord
+        record.addPrescription(prescription);
+        System.out.println("Prescription added to medical record for Patient ID: " + patientID);
+
+        // Step 2: Add prescription to the central PrescriptionManager
+        if (prescriptionManager != null) {
+        prescriptionManager.addPrescription(prescription);
+        System.out.println("Prescription added to PrescriptionManager for pharmacist access.");
+        } else {
+        System.out.println("Error: PrescriptionManager is not initialized.");
+        }
+
+        // Further processing of appointment outcome...
+        System.out.println("Appointment outcome recorded successfully.");
+        } else {
+        System.out.println("Patient record not found.");
+        }
     }
 
     public List<Doctor> getAllDoctors() {
@@ -24,7 +54,7 @@ public class DoctorManager implements IDoctorManager {
                 doctorList.add((Doctor) staff);
             }
         }
-        return doctorList;  // Returning a copy to prevent direct modification
+        return doctorList;  // copy to prevent direct modification
     }
     
     public void viewPatientRecord(Doctor doctor, String patientID) {
@@ -41,20 +71,6 @@ public class DoctorManager implements IDoctorManager {
         }
     }
 
-    public void updatePatientRecord(Doctor doctor, String patientID, AppointmentOutcome outcome) {
-        if (!doctor.getAssignedPatientIDs().contains(patientID)) {
-            System.out.println("Access denied. Patient is not under your care.");
-            return;
-        }
-        MedicalRecord record = MedicalRecord.getRecordByPatientID(patientID);
-        if (record != null) {
-            record.addAppointmentOutcome(outcome);
-            System.out.println("Appointment outcome added to the medical record for Patient ID: " + patientID);
-        } else {
-            System.out.println("No medical record found for Patient ID: " + patientID);
-        }
-    }
-
     public Doctor findDoctorById(String doctorId) {
         for (Doctor doctor : getAllDoctors()) {  
             if (doctor.getUserId().equalsIgnoreCase(doctorId)) {
@@ -66,46 +82,13 @@ public class DoctorManager implements IDoctorManager {
     }
     
     public boolean isAvailable(Doctor doctor, TimeSlot timeSlot) {
-        if (!doctor.getAvailability().contains(timeSlot)) {
-            return false;
-        }
-        for (Appointment appointment : doctor.getAppointments()) {
-            if (appointment.getTimeSlot().isSameTimeSlot(timeSlot)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public void setAvailability(Doctor doctor, TimeSlot timeSlot) {
-        if (doctor.getAvailability().contains(timeSlot)) {
-            System.out.println("Time slot " + timeSlot + " is already in the availability list for Dr. " + doctor.getName());
-            return;
-        }
-        doctor.getAvailability().add(timeSlot);
-        System.out.println("Time slot " + timeSlot + " added to the availability list for Dr. " + doctor.getName());
+        return doctor.isAvailable(timeSlot);
     }
 
     public List<TimeSlot> getAvailability(Doctor doctor) {
-        return new ArrayList<>(doctor.getAvailability()); 
+        return doctor.getAvailability(); 
     }
-
-    public void addAvailability(Doctor doctor, TimeSlot timeSlot) {
-        if (doctor.getAvailability().contains(timeSlot)) {
-            System.out.println("Time slot " + timeSlot + " is already in the availability list.");
-            return;
-        }
-        doctor.getAvailability().add(timeSlot);
-        System.out.println("Availability added for Dr. " + doctor.getName() + ": " + timeSlot);
-    }
-
-    public void removeAvailability(Doctor doctor, TimeSlot timeSlot) {
-        if (doctor.getAvailability().remove(timeSlot)) {
-            
-        } else {
-            System.out.println("Time slot " + timeSlot + " not found in Dr. " + doctor.getName() + "'s availability.");
-        }
-    }
+    
 
     public void assignPatient(Doctor doctor, String patientID) {
         if (!doctor.getAssignedPatientIDs().contains(patientID)) {
@@ -136,4 +119,101 @@ public class DoctorManager implements IDoctorManager {
     public List<String> getAssignedPatientIDs(Doctor doctor) {
         return new ArrayList<>(doctor.getAssignedPatientIDs()); 
     }
+
+    public void addDiagnosis(String patientID, String diagnosisID, String details) {
+        MedicalRecord record = MedicalRecord.getRecordByPatientID(patientID);
+        if (record != null) {
+            Diagnosis diagnosis = new Diagnosis(diagnosisID, details, LocalDate.now());
+            record.addDiagnosis(diagnosis);
+            System.out.println("Diagnosis added successfully.");
+        } else {
+            System.out.println("Patient record not found.");
+        }
+    }
+    
+    public void addTreatment(String patientID, String treatmentID, String details) {
+        MedicalRecord record = MedicalRecord.getRecordByPatientID(patientID);
+        if (record != null) {
+            Treatment treatment = new Treatment(treatmentID, details, LocalDate.now());
+            record.addTreatment(treatment);
+            System.out.println("Treatment added successfully.");
+        } else {
+            System.out.println("Patient record not found.");
+        }
+    }
+    
+    public void addPrescription(String patientID, String prescriptionID, MedicineManager medicineManager) {
+        Scanner scanner = new Scanner(System.in);
+        List<Medicine> selectedMedicines = new ArrayList<>();
+        List<Integer> quantities = new ArrayList<>();
+    
+        medicineManager.displayInventory();  
+    
+        while (true) {
+            System.out.print("Enter the index of the medicine to add (or -1 to finish): ");
+            int index;
+            try {
+                index = scanner.nextInt();
+                scanner.nextLine();  
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                scanner.nextLine();  
+                continue;
+            }
+    
+            if (index == -1) {
+                break;  
+            }
+            
+            List<Medicine> inventory = medicineManager.getInventory();
+            if (index >= 0 && index < inventory.size()) {
+                Medicine selectedMedicine = inventory.get(index);
+                System.out.print("Enter quantity for " + selectedMedicine.getName() + ": ");
+                int quantity;
+                try {
+                    quantity = scanner.nextInt();
+                    scanner.nextLine();
+                    if (quantity <= 0) {
+                        System.out.println("Quantity must be a positive number.");
+                        continue;
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input. Please enter a valid quantity.");
+                    scanner.nextLine();
+                    continue;
+                }
+    
+                selectedMedicines.add(selectedMedicine);
+                quantities.add(quantity);
+                System.out.println("Added: " + selectedMedicine.getName() + " (Quantity: " + quantity + ")");
+            } else {
+                System.out.println("Invalid index. Please select a valid medicine from the inventory.");
+            }
+        }
+    
+        if (selectedMedicines.isEmpty()) {
+            System.out.println("No medicines selected. Prescription was not created.");
+            return;
+        }
+    
+        Prescription prescription = new Prescription(prescriptionID, selectedMedicines, quantities, "Pending");
+        MedicalRecord record = MedicalRecord.getRecordByPatientID(patientID);
+        if (record != null) {
+            record.addPrescription(prescription);
+            System.out.println("Prescription added successfully to patient record.");
+    
+            if (prescriptionManager != null) {
+                prescriptionManager.addPrescription(prescription);
+                System.out.println("Prescription added to PrescriptionManager for pharmacist access.");
+            } else {
+                System.out.println("Error: PrescriptionManager is not initialized.");
+            }
+        } else {
+            System.out.println("Patient record not found.");
+        }
+    }
+    
+
+
+    
 }

@@ -33,6 +33,6 @@ public class Treatment {
 
     @Override
     public String toString() {
-        return "Treatment ID: " + treatmentID + ", Description: " + description + ", Date: " + date;
+        return "Treatment ID: " + treatmentID + ", Description: " + description;
     }
 }

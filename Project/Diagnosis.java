@@ -35,6 +35,6 @@ public class Diagnosis {
 
     @Override
     public String toString() {
-        return "Diagnosis ID: " + diagnosisID + ", Description: " + description + ", Date: " + date;
+        return "Diagnosis ID: " + diagnosisID + ", Notes: " + description;
     }
 }

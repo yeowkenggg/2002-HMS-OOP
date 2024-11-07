@@ -8,6 +8,11 @@ public class Medicine {
 	private int alertLevel;
 	private static List<Medicine> medicineList = new ArrayList<>();
 
+	public Medicine(String name) {
+		this(name, 0, 0); 
+		medicineList.add(this);
+	}
+
 	public Medicine(String name, int stock, int alertLevel){
 		this.name = name;
 		this.stock = stock;
@@ -72,6 +77,15 @@ public class Medicine {
         return null;  //if not found
     }
 	
+	//used when we change to dispensed and reducing of quantity
+	public void deductStock(int quantity) {
+        if (quantity <= stock) {
+            stock -= quantity;
+        } else {
+            throw new IllegalArgumentException("Insufficient stock for " + name);
+        }
+    }
+
 	@Override
     public String toString() {
 		return name;

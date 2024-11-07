@@ -22,7 +22,7 @@ public class AdminService {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the index of the replenishment request to approve: ");
         int index = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine(); 
 
         if (index >= 0 && index < requests.size()) {
             ReplenishmentRequest selectedRequest = requests.get(index);

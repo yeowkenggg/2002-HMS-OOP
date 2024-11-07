@@ -1,6 +1,8 @@
 import java.util.*;
 import java.io.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class MedicalRecord {
 
@@ -12,7 +14,9 @@ public class MedicalRecord {
     private String contactInfo;
     private List<Diagnosis> diagnoses;
     private List<Treatment> treatments;
+    private List<Prescription> prescriptions;
     private List<AppointmentOutcome> pastAppointments;
+    private List<LocalDateTime> entryTimestamps;
 
 	private static List<MedicalRecord> allRecords = new ArrayList<>();
 
@@ -26,8 +30,11 @@ public class MedicalRecord {
         this.contactInfo = contactInfo;
         this.diagnoses = new ArrayList<>();
         this.treatments = new ArrayList<>();
+        this.prescriptions = new ArrayList<>();
         this.pastAppointments = new ArrayList<>();
+        this.entryTimestamps = new ArrayList<>();
     }
+
  	public static void addRecord(MedicalRecord record) {
         allRecords.add(record);
     }
@@ -50,8 +57,14 @@ public class MedicalRecord {
     }
 
     public void addAppointmentOutcome(AppointmentOutcome outcome) {
-        pastAppointments.add(outcome);
+        if (!pastAppointments.contains(outcome)) {  // Check to prevent duplicates
+            pastAppointments.add(outcome);
+            System.out.println("Appointment outcome added to medical record for Patient ID: " + patientID);
+        } else {
+            System.out.println("Appointment outcome already exists in the record for Patient ID: " + patientID);
+        }
     }
+    
 
     public void removeAppointmentOutcome(AppointmentOutcome outcome) {
         if (pastAppointments.contains(outcome)) {
@@ -64,11 +77,19 @@ public class MedicalRecord {
 
     public void addDiagnosis(Diagnosis diagnosis) {
         diagnoses.add(diagnosis);
+        entryTimestamps.add(LocalDateTime.now());
         System.out.println("Diagnosis added to medical record for Patient ID: " + patientID);
+    }
+
+    public void addPrescription(Prescription prescription) {
+        prescriptions.add(prescription);
+        entryTimestamps.add(LocalDateTime.now());
+        System.out.println("Prescription added to medical record for Patient ID: " + patientID);
     }
 
     public void addTreatment(Treatment treatment) {
         treatments.add(treatment);
+        entryTimestamps.add(LocalDateTime.now());
         System.out.println("Treatment added to medical record for Patient ID: " + patientID);
     }
 
@@ -80,6 +101,11 @@ public class MedicalRecord {
     public void removeTreatment(String treatmentID) {
         treatments.removeIf(treatment -> treatment.getTreatmentID().equals(treatmentID));
         System.out.println("Treatment with ID " + treatmentID + " removed from medical record for Patient ID: " + patientID);
+    }
+
+    public void removePrescription(String prescriptionID) {
+        prescriptions.removeIf(treatment -> treatment.getPrescriptionID().equals(prescriptionID));
+        System.out.println("Prescription with ID " + prescriptionID + " removed from medical record for Patient ID: " + patientID);
     }
 
     public List<AppointmentOutcome> getAppointmentOutcomes() {
@@ -98,6 +124,10 @@ public class MedicalRecord {
         return patientID;
     }
 
+    public String getPatientName() {
+        return name;
+    }
+
     public void viewMedicalRecord() {
         System.out.println("=== Medical Record ===");
         System.out.println("Patient ID: " + patientID);
@@ -106,20 +136,35 @@ public class MedicalRecord {
         System.out.println("Gender: " + gender);
         System.out.println("Blood Type: " + bloodType);
         System.out.println("Contact Info: " + contactInfo);
-        System.out.println("--- Diagnoses ---");
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        System.out.println("\n--- Diagnoses History ---");
         if (diagnoses.isEmpty()) {
             System.out.println("N/A");
         } else {
-            for (Diagnosis diagnosis : diagnoses) {
-                System.out.println(diagnosis);
+            for (int i = 0; i < diagnoses.size(); i++) {
+                String formattedTimestamp = entryTimestamps.get(i).format(formatter);
+                System.out.println(formattedTimestamp + " - " + diagnoses.get(i));
             }
         }
-        System.out.println("\n--- Treatments ---");
+
+        System.out.println("\n--- Treatments History ---");
         if (treatments.isEmpty()) {
             System.out.println("N/A");
         } else {
-            for (Treatment treatment : treatments) {
-                System.out.println(treatment);
+            for (int i = 0; i < treatments.size(); i++) {
+                String formattedTimestamp = entryTimestamps.get(i).format(formatter);
+                System.out.println(formattedTimestamp + " - " + treatments.get(i));
+            }
+        }
+
+        System.out.println("\n--- Past Appointments ---");
+        if (pastAppointments.isEmpty()) {
+            System.out.println("N/A");
+        } else {
+            for (AppointmentOutcome outcome : pastAppointments) {
+                System.out.println(outcome);
             }
         }
         System.out.println("");

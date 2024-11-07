@@ -42,7 +42,7 @@ public class AppointmentManager implements IAppointmentManager {
 
         patient.addAppointment(appointment);
         doctor.addAppointment(appointment);
-        doctorManager.removeAvailability(doctor, timeSlot);  
+        doctor.removeAvailability(timeSlot);
         allAppointments.add(appointment);
         System.out.println("Scheduled appointment for " + patient.getName() + " with Dr. " + doctor.getName() + " at " + timeSlot);
     } else {
@@ -55,10 +55,9 @@ public class AppointmentManager implements IAppointmentManager {
     public void rescheduleAppointment(Patient patient, Appointment appointment, TimeSlot newTimeSlot, Doctor doctor) {
         TimeSlot oldTimeSlot = appointment.getTimeSlot();
         if (doctorManager.isAvailable(doctor, newTimeSlot)) {
-            appointment.setTimeSlot(newTimeSlot);
-            appointment.setStatus("Rescheduled");
-            doctorManager.setAvailability(doctor, oldTimeSlot);
-            doctorManager.removeAvailability(doctor, newTimeSlot);
+            appointment.setTimeSlot(newTimeSlot); //set the appt to new
+            doctor.addAvailability(oldTimeSlot); // add the old time to avail
+            doctor.removeAvailability(newTimeSlot); // remove the new time from avail
             System.out.println("Rescheduled appointment to " + newTimeSlot);
         } else {
             System.out.println("The selected slot is not available.");
@@ -176,13 +175,17 @@ public class AppointmentManager implements IAppointmentManager {
     
         MedicalRecord record = MedicalRecord.getRecordByPatientID(patientID);
         if (record != null) {
-            record.addAppointmentOutcome(outcome);
-            System.out.println("Patient record updated for Patient ID: " + patientID);
+            if (!record.getAppointmentOutcomes().contains(outcome)) {  
+                record.addAppointmentOutcome(outcome);
+                System.out.println("Patient record updated for Patient ID: " + patientID);
+            }
         } else {
             System.out.println("No medical record found for Patient ID: " + patientID + ", but appointment outcome was still recorded.");
         }
         System.out.println("Appointment outcome recorded for Appointment ID: " + appointmentID);
     }
+    
+    
     
 
     public AppointmentManager(List<Appointment> allAppointments) {
@@ -274,12 +277,11 @@ public class AppointmentManager implements IAppointmentManager {
     public void acceptAppointment(Doctor doctor, Appointment appointment) {
         if (appointment.getDoctorID().equals(doctor.getUserId())) {
             if (!doctor.getAppointments().contains(appointment)) {
-                doctor.addAppointment(appointment);
-                doctorManager.removeAvailability(doctor, appointment.getTimeSlot());
+                doctor.removeAvailability(appointment.getTimeSlot());
             }
             appointment.confirm();
             if (!allAppointments.contains(appointment)) {
-                allAppointments.add(appointment); // Add to centralized list if not already present
+                allAppointments.add(appointment); 
             }
             System.out.println("Appointment " + appointment.getAppointmentID() + " accepted.");
             
@@ -288,12 +290,12 @@ public class AppointmentManager implements IAppointmentManager {
                 if (!patient.getAppointments().contains(appointment)) {
                     patient.addAppointment(appointment);
                     System.out.println("Appointment added to Patient " + patient.getName() + "'s record.");
-                } else {
-                    System.out.println("Appointment already exists in the patient's record.");
                 }
+                
             } else {
                 System.out.println("Patient with ID " + appointment.getPatientID() + " not found.");
             }
+            doctor.addAssignedPatientID(patient.getUserId());
         } else {
             System.out.println("Access Denied: You are not authorized to accept this appointment.");
         }
@@ -303,7 +305,7 @@ public class AppointmentManager implements IAppointmentManager {
         if (appointment.getDoctorID().equals(doctor.getUserId()) && doctor.getAppointments().contains(appointment)) {
             appointment.setStatus("Declined");
 
-            doctorManager.setAvailability(doctor, appointment.getTimeSlot());
+            doctor.addAvailability(appointment.getTimeSlot());
             System.out.println("Appointment " + appointment.getAppointmentID() + " declined.");
         } else {
             System.out.println("Access Denied: You are not authorized to decline this appointment.");
@@ -311,8 +313,6 @@ public class AppointmentManager implements IAppointmentManager {
     }
 
     @Override
-    // we need both patient and doctor as parameters to check if they are the correct person asking for the cancellation.
-    // in implementation, we will get doctorID when its patient side, and vice versa.
     public void cancelAppointment(Appointment appointment, User caller) {
         if (caller instanceof Doctor) {
             Doctor doctor = (Doctor) caller;
@@ -323,7 +323,7 @@ public class AppointmentManager implements IAppointmentManager {
                     appointment.cancel();
                     patient.removeAppointment(appointment);
                     doctor.removeAppointment(appointment);
-                    doctorManager.setAvailability(doctor, appointment.getTimeSlot());
+                    doctor.addAvailability(appointment.getTimeSlot());
                     System.out.println("Appointment with ID " + appointment.getAppointmentID() + " has been canceled.");
                 }
             }
@@ -336,7 +336,7 @@ public class AppointmentManager implements IAppointmentManager {
                     appointment.cancel();
                     patient.removeAppointment(appointment);
                     doctor.removeAppointment(appointment);
-                    doctorManager.setAvailability(doctor, appointment.getTimeSlot());
+                    doctor.addAvailability(appointment.getTimeSlot());
                     System.out.println("Appointment with ID " + appointment.getAppointmentID() + " has been canceled.");
                 }
             }

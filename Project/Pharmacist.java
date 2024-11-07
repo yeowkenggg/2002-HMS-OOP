@@ -6,11 +6,17 @@ import java.time.format.DateTimeFormatter;
 public class Pharmacist extends Staff implements IUser {
 
     private PharmacistManager pharmacistManager;
+    private PrescriptionManager prescriptionManager;
 
     public Pharmacist(String userId, String password, String name, String gender, String role, int age, 
-                      PharmacistManager pharmacistManager) {
+                      PharmacistManager pharmacistManager, PrescriptionManager prescriptionManager) {
         super(userId, password, name, gender, role, age);
         this.pharmacistManager = pharmacistManager;
+        this.prescriptionManager = prescriptionManager; 
+    }
+
+    public PrescriptionManager getPrescriptionManager() {
+        return this.prescriptionManager;
     }
 
     public void setPharmacistManager(PharmacistManager pm){

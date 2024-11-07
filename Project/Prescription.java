@@ -4,22 +4,24 @@ import java.util.List;
 public class Prescription {
 
     private String prescriptionID;
-    private List<Medicine> medicine;
+    private List<Medicine> medicines;
+    private List<Integer> quantities;
     private String status;
 
     private static List<Prescription> allPrescriptions = new ArrayList<>();
 
     //constructor
-    public Prescription(String prescriptionID, List<Medicine> medicine, String status) {
+    public Prescription(String prescriptionID, List<Medicine> medicines, List<Integer> quantities, String status) {
         this.prescriptionID = prescriptionID;
-        this.medicine = medicine; 
+        this.medicines = medicines;
+        this.quantities = quantities;
         this.status = status;
         allPrescriptions.add(this);
     }
 
     //check if medicine exists in the list
     public boolean hasMedicine(Medicine med) {
-        return medicine.contains(med);
+        return medicines.contains(med);
     }
     
     //get prescription id 
@@ -45,9 +47,27 @@ public class Prescription {
             System.out.println("This prescription has already been dispensed.");
         }
     }
+    
+    public List<Medicine> getMedicines() {
+        return medicines;
+    }
+
+    public List<Integer> getQuantities() {
+        return quantities;
+    }
 
     @Override
     public String toString() {
-        return "Medicines: " + medicine + " Status: " + status;
+        String result = prescriptionID + " Medicines: ";
+        
+        for (int i = 0; i < medicines.size(); i++) {
+            result += medicines.get(i).getName() + " x " + quantities.get(i);
+            if (i < medicines.size() - 1) {
+                result += ", "; 
+            }
+        }
+        
+        result += " Status: " + status;
+        return result;
     }
 }

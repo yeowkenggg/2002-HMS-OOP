@@ -13,6 +13,7 @@ public class StaffManager implements IStaffManager{
     private PrescriptionManager prescriptionManager;
     private PharmacistManager pharmacistManager; 
     private UserManager userManager;
+    private DoctorManager doctorManager;
 
     public StaffManager() {
         this.staffList = new ArrayList<>();
@@ -30,6 +31,7 @@ public class StaffManager implements IStaffManager{
         this.prescriptionManager = new PrescriptionManager(inventoryManager);
         this.pharmacistManager = new PharmacistManager(prescriptionManager, inventoryManager);
         this.userManager = userManager;
+        this.doctorManager = doctorManager;
 
         for (Staff staff : initialStaffList) {
             this.userList.add(staff);
@@ -55,9 +57,9 @@ public class StaffManager implements IStaffManager{
 
                     Staff newStaff;
                     if ("Doctor".equalsIgnoreCase(role)) {
-                        newStaff = new Doctor(userId, password, name, gender, role, age);
+                        newStaff = new Doctor(userId, password, name, gender, role, age, doctorManager);
                     } else {
-                        newStaff = new Pharmacist(userId, password, name, gender, role, age, pharmacistManager);
+                        newStaff = new Pharmacist(userId, password, name, gender, role, age, pharmacistManager, prescriptionManager);
                     }
 
                     addStaff(newStaff);
@@ -71,7 +73,7 @@ public class StaffManager implements IStaffManager{
     }
     public void displayStaffManagementMenu() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("STAFF MANAGEMENT");
+        System.out.println("--- Staff Manaagement Menu ---");
         System.out.println("1. Add New Staff");
         System.out.println("2. Update Staff");
         System.out.println("3. Remove Staff");
@@ -132,9 +134,9 @@ public class StaffManager implements IStaffManager{
 
         Staff newStaff;
         if ("Doctor".equalsIgnoreCase(role)) {
-            newStaff = new Doctor(userId, password, name, gender, "Doctor", age);
+            newStaff = new Doctor(userId, password, name, gender, "Doctor", age, doctorManager);
         } else if ("Pharmacist".equalsIgnoreCase(role)) {
-            newStaff = new Pharmacist(userId, password, name, gender, "Pharmacist", age, pharmacistManager);
+            newStaff = new Pharmacist(userId, password, name, gender, "Pharmacist", age, pharmacistManager, prescriptionManager);
         } else {
             throw new InvalidRoleException("Invalid role. Only 'Doctor' or 'Pharmacist' is allowed.");
         }
@@ -155,14 +157,28 @@ public class StaffManager implements IStaffManager{
 
     public void updateStaff() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter User ID of Staff to Update: ");
-        String userId = scanner.nextLine();
     
-        Staff staff = findStaffById(userId);
-        if (staff == null) {
-            System.out.println("Staff member with ID " + userId + " not found.");
+        System.out.println("\n--- All Staff Members ---");
+        for (int i = 0; i < staffList.size(); i++) {
+            Staff staff = staffList.get(i);
+            System.out.println(i + ": ID: " + staff.getUserId() + ", Name: " + staff.getName() + ", Role: " + staff.getRole());
+        }
+    
+        System.out.print("Enter the index of the Staff to Update: ");
+        int index;
+        try {
+            index = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid number.");
             return;
         }
+    
+        if (index < 0 || index >= staffList.size()) {
+            System.out.println("Invalid index. Please select a valid staff member.");
+            return;
+        }
+    
+        Staff staff = staffList.get(index);
     
         try {
             System.out.print("Enter New Name (leave blank to keep current): ");
@@ -170,25 +186,24 @@ public class StaffManager implements IStaffManager{
     
             System.out.print("Enter New Role (leave blank to keep current): ");
             String role = scanner.nextLine();
-            
+    
             if (!role.isEmpty() && !role.equalsIgnoreCase(staff.getRole())) {
                 validateRole(role);
     
-                //if change role, object is still an instance of the old role
-                //create a new instance of object and replace it
+                // if changing role, create a new instance of the appropriate subclass
                 Staff newStaff;
                 if ("Doctor".equalsIgnoreCase(role)) {
-                    newStaff = new Doctor(staff.getUserId(), staff.getPassword(), name.isEmpty() ? staff.getName() : name, staff.getGender(), "Doctor", staff.getAge());
+                    newStaff = new Doctor(staff.getUserId(), staff.getPassword(), name.isEmpty() ? staff.getName() : name, staff.getGender(), "Doctor", staff.getAge(), doctorManager);
                 } else if ("Pharmacist".equalsIgnoreCase(role)) {
-                    newStaff = new Pharmacist(staff.getUserId(), staff.getPassword(), name.isEmpty() ? staff.getName() : name, staff.getGender(), "Pharmacist", staff.getAge(), pharmacistManager);
+                    newStaff = new Pharmacist(staff.getUserId(), staff.getPassword(), name.isEmpty() ? staff.getName() : name, staff.getGender(), "Pharmacist", staff.getAge(), pharmacistManager, prescriptionManager);
                 } else {
                     throw new InvalidRoleException("Invalid role provided.");
                 }
-                int index = staffList.indexOf(staff);
+    
                 staffList.set(index, newStaff);
                 userList.set(userList.indexOf(staff), newStaff);
+    
                 System.out.println("Role updated. Staff member changed to: " + newStaff.getName() + " (ID: " + newStaff.getUserId() + ", Role: " + newStaff.getRole() + ")");
-        
             }
     
             if (!name.isEmpty()) {
@@ -214,21 +229,40 @@ public class StaffManager implements IStaffManager{
     
     
     
+    
 
     public void removeStaff(UserManager userManager) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter User ID of Staff to Remove: ");
-        String userId = scanner.nextLine();
-
-        Staff staff = findStaffById(userId);
-        if (staff != null) {
-            staffList.remove(staff);
-            userManager.getUsers().removeIf(user -> user.getUserId().equals(userId));
-            System.out.println("Staff member with ID " + userId + " removed.");
-        } else {
-            System.out.println("Staff member with ID " + userId + " not found.");
+    
+        System.out.println("\n--- All Staff Members ---");
+        for (int i = 0; i < staffList.size(); i++) {
+            Staff staff = staffList.get(i);
+            System.out.println(i + ": ID: " + staff.getUserId() + ", Name: " + staff.getName() + ", Role: " + staff.getRole());
         }
+    
+        System.out.print("Enter the index of the Staff to Remove: ");
+        int index;
+        try {
+            index = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid number.");
+            return;
+        }
+    
+        if (index < 0 || index >= staffList.size()) {
+            System.out.println("Invalid index. Please select a valid staff member.");
+            return;
+        }
+    
+        Staff staff = staffList.get(index);
+        String userId = staff.getUserId();
+    
+        staffList.remove(index);
+        userManager.getUsers().removeIf(user -> user.getUserId().equals(userId));
+    
+        System.out.println("Staff member with ID " + userId + " removed.");
     }
+    
     
 
     public void viewAllStaff() {

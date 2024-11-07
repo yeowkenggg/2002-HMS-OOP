@@ -31,7 +31,6 @@ public class Administrator extends Staff implements IUser {
                 System.out.println("3. Approve Replenishment Requests");
                 System.out.println("4. View Appointments Detail");
                 System.out.println("5. Logout");
-                System.out.print("Choose an option (1-5): ");
         } else {
             System.out.println("ERROR: Please log in first. (Admin)");
         }

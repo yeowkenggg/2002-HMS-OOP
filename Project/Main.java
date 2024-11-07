@@ -11,12 +11,10 @@ public class Main {
         MedicineManager medicineManager = new MedicineManager();
         PrescriptionManager prescriptionManager = new PrescriptionManager(null);
         PatientManager patientManager = new PatientManager(null);
-        DoctorManager doctorManager = new DoctorManager(null);
-        DiagnosisManager diagnosisManager = new DiagnosisManager();
-        TreatmentManager treatmentManager = new TreatmentManager();
+        DoctorManager doctorManager = new DoctorManager(null, null);
         PharmacistManager pharmacistManager = new PharmacistManager(null, null);
         AppointmentManager appointmentManager = new AppointmentManager(null, null, null);
-        UserManager userManager = new UserManager(sharedUserList, doctorManager, appointmentManager);
+        UserManager userManager = new UserManager(sharedUserList, doctorManager, appointmentManager, medicineManager, prescriptionManager);
         StaffManager staffManager = new StaffManager(initialStaffList, sharedUserList, userManager);
 
         TimeSlot slot1 = new TimeSlot(LocalDate.now().plusDays(1), LocalTime.of(10, 0));
@@ -31,6 +29,7 @@ public class Main {
         appointmentManager.setDoctorManager(doctorManager);
         appointmentManager.setPatientManager(patientManager);
         doctorManager.setStaffManager(staffManager);
+        doctorManager.setPrescriptionManager(prescriptionManager);
 
 
 
@@ -38,7 +37,7 @@ public class Main {
         String patientFilePath = "2002\\Project\\Patient_List.csv";  
         String medicineFilePath = "2002\\Project\\Medicine_List.csv";  
 
-        CSVImportManager.importStaffData(staffFilePath, staffManager, medicineManager, pharmacistManager);
+        CSVImportManager.importStaffData(staffFilePath, staffManager, medicineManager, pharmacistManager, doctorManager, prescriptionManager);
         CSVImportManager.importPatientData(patientFilePath, patientManager, appointmentManager);
         CSVImportManager.importMedicineData(medicineFilePath, medicineManager);
 
@@ -48,8 +47,8 @@ public class Main {
         staffManager.viewAllStaff();
 
         Doctor doctor1 = doctorManager.findDoctorById("D001");
-        doctorManager.setAvailability(doctor1, slot1);
-        doctorManager.setAvailability(doctor1, slot2);
+        doctor1.addAvailability(slot1);
+        doctor1.addAvailability(slot2);
         boolean isAvailable = doctorManager.isAvailable(doctor1, slot1);
         System.out.println("Is available: " + isAvailable);
 

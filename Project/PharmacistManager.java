@@ -67,7 +67,7 @@ class PharmacistManager implements IPharmacistManager {
             return;
         }
 
-        if (medicineManager.needsReplenishment(medicine)) {
+        if (medicineManager.needsReplenishment(medicine.getName())) {
             boolean alreadyRequested = false;
             for (ReplenishmentRequest request : replenishmentRequests) {
                 if (request.getMedicine().equals(medicine) && !request.isApproved()) {
@@ -95,7 +95,6 @@ class PharmacistManager implements IPharmacistManager {
 
     @Override
     public void viewInventory() {
-        System.out.println("\n=== Current Inventory ===");
         medicineManager.viewMedicines();
     }
 

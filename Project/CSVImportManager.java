@@ -6,7 +6,7 @@ import java.util.List;
 
 public class CSVImportManager {
 
-    public static void importStaffData(String filePath, StaffManager staffManager, MedicineManager medicineManager, PharmacistManager pharmacistManager) {
+    public static void importStaffData(String filePath, StaffManager staffManager, MedicineManager medicineManager, PharmacistManager pharmacistManager, DoctorManager doctorManager, PrescriptionManager prescriptionManager) {
         try (Scanner scanner = new Scanner(new File(filePath))) {
             if (scanner.hasNextLine()) {
                 scanner.nextLine();
@@ -26,9 +26,9 @@ public class CSVImportManager {
 
                     Staff newStaff;
                     if ("Doctor".equalsIgnoreCase(role)) {
-                        newStaff = new Doctor(userId, password, name, gender, role, age);
+                        newStaff = new Doctor(userId, password, name, gender, role, age, doctorManager);
                     } else if ("Pharmacist".equalsIgnoreCase(role)) {
-                        newStaff = new Pharmacist(userId, password, name, gender, role, age, pharmacistManager);
+                        newStaff = new Pharmacist(userId, password, name, gender, role, age, pharmacistManager, prescriptionManager);
                     } else  {
                         newStaff = new Administrator(userId, password, name, gender, role, age, staffManager, medicineManager);
                     }
