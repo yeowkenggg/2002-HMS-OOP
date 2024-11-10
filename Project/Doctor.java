@@ -51,7 +51,6 @@ public class Doctor extends Staff implements IUser {
         }
         if (!alreadyExists) {
             availability.add(newSlot);
-            System.out.println("New availability detected for Dr." + getName() + ": " + newSlot);
         } else {
             System.out.println("Time slot already set.");
         }

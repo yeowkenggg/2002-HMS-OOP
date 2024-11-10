@@ -114,7 +114,7 @@ public class PatientManager implements IPatientManager {
     public void addPatient(Patient patient) {
         if (!patientList.contains(patient)) {
             patientList.add(patient);
-            System.out.println("Patient added: " + patient.getName() + " (ID: " + patient.getUserId() + ")");
+            //System.out.println("Patient added: " + patient.getName() + " (ID: " + patient.getUserId() + ")");
         }
     }
 

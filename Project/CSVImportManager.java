@@ -2,7 +2,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.Scanner;
-import java.util.List;
 
 public class CSVImportManager {
 
@@ -36,8 +35,7 @@ public class CSVImportManager {
                 }
             }
         } catch (FileNotFoundException e) {
-            System.out.println("File not found: " + filePath);
-            e.printStackTrace();
+            System.out.println("Error: File not found at '" + filePath + "'. Please check the file location in Main.java and try again.");
         }
     }
 
@@ -67,8 +65,7 @@ public class CSVImportManager {
                 }
             }
         } catch (FileNotFoundException e) {
-            System.out.println("File not found: " + filePath);
-            e.printStackTrace();
+            System.out.println("Error: File not found at '" + filePath + "'. Please check the file location in Main.java and try again.");
         }
     }
 
@@ -87,16 +84,13 @@ public class CSVImportManager {
                     int stock = Integer.parseInt(data[1]);
                     int alertLevel = Integer.parseInt(data[2]);
 
-                    // Add medicine to the manager
                     medicineManager.addMedicine(name, stock, alertLevel);
                 }
             }
         } catch (FileNotFoundException e) {
-            System.out.println("File not found: " + filePath);
-            e.printStackTrace();
+            System.out.println("Error: File not found at '" + filePath + "'. Please check the file location in Main.java and try again.");
         } catch (NumberFormatException e) {
             System.out.println("Invalid data format in the file: " + filePath);
-            e.printStackTrace();
         }
     }
 }

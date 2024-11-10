@@ -18,7 +18,7 @@ public class MedicineManager implements IMedicineManager {
         }
         Medicine medicine = new Medicine(name, stock, alertLevel);
         medicines.add(medicine);
-        System.out.println("Medicine added: " + name + " with stock " + stock + " and alert level " + alertLevel);
+        
     }
 
     public List<Medicine> getInventory() {
@@ -130,6 +130,7 @@ public class MedicineManager implements IMedicineManager {
         int alertLevel = scanner.nextInt();
 
         addMedicine(name, stock, alertLevel);
+        System.out.println("Medicine added: " + name + " with stock " + stock + " and alert level " + alertLevel);
     }
 
     private void updateMedicineStockMenu() {

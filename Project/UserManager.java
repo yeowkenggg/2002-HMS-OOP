@@ -207,6 +207,7 @@ public class UserManager {
                     
                         TimeSlot newSlot = new TimeSlot(date, time);
                         doctor.addAvailability(newSlot);
+                        System.out.println("New availability detected for Dr." + doctor.getName() + ": " + newSlot);
                         break;
 
                     case 5:
