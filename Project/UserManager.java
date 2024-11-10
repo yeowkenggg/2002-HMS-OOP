@@ -304,17 +304,23 @@ public class UserManager {
 
                                     System.out.print("Enter quantity for " + selectedMedicine.getName() + ": ");
                                     int quantity;
-                                    try {
-                                        quantity = scanner.nextInt();
-                                        scanner.nextLine();
-                                    } catch (InputMismatchException e) {
-                                        System.out.println("Invalid quantity. Please enter a valid number.");
-                                        scanner.nextLine();
-                                        continue;
+                                    while (true) {
+                                        System.out.print("Enter quantity for " + selectedMedicine.getName() + ": ");
+                                        try {
+                                            quantity = scanner.nextInt();
+                                            scanner.nextLine();
+                                            if (quantity > 0) { //if doctor select a medicine, atleast 1 must be dispensed
+                                                break; 
+                                            } else {
+                                                System.out.println("Quantity must be greater than 0. Please try again.");
+                                            }
+                                        } catch (InputMismatchException e) {
+                                            System.out.println("Invalid quantity. Please enter a valid number.");
+                                            scanner.nextLine();
+                                        }
                                     }
 
                                     if (selectedMedicine.getStock() >= quantity) {
-                                        selectedMedicine.deductStock(quantity);
 
                                         medicines.add(selectedMedicine);
                                         qty.add(quantity);

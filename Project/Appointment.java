@@ -90,7 +90,6 @@ public class Appointment {
     @Override
     public String toString() {
         return "Appointment ID: " + appointmentID + 
-               ", Doctor ID: " + doctorID + 
                ", Time: " + timeSlot + 
                ", Status: " + status ;
     }

@@ -50,9 +50,21 @@ public class Administrator extends Staff implements IUser {
 
     public void viewAppointmentDetails() {
         List<Appointment> appointments = Appointment.getAllAppointments();
-        System.out.println("All Appointments in the System:");
+        System.out.println("All Appointments in the System:\n");
+        
         for (Appointment appointment : appointments) {
             System.out.println(appointment);
+    
+            //Print out the outcome together with the appointment, if there isnt a outcome 
+            //then just leave it as it is
+            AppointmentOutcome outcome = appointment.getOutcome();
+            if (outcome != null) {
+                System.out.println("  --- Appointment Outcome ---");
+                System.out.println("  Services Provided: " + outcome.getServices());
+                System.out.println("  Additional Notes: " + outcome.getNotes());
+                System.out.println("  Prescription ID: " + outcome.getPrescriptrion());
+                System.out.println("");
+            }
         }
     }
 }
