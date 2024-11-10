@@ -624,7 +624,10 @@ public class UserManager {
     
                 case 5:
                     // reschedule appointment
-                    List<Appointment> appointments = patient.getAppointments();
+                    List<Appointment> appointments = patient.getAppointments().stream()
+                    .filter(appointment -> "Pending".equalsIgnoreCase(appointment.getStatus()))
+                    .toList();
+
                     if (appointments.isEmpty()) {
                         System.out.println("No appointments to reschedule.");
                     } else {
@@ -703,10 +706,12 @@ public class UserManager {
                     break;
     
                 case 7:
+                    System.out.println("\n--- Your Scheduled Appointments ---");
                     patient.viewScheduledAppointments();
                     break;
     
                 case 8:
+                    System.out.println("\n--- Your Past Appointments ---");
                     patient.viewPastAppointmentOutcomes();
                     break;
     

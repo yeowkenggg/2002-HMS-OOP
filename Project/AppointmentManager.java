@@ -58,7 +58,6 @@ public class AppointmentManager implements IAppointmentManager {
             appointment.setTimeSlot(newTimeSlot); //set the appt to new
             doctor.addAvailability(oldTimeSlot); // add the old time to avail
             doctor.removeAvailability(newTimeSlot); // remove the new time from avail
-            System.out.println("Rescheduled appointment to " + newTimeSlot);
         } else {
             System.out.println("The selected slot is not available.");
         }
@@ -125,7 +124,7 @@ public class AppointmentManager implements IAppointmentManager {
     public List<Appointment> getPastAppointments(Patient patient) {
         List<Appointment> pastAppointments = new ArrayList<>();
         for (Appointment appointment : patient.getAppointments()) {
-            if (appointment.isPast()) { 
+            if (appointment.isPast() || "Completed".equalsIgnoreCase(appointment.getStatus())) {
                 pastAppointments.add(appointment);
             }
         }
@@ -136,7 +135,7 @@ public class AppointmentManager implements IAppointmentManager {
     public List<Appointment> getPastAppointments(Doctor doctor) {
         List<Appointment> pastAppointments = new ArrayList<>();
         for (Appointment appointment : doctor.getAppointments()) {
-            if (appointment.isPast()) { 
+            if (appointment.isPast() || "Completed".equalsIgnoreCase(appointment.getStatus())) { 
                 pastAppointments.add(appointment);
             }
         }
