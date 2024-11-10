@@ -128,6 +128,10 @@ public class AppointmentManager implements IAppointmentManager {
                 pastAppointments.add(appointment);
             }
         }
+
+        if (pastAppointments.isEmpty()) {
+            System.out.println("No available past appointments for the patient.");
+        }
         return pastAppointments;
     }
 
@@ -139,6 +143,10 @@ public class AppointmentManager implements IAppointmentManager {
                 pastAppointments.add(appointment);
             }
         }
+
+        if (pastAppointments.isEmpty()) {
+            System.out.println("No available past appointments for the patient.");
+        }
         return pastAppointments;
     }
 
@@ -149,6 +157,8 @@ public class AppointmentManager implements IAppointmentManager {
                 return appointment;
             }
         }
+
+        
         return null; 
     }
 
@@ -260,16 +270,27 @@ public class AppointmentManager implements IAppointmentManager {
     
     @Override 
     public void viewAppointments(Patient patient) {
-        for (Appointment appointment : patient.getAppointments()) {
-            System.out.println(appointment);
+        List<Appointment> appointments = patient.getAppointments();
+
+        if (appointments.isEmpty()) {
+            System.out.println("No available appointments for the patient.");
+        } else {
+            for (Appointment appointment : appointments) {
+                System.out.println(appointment);
+            }
         }
     }
     
     //Utilizing method overloading to do the same, but for doctor
     public void viewAppointments(Doctor doctor) {
+        List<Appointment> appointments = doctor.getAppointments();
         System.out.println("Scheduled Appointments for Doctor ID: " + doctor.getUserId());
-        for (Appointment appointment : doctor.getAppointments()) {
-            System.out.println(appointment);
+        if (appointments.isEmpty()) {
+            System.out.println("No available appointments for the patient.");
+        } else {
+            for (Appointment appointment : appointments) {
+                System.out.println(appointment);
+            }
         }
     }
     

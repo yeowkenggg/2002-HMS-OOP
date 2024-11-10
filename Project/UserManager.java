@@ -563,63 +563,31 @@ public class UserManager {
     
                 case 4: 
                     // schedule appointment
-                    List<Doctor> doctors = doctorManager.getAllDoctors();
-                    if (doctors.isEmpty()) {
-                        System.out.println("No doctors available.");
+                    List<Appointment> allAppointments = patient.getAppointments();
+                    if (allAppointments.isEmpty()) {
+                        System.out.println("No scheduled appointments found to cancel.");
                     } else {
-                        System.out.println("\n--- Available Doctors ---");
-                        for (int i = 0; i < doctors.size(); i++) {
-                            System.out.println(i + ": Dr. " + doctors.get(i).getName() + " (ID: " + doctors.get(i).getUserId() + ")");
+                        System.out.println("\n--- Your Scheduled Appointments ---");
+                        for (int i = 0; i < allAppointments.size(); i++) {
+                            System.out.println(i + ": " + allAppointments.get(i));
                         }
 
-                        int doctorIdx;
-                        while (true) {
-                            System.out.print("Enter the index of the doctor to schedule an appointment: ");
-                            try {
-                                doctorIdx = scanner.nextInt();
-                                scanner.nextLine();
-                                if (doctorIdx >= 0 && doctorIdx < doctors.size()) {
-                                    break; 
-                                } else {
-                                    System.out.println("Invalid index. Please select a number from the list.");
-                                }
-                            } catch (InputMismatchException e) {
-                                System.out.println("Invalid input. Please enter a valid number.");
-                                scanner.nextLine(); 
+                        System.out.print("Enter the index of the appointment to cancel: ");
+                        
+                        try {
+                            int appointmentIdx = Integer.parseInt(scanner.nextLine().trim());  
+                            if (appointmentIdx >= 0 && appointmentIdx < allAppointments.size()) {
+                                Appointment appointmentToCancel = allAppointments.get(appointmentIdx);
+                                patient.cancelAppointment(appointmentToCancel);
+                                System.out.println("Appointment cancelled successfully.");
+                            } else {
+                                System.out.println("Invalid index. Please select a number from the list.");
                             }
-                        }
-
-                        Doctor selectedDoctor = doctors.get(doctorIdx);
-                        List<TimeSlot> slots = selectedDoctor.getAvailability();
-                        if (slots.isEmpty()) {
-                            System.out.println("No available slots for Dr. " + selectedDoctor.getName());
-                        } else {
-                            System.out.println("\n--- Available Slots for Dr. " + selectedDoctor.getName() + " ---");
-                            for (int i = 0; i < slots.size(); i++) {
-                                System.out.println(i + ": " + slots.get(i));
-                            }
-
-                            int slotIndex;
-                            while (true) {
-                                System.out.print("Enter the index of available time slot to schedule: ");
-                                try {
-                                    slotIndex = scanner.nextInt();
-                                    scanner.nextLine(); 
-                                    if (slotIndex >= 0 && slotIndex < slots.size()) {
-                                        break; 
-                                    } else {
-                                        System.out.println("Invalid index. Please select a number from the list.");
-                                    }
-                                } catch (InputMismatchException e) {
-                                    System.out.println("Invalid input. Please enter a valid number.");
-                                    scanner.nextLine(); 
-                                }
-                            }
-
-                            TimeSlot selectedSlot = slots.get(slotIndex);
-                            patient.scheduleAppointment(selectedDoctor, selectedSlot);
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input. Please enter a valid number or 'E' to exit.");
                         }
                     }
+
                     break;
     
                 case 5:
@@ -675,34 +643,33 @@ public class UserManager {
     
                     case 6:
                     // cancel appt
-                    List<Appointment> allAppointments = patient.getAppointments();
-                    if (allAppointments.isEmpty()) {
+                    List<Appointment> appointmentsToCancel = patient.getAppointments();
+                    if (appointmentsToCancel.isEmpty()) {
                         System.out.println("No scheduled appointments found to cancel.");
                     } else {
                         System.out.println("\n--- Your Scheduled Appointments ---");
-                        for (int i = 0; i < allAppointments.size(); i++) {
-                            System.out.println(i + ": " + allAppointments.get(i));
+                        for (int i = 0; i < appointmentsToCancel.size(); i++) {
+                            System.out.println(i + ": " + appointmentsToCancel.get(i));
                         }
 
-                        int appointmentIdx;
-                        while (true) {
-                            System.out.print("Enter the index of the appointment to cancel: ");
-                            try {
-                                appointmentIdx = scanner.nextInt();
-                                scanner.nextLine(); 
-                                if (appointmentIdx >= 0 && appointmentIdx < allAppointments.size()) {
-                                    break; 
-                                } else {
-                                    System.out.println("Invalid index. Please select a number from the list.");
-                                }
-                            } catch (InputMismatchException e) {
-                                System.out.println("Invalid input. Please enter a valid number.");
-                                scanner.nextLine(); }
+                        System.out.print("Enter the index of the appointment to cancel: ");
+                        
+                        String input = scanner.nextLine().trim();  
+                        
+                        try {
+                            int appointmentIdx = Integer.parseInt(input);  // Parse input as an integer if it's not 'E'
+                            if (appointmentIdx >= 0 && appointmentIdx < appointmentsToCancel.size()) {
+                                Appointment appointmentToCancel = appointmentsToCancel.get(appointmentIdx);
+                                patient.cancelAppointment(appointmentToCancel);
+                                System.out.println("Appointment cancelled successfully.");
+                            } else {
+                                System.out.println("Invalid index. Please select a number from the list.");
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input. Please enter a valid number.");
                         }
-
-                        Appointment appointmentToCancel = allAppointments.get(appointmentIdx);
-                        patient.cancelAppointment(appointmentToCancel);
                     }
+
                     break;
     
                 case 7:
