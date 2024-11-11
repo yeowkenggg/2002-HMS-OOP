@@ -302,8 +302,6 @@ public class UserManager {
                                 List<Medicine> inventory = medicineManager.getInventory();
                                 if (medicineIndex >= 0 && medicineIndex < inventory.size()) {
                                     Medicine selectedMedicine = inventory.get(medicineIndex);
-
-                                    System.out.print("Enter quantity for " + selectedMedicine.getName() + ": ");
                                     int quantity;
                                     while (true) {
                                         System.out.print("Enter quantity for " + selectedMedicine.getName() + ": ");
