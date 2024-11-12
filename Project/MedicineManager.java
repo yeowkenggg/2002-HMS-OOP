@@ -148,7 +148,6 @@ public class MedicineManager implements IMedicineManager {
         }
     
         updateMedicineStock(selectedMedicine.getName(), newStock);
-        System.out.println("Updated stock for " + selectedMedicine.getName() + " to " + newStock + " units.");
     }
     
     
