@@ -7,13 +7,13 @@ import java.util.Scanner;
 
 public class UserManager {
     private List<User> users;
-    private DoctorManager doctorManager;
-    private AppointmentManager appointmentManager;
-    private MedicineManager medicineManager;
-    private PrescriptionManager prescriptionManager;
+    private IDoctorManager doctorManager;
+    private IAppointmentManager appointmentManager;
+    private IMedicineManager medicineManager;
+    private IPrescriptionManager prescriptionManager;
 
-    public UserManager(List<User> users, DoctorManager doctorManager, AppointmentManager appointmentManager, 
-                       MedicineManager medicineManager, PrescriptionManager prescriptionManager) {
+    public UserManager(List<User> users, IDoctorManager doctorManager, IAppointmentManager appointmentManager, 
+                       IMedicineManager medicineManager, IPrescriptionManager prescriptionManager) {
         this.users = users;
         this.doctorManager = doctorManager;
         this.appointmentManager = appointmentManager;
@@ -122,7 +122,13 @@ public class UserManager {
                         }
                         System.out.println("\n--- Assigned Patients ---");
                         for (int i = 0; i < patientIDsForUpdate.size(); i++) {
-                            System.out.println(i + ": Patient ID: " + patientIDsForUpdate.get(i));
+                            String patientID = patientIDsForUpdate.get(i);
+                            MedicalRecord record = MedicalRecord.getRecordByPatientID(patientID);
+                            if (record != null) {
+                                System.out.println(i + ": Patient Name: " + record.getPatientName() + ", ID: " + patientID);
+                            }
+                            
+                            
                         }
                         System.out.print("Choose patient index to update medical records: ");
                         int patientIndex = scanner.nextInt();
@@ -138,21 +144,46 @@ public class UserManager {
                             switch (recordType) {
                                 case 1 -> {
                                     System.out.print("Enter Diagnosis ID: ");
-                                    String diagnosisID = scanner.nextLine();
+                                    String diagnosisID = scanner.nextLine().trim();
+                                    if (diagnosisID.isEmpty()) {
+                                        System.out.println("Diagnosis ID cannot be empty. Returning to the previous menu.");
+                                        return; 
+                                    }
+                            
                                     System.out.print("Enter Diagnosis Details: ");
-                                    String details = scanner.nextLine();
+                                    String details = scanner.nextLine().trim();
+                                    if (details.isEmpty()) {
+                                        System.out.println("Diagnosis Details cannot be empty. Returning to the previous menu.");
+                                        return; 
+                                    }
+                            
                                     doctorManager.addDiagnosis(selectedPatientID, diagnosisID, details);
                                 }
                                 case 2 -> {
                                     System.out.print("Enter Treatment ID: ");
-                                    String treatmentID = scanner.nextLine();
+                                    String treatmentID = scanner.nextLine().trim();
+                                    if (treatmentID.isEmpty()) {
+                                        System.out.println("Treatment ID cannot be empty. Returning to the previous menu.");
+                                        return; 
+                                    }
+                            
                                     System.out.print("Enter Treatment Details: ");
-                                    String details = scanner.nextLine();
+                                    String details = scanner.nextLine().trim();
+                                    if (details.isEmpty()) {
+                                        System.out.println("Treatment Details cannot be empty. Returning to the previous menu.");
+                                        return; 
+                                    }
+                            
                                     doctorManager.addTreatment(selectedPatientID, treatmentID, details);
                                 }
                                 case 3 -> {
                                     System.out.print("Enter Prescription ID: ");
-                                    String prescriptionID = scanner.nextLine();
+                                    String prescriptionID = scanner.nextLine().trim();
+                                    if (prescriptionID.isEmpty()) {
+                                        System.out.println("Prescription ID cannot be empty. Returning to the previous menu.");
+                                        return; 
+                                    }
+                            
                                     doctorManager.addPrescription(selectedPatientID, prescriptionID, medicineManager);
                                 }
                                 default -> System.out.println("Invalid choice.");
@@ -166,7 +197,7 @@ public class UserManager {
                         List<TimeSlot> availableSlots = doctor.getAvailability();
                         System.out.println("\n--- Available Timeslots ---");
                         if (availableSlots.isEmpty()) {
-                            System.out.println("No available timeslots set.");
+                            System.out.println("No available timeslots.");
                         } else {
                             for (TimeSlot slot : availableSlots) {
                                 System.out.println(slot);
@@ -207,7 +238,7 @@ public class UserManager {
                     
                         TimeSlot newSlot = new TimeSlot(date, time);
                         doctor.addAvailability(newSlot);
-                        System.out.println("New availability detected for Dr." + doctor.getName() + ": " + newSlot);
+                        System.out.println("New availability added for Dr." + doctor.getName() + ": " + newSlot);
                         break;
 
                     case 5:
@@ -563,33 +594,69 @@ public class UserManager {
                     break;
     
                 case 4: 
-                    // schedule appointment
-                    List<Appointment> allAppointments = patient.getAppointments();
-                    if (allAppointments.isEmpty()) {
-                        System.out.println("No scheduled appointments found to cancel.");
+                    // Schedule appointment
+                    List<Doctor> doctors = doctorManager.getAllDoctors();
+                    if (doctors.isEmpty()) {
+                        System.out.println("No doctors available.");
                     } else {
-                        System.out.println("\n--- Your Scheduled Appointments ---");
-                        for (int i = 0; i < allAppointments.size(); i++) {
-                            System.out.println(i + ": " + allAppointments.get(i));
+                        System.out.println("\n--- Available Doctors ---");
+                        for (int i = 0; i < doctors.size(); i++) {
+                            System.out.println(i + ": Dr. " + doctors.get(i).getName() + " (ID: " + doctors.get(i).getUserId() + ")");
                         }
-
-                        System.out.print("Enter the index of the appointment to cancel: ");
-                        
+                
+                        int doctorIdx;
+                        boolean validDoctorSelected = false;
+                
+                        System.out.print("Enter the index of the doctor to schedule an appointment: ");
                         try {
-                            int appointmentIdx = Integer.parseInt(scanner.nextLine().trim());  
-                            if (appointmentIdx >= 0 && appointmentIdx < allAppointments.size()) {
-                                Appointment appointmentToCancel = allAppointments.get(appointmentIdx);
-                                patient.cancelAppointment(appointmentToCancel);
-                                System.out.println("Appointment cancelled successfully.");
+                            doctorIdx = Integer.parseInt(scanner.nextLine().trim());
+                            if (doctorIdx >= 0 && doctorIdx < doctors.size()) {
+                                validDoctorSelected = true;
                             } else {
-                                System.out.println("Invalid index. Please select a number from the list.");
+                                System.out.println("Invalid index. Returning to the previous menu.");
+                                break;
                             }
                         } catch (NumberFormatException e) {
-                            System.out.println("Invalid input. Please enter a valid number or 'E' to exit.");
+                            System.out.println("Invalid input. Returning to the previous menu.");
+                            break;
+                        }
+                
+                        if (validDoctorSelected) {
+                            Doctor selectedDoctor = doctors.get(doctorIdx);
+                            List<TimeSlot> slots = selectedDoctor.getAvailability();
+                
+                            if (slots.isEmpty()) {
+                                System.out.println("No available slots for Dr. " + selectedDoctor.getName());
+                            } else {
+                                System.out.println("\n--- Available Slots for Dr. " + selectedDoctor.getName() + " ---");
+                                for (int i = 0; i < slots.size(); i++) {
+                                    System.out.println(i + ": " + slots.get(i));
+                                }
+                
+                                int slotIndex;
+                                System.out.print("Enter the index of available time slot to schedule: ");
+                                try {
+                                    slotIndex = Integer.parseInt(scanner.nextLine().trim());
+                
+                            
+                                    if (slotIndex >= 0 && slotIndex < slots.size()) {
+                                        TimeSlot selectedSlot = slots.get(slotIndex);
+                                        patient.scheduleAppointment(selectedDoctor, selectedSlot);
+                                        System.out.println("Scheduled appointment for " + patient.getName() + 
+                                                           " with Dr. " + selectedDoctor.getName() + " at " + selectedSlot);
+                                    } else {
+                                        System.out.println("Invalid slot index. Returning to the previous menu.");
+                                    }
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Invalid input. Returning to the previous menu.");
+                                }
+                            }
                         }
                     }
+                break;
+                
+                
 
-                    break;
     
                 case 5:
                     // reschedule appointment
@@ -627,7 +694,7 @@ public class UserManager {
                                     if (newSlotIndex >= 0 && newSlotIndex < availableSlots.size()) {
                                         TimeSlot newTimeSlot = availableSlots.get(newSlotIndex);
                                         patient.rescheduleAppointment(appointmentToReschedule, newTimeSlot, doctorForReschedule);
-                                        System.out.println("Rescheduled appointment to " + newTimeSlot);
+                                        System.out.println("Scheduled appointment for " + patient.getName() + " with Dr. " + doctorForReschedule.getName() + " at " + newTimeSlot);
                                     } else {
                                         System.out.println("Invalid slot index. Please try again.");
                                     }
@@ -658,11 +725,10 @@ public class UserManager {
                         String appointmentCancelInput = scanner.nextLine().trim();  
                         
                         try {
-                            int appointmentIdx = Integer.parseInt(appointmentCancelInput);  // Parse input as an integer if it's not 'E'
+                            int appointmentIdx = Integer.parseInt(appointmentCancelInput);  
                             if (appointmentIdx >= 0 && appointmentIdx < appointmentsToCancel.size()) {
                                 Appointment appointmentToCancel = appointmentsToCancel.get(appointmentIdx);
                                 patient.cancelAppointment(appointmentToCancel);
-                                System.out.println("Appointment cancelled successfully.");
                             } else {
                                 System.out.println("Invalid index. Please select a number from the list.");
                             }

@@ -12,9 +12,20 @@ public interface IMedicineManager {
 
     void updateStockAlertLevel(String name, int newAlertLevel);
 
+    void displayMedicineManagementMenu();
+
+    List<ReplenishmentRequest> getPendingReplenishmentRequests();
+
+    void approveReplenishment(String requestID);
+
     void removeMedicine(String name);
 
     Medicine findMedicineByName(String name);
 
     List<Medicine> getAllMedicines();
+
+    void displayInventory();
+
+    List<Medicine> getInventory();
+
 }

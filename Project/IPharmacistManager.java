@@ -13,4 +13,8 @@ public interface IPharmacistManager {
     void viewInventory();
 
     void viewReplenishmentRequests();
+
+    void setMedicineManager(IMedicineManager medicineManager);
+
+    void setPrescriptionManager(IPrescriptionManager prescriptionManager);
 }

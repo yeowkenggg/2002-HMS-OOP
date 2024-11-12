@@ -54,21 +54,18 @@ public class Appointment {
         this.status = status;
     }
 
-    public void setOutcome(AppointmentOutcome outcome) {
-        if (this.outcome != null) {
-            return;
-        }
-        this.outcome = outcome;
+    public void recordOutcome(String services, String notes, Prescription prescription, Patient patient) {
+        if (this.outcome == null) {
+            this.outcome = new AppointmentOutcome(this, services, notes, prescription, timeSlot.getDate());
         
-        MedicalRecord record = MedicalRecord.getRecordByPatientID(patientID);
-        if (record != null) {
-            if (!record.getAppointmentOutcomes().contains(outcome)) {
-                record.addAppointmentOutcome(outcome);
-            } else {
+            MedicalRecord record = MedicalRecord.getRecordByPatientID(patientID);
+            record.addAppointmentOutcome(outcome);
+            }   
+        else {
                 System.out.println("Outcome already exists in the patient record for Patient ID: " + patientID);
-            }
         }
     }
+    
     
 
     public AppointmentOutcome getOutcome() { 

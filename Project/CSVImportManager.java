@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class CSVImportManager {
 
-    public static void importStaffData(String filePath, StaffManager staffManager, MedicineManager medicineManager, PharmacistManager pharmacistManager, DoctorManager doctorManager, PrescriptionManager prescriptionManager) {
+    public static void importStaffData(String filePath, IStaffManager staffManager, IMedicineManager medicineManager, IPharmacistManager pharmacistManager, IDoctorManager doctorManager, IPrescriptionManager prescriptionManager) {
         try (Scanner scanner = new Scanner(new File(filePath))) {
             if (scanner.hasNextLine()) {
                 scanner.nextLine();
@@ -39,7 +39,7 @@ public class CSVImportManager {
         }
     }
 
-    public static void importPatientData(String filePath, PatientManager patientManager, AppointmentManager appointmentManager) {
+    public static void importPatientData(String filePath, IPatientManager patientManager, IAppointmentManager appointmentManager) {
         try (Scanner scanner = new Scanner(new File(filePath))) {
             if (scanner.hasNextLine()) {
                 scanner.nextLine();
@@ -69,7 +69,7 @@ public class CSVImportManager {
         }
     }
 
-    public static void importMedicineData(String filePath, MedicineManager medicineManager) {
+    public static void importMedicineData(String filePath, IMedicineManager medicineManager) {
         try (Scanner scanner = new Scanner(new File(filePath))) {
             if (scanner.hasNextLine()) {
                 scanner.nextLine();
@@ -93,4 +93,6 @@ public class CSVImportManager {
             System.out.println("Invalid data format in the file: " + filePath);
         }
     }
+
+
 }

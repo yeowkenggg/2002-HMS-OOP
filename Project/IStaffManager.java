@@ -1,3 +1,4 @@
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -20,4 +21,7 @@ public interface IStaffManager {
     void addStaffMenu();
 
     void displayStaffManagementMenu();
+
+    List<Staff> getAllStaff();
+
 }

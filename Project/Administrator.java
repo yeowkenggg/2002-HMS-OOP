@@ -2,12 +2,12 @@ import java.util.Scanner;
 import java.util.List;
 
 public class Administrator extends Staff implements IUser {
-    private StaffManager staffManager;
-    private MedicineManager medicineManager;
+    private IStaffManager staffManager;
+    private IMedicineManager medicineManager;
     private AdminService adminService;
 
     public Administrator(String userId, String password, String name, String gender, String role, int age, 
-                         StaffManager staffManager, MedicineManager medicineManager) {
+                         IStaffManager staffManager, IMedicineManager medicineManager) {
         super(userId, password, name, gender, role, age);
         this.staffManager = staffManager;
         this.medicineManager = medicineManager;

@@ -13,4 +13,6 @@ public interface IPrescriptionManager {
     Prescription findPrescriptionById(String prescriptionID);
 
     void removePrescription(String prescriptionID);
+
+    void setMedicineManager(IMedicineManager medicineManager);
 }

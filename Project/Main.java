@@ -8,14 +8,14 @@ public class Main {
         List<User> sharedUserList = new ArrayList<>();
         List<Staff> initialStaffList = new ArrayList<>();
         // Initialize managers 
-        MedicineManager medicineManager = new MedicineManager();
-        PrescriptionManager prescriptionManager = new PrescriptionManager(null);
-        PatientManager patientManager = new PatientManager(null);
-        DoctorManager doctorManager = new DoctorManager(null, null);
-        PharmacistManager pharmacistManager = new PharmacistManager(null, null);
-        AppointmentManager appointmentManager = new AppointmentManager(null, null, null);
+        IMedicineManager medicineManager = new MedicineManager();
+        IPrescriptionManager prescriptionManager = new PrescriptionManager(null);
+        IPatientManager patientManager = new PatientManager(null);
+        IDoctorManager doctorManager = new DoctorManager(null, null);
+        IPharmacistManager pharmacistManager = new PharmacistManager(null, null);
+        IAppointmentManager appointmentManager = new AppointmentManager(null, null, null);
         UserManager userManager = new UserManager(sharedUserList, doctorManager, appointmentManager, medicineManager, prescriptionManager);
-        StaffManager staffManager = new StaffManager(initialStaffList, sharedUserList, userManager);
+        IStaffManager staffManager = new StaffManager(initialStaffList, sharedUserList, userManager, medicineManager, prescriptionManager, doctorManager);
 
         TimeSlot slot1 = new TimeSlot(LocalDate.now().plusDays(1), LocalTime.of(10, 0));
         TimeSlot slot2 = new TimeSlot(LocalDate.now().plusDays(2), LocalTime.of(10, 0));

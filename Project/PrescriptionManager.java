@@ -4,14 +4,14 @@ import java.util.List;
 public class PrescriptionManager implements IPrescriptionManager {
 
     private List<Prescription> prescriptions;
-    private MedicineManager medicineManager;
+    private IMedicineManager medicineManager;
 
-    public PrescriptionManager(MedicineManager medicineManager) {
+    public PrescriptionManager(IMedicineManager medicineManager) {
         this.prescriptions = new ArrayList<>();
         this.medicineManager = medicineManager;
     }
 
-    public void setMedicineManager(MedicineManager mm){
+    public void setMedicineManager(IMedicineManager mm){
         this.medicineManager = mm;
     }
 

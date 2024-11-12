@@ -10,4 +10,11 @@ public interface IAppointmentManager {
     public void viewAvailableSlots(Doctor doctor);
     void viewAppointments(Patient patient);
     void viewAppointmentOutcome(Patient patient);
+    void setAppList(List<Appointment> allAppointments);
+    void setDoctorManager(IDoctorManager doctorManager);
+    void setPatientManager(IPatientManager patientManager);
+    void acceptAppointment(Doctor doctor, Appointment appointment);
+    void declineAppointment(Doctor doctor, Appointment appointment);
+    void recordAppointmentOutcome(Doctor doctor, String patientID, String appointmentID, String services, String notes,
+            Prescription prescription);
 }

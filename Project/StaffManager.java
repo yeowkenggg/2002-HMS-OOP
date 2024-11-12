@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -9,27 +10,24 @@ import java.util.function.Predicate;
 public class StaffManager implements IStaffManager{
     private List<Staff> staffList;
     private List<User> userList;
-    private MedicineManager inventoryManager;
-    private PrescriptionManager prescriptionManager;
-    private PharmacistManager pharmacistManager; 
+    private IMedicineManager inventoryManager;
+    private IPrescriptionManager prescriptionManager;
+    private IPharmacistManager pharmacistManager; 
     private UserManager userManager;
-    private DoctorManager doctorManager;
+    private IDoctorManager doctorManager;
 
-    public StaffManager() {
-        this.staffList = new ArrayList<>();
-    }
 
     public List<Staff> getAllStaff() {
-        return new ArrayList<>(staffList); // Return a copy to prevent direct modification
+        return new ArrayList<>(staffList); 
     }
 
     // Initialize with an existing list of staff members
-    public StaffManager(List<Staff> initialStaffList, List<User> userList, UserManager userManager) {
+    public StaffManager(List<Staff> initialStaffList, List<User> userList, UserManager userManager, IMedicineManager inventoryManager, IPrescriptionManager prescriptionManager, IDoctorManager doctorManager) {
         this.staffList = new ArrayList<>(initialStaffList);
-        this.userList = userList; // Assign the shared user list
-        this.inventoryManager = new MedicineManager();
-        this.prescriptionManager = new PrescriptionManager(inventoryManager);
-        this.pharmacistManager = new PharmacistManager(prescriptionManager, inventoryManager);
+        this.userList = userList; 
+        this.inventoryManager = inventoryManager;
+        this.prescriptionManager = prescriptionManager;
+        this.pharmacistManager = pharmacistManager;
         this.userManager = userManager;
         this.doctorManager = doctorManager;
 
@@ -37,6 +35,8 @@ public class StaffManager implements IStaffManager{
             this.userList.add(staff);
         }
     }
+
+
     public void loadStaffFromCSV(String filePath) {
         try (Scanner scanner = new Scanner(new File(filePath))) {
             if (scanner.hasNextLine()) {
@@ -232,33 +232,33 @@ public class StaffManager implements IStaffManager{
     
 
     public void removeStaff(UserManager userManager) {
-        Scanner scanner = new Scanner(System.in);
-    
-        System.out.println("\n--- All Staff Members ---");
-        for (int i = 0; i < staffList.size(); i++) {
-            Staff staff = staffList.get(i);
-            System.out.println(i + ": ID: " + staff.getUserId() + ", Name: " + staff.getName() + ", Role: " + staff.getRole());
-        }
-    
-        System.out.print("Enter the index of the Staff to Remove: ");
-        int index;
-        try {
-            index = Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Please enter a valid number.");
-            return;
-        }
-    
-        if (index < 0 || index >= staffList.size()) {
-            System.out.println("Invalid index. Please select a valid staff member.");
-            return;
-        }
-    
-        Staff staff = staffList.get(index);
-        String userId = staff.getUserId();
-    
-        staffList.remove(index);
-        userManager.getUsers().removeIf(user -> user.getUserId().equals(userId));
+            Scanner scanner = new Scanner(System.in);
+        
+            System.out.println("\n--- All Staff Members ---");
+            for (int i = 0; i < staffList.size(); i++) {
+                Staff staff = staffList.get(i);
+                System.out.println(i + ": ID: " + staff.getUserId() + ", Name: " + staff.getName() + ", Role: " + staff.getRole());
+            }
+        
+            System.out.print("Enter the index of the Staff to Remove: ");
+            int index;
+            try {
+                index = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                return;
+            }
+        
+            if (index < 0 || index >= staffList.size()) {
+                System.out.println("Invalid index. Please select a valid staff member.");
+                return;
+            }
+        
+            Staff staff = staffList.get(index);
+            String userId = staff.getUserId();
+        
+            staffList.remove(index);
+            userManager.getUsers().removeIf(user -> user.getUserId().equals(userId));
     
         System.out.println("Staff member with ID " + userId + " removed.");
     }
@@ -380,6 +380,7 @@ public class StaffManager implements IStaffManager{
             throw new InvalidRoleException("Invalid role. Only 'Doctor' or 'Pharmacist' is allowed.");
         }
     }
+
 
     
 }

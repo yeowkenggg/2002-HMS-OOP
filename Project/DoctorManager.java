@@ -6,33 +6,30 @@ import java.util.Scanner;
 
 public class DoctorManager implements IDoctorManager {
 
-    private StaffManager staffManager;
-    private PrescriptionManager prescriptionManager; 
+    private IStaffManager staffManager;
+    private IPrescriptionManager prescriptionManager; 
 
-    public DoctorManager(StaffManager staffManager, PrescriptionManager prescriptionManager) {
+    public DoctorManager(IStaffManager staffManager, IPrescriptionManager prescriptionManager) {
         this.staffManager = staffManager;
         this.prescriptionManager = prescriptionManager;
     }
 
-    public void setStaffManager(StaffManager sm){
+    public void setStaffManager(IStaffManager sm){
         this.staffManager = sm;
     }
 
-    public void setPrescriptionManager(PrescriptionManager pm) {
+    public void setPrescriptionManager(IPrescriptionManager pm) {
         this.prescriptionManager = pm;
     }
 
     public void recordAppointmentOutcome(Doctor doctor, String patientID, String appointmentID, 
         String services, String notes, Prescription prescription) {
-        // Retrieve the patient's MedicalRecord
         MedicalRecord record = MedicalRecord.getRecordByPatientID(patientID);
 
         if (record != null) {
-        // Step 1: Add prescription to the patient’s MedicalRecord
         record.addPrescription(prescription);
         System.out.println("Prescription added to medical record for Patient ID: " + patientID);
 
-        // Step 2: Add prescription to the central PrescriptionManager
         if (prescriptionManager != null) {
         prescriptionManager.addPrescription(prescription);
         System.out.println("Prescription added to PrescriptionManager for pharmacist access.");
@@ -40,7 +37,6 @@ public class DoctorManager implements IDoctorManager {
         System.out.println("Error: PrescriptionManager is not initialized.");
         }
 
-        // Further processing of appointment outcome...
         System.out.println("Appointment outcome recorded successfully.");
         } else {
         System.out.println("Patient record not found.");
@@ -125,7 +121,6 @@ public class DoctorManager implements IDoctorManager {
         if (record != null) {
             Diagnosis diagnosis = new Diagnosis(diagnosisID, details, LocalDate.now());
             record.addDiagnosis(diagnosis);
-            System.out.println("Diagnosis added successfully.");
         } else {
             System.out.println("Patient record not found.");
         }
@@ -142,7 +137,7 @@ public class DoctorManager implements IDoctorManager {
         }
     }
     
-    public void addPrescription(String patientID, String prescriptionID, MedicineManager medicineManager) {
+    public void addPrescription(String patientID, String prescriptionID, IMedicineManager medicineManager) {
         Scanner scanner = new Scanner(System.in);
         List<Medicine> selectedMedicines = new ArrayList<>();
         List<Integer> quantities = new ArrayList<>();
@@ -212,6 +207,11 @@ public class DoctorManager implements IDoctorManager {
             System.out.println("Patient record not found.");
         }
     }
+
+
+
+
+
     
 
 

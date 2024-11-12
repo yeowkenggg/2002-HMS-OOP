@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.util.Collection;
 
 public interface IPatientManager {
 
@@ -12,5 +13,11 @@ public interface IPatientManager {
 
     void updateDateOfBirth(Patient patient, LocalDate newDateOfBirth);
 
-    void addPatient(Patient patient);
+    void setAppointmentManager(IAppointmentManager appointmentManager);
+
+    Collection<? extends User> getAllPatientsPrv();
+
+    Patient findPatientById(String patientID);
+
+    void addPatient(Patient newPatient);
 }

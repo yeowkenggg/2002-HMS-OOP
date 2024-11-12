@@ -5,21 +5,21 @@ import java.time.format.DateTimeFormatter;
 
 class PharmacistManager implements IPharmacistManager {
 
-    private PrescriptionManager prescriptionManager;
-    private MedicineManager medicineManager;
+    private IPrescriptionManager prescriptionManager;
+    private IMedicineManager medicineManager;
     private List<ReplenishmentRequest> replenishmentRequests;
 
-    public PharmacistManager(PrescriptionManager prescriptionManager, MedicineManager medicineManager) {
+    public PharmacistManager(IPrescriptionManager prescriptionManager, IMedicineManager medicineManager) {
         this.prescriptionManager = prescriptionManager;
         this.medicineManager = medicineManager;
         this.replenishmentRequests = new ArrayList<>();
     }
 
-    public void setPrescriptionManager(PrescriptionManager pm){
+    public void setPrescriptionManager(IPrescriptionManager pm){
         this.prescriptionManager = pm;   
     }
 
-    public void setMedicineManager(MedicineManager mm){
+    public void setMedicineManager(IMedicineManager mm){
         this.medicineManager = mm;
     }
     

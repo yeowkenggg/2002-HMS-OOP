@@ -10,12 +10,12 @@ public class Patient extends User implements IUser {
     private String contactInfo;
     private List<Appointment> appointments;
     private MedicalRecord medicalRecord;
-    private PatientManager patientManager;
-    private AppointmentManager appointmentManager;
+    private IPatientManager patientManager;
+    private IAppointmentManager appointmentManager;
 
 
     // constructor
-    public Patient(String userId, String password, String name, String gender, LocalDate dateOfBirth, String bloodType, String contactInfo, PatientManager patientManager, AppointmentManager appointmentManager) {
+    public Patient(String userId, String password, String name, String gender, LocalDate dateOfBirth, String bloodType, String contactInfo, IPatientManager patientManager, IAppointmentManager appointmentManager) {
         super(userId, password, name, gender);
         this.patientID = userId;
         this.dateOfBirth = dateOfBirth;

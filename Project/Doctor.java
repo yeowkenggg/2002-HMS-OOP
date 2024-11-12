@@ -5,10 +5,10 @@ public class Doctor extends Staff implements IUser {
     private List<TimeSlot> availability;
     private List<Appointment> appointments;
     private List<String> assignedPatientIDs = new ArrayList<>();
-    private DoctorManager doctorManager;
+    private IDoctorManager doctorManager;
 
     // constructor
-    public Doctor(String userId, String password, String name, String gender, String role, int age, DoctorManager doctorManager) {
+    public Doctor(String userId, String password, String name, String gender, String role, int age, IDoctorManager doctorManager) {
         super(userId, password, name, gender, role, age);
         this.availability = new ArrayList<>();
         this.appointments = new ArrayList<>();
@@ -58,7 +58,7 @@ public class Doctor extends Staff implements IUser {
     
     public void removeAvailability(TimeSlot slot) {
         if (availability.remove(slot)) {
-            System.out.println("Time slot removed from availability: " + slot);
+            //System.out.println("Time slot removed from availability: " + slot);
         } else {
             System.out.println("Time slot not found in availability.");
         }

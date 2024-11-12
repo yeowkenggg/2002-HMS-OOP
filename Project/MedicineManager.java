@@ -270,6 +270,8 @@ public class MedicineManager implements IMedicineManager {
     
         return inventory.get(index);
     }
+
+
     
     
 

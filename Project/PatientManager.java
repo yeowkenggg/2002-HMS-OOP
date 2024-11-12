@@ -8,14 +8,14 @@ import java.util.List;
 public class PatientManager implements IPatientManager {
 
     private List<Patient> patientList;
-    private AppointmentManager appointmentManager;
+    private IAppointmentManager appointmentManager;
 
     public PatientManager(AppointmentManager appointmentManager) {
         this.patientList = new ArrayList<>();
         this.appointmentManager = appointmentManager;
     }
 
-    public void setAppointmentManager(AppointmentManager am){
+    public void setAppointmentManager(IAppointmentManager am){
         this.appointmentManager = am;
     }
 
@@ -107,8 +107,6 @@ public class PatientManager implements IPatientManager {
         }
         return null;
     }
-
-    
     
     @Override
     public void addPatient(Patient patient) {
@@ -117,6 +115,11 @@ public class PatientManager implements IPatientManager {
             //System.out.println("Patient added: " + patient.getName() + " (ID: " + patient.getUserId() + ")");
         }
     }
+
+
+    
+    
+
 
 
 

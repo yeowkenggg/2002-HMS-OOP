@@ -3,21 +3,21 @@ import java.util.List;
 
 public class AppointmentManager implements IAppointmentManager {
 
-    private DoctorManager doctorManager;
-    private PatientManager patientManager;
+    private IDoctorManager doctorManager;
+    private IPatientManager patientManager;
     private List<Appointment> allAppointments;
 
 
-    public AppointmentManager(DoctorManager doctorManager, PatientManager patientManager,List<Appointment> allAppointments) {
+    public AppointmentManager(IDoctorManager doctorManager, IPatientManager patientManager,List<Appointment> allAppointments) {
         this.doctorManager = doctorManager;
         this.patientManager = patientManager;    
         this.allAppointments = allAppointments;
     }
-    public void setDoctorManager(DoctorManager dm){
+    public void setDoctorManager(IDoctorManager dm){
         this.doctorManager = dm;
     }
 
-    public void setPatientManager(PatientManager pm){
+    public void setPatientManager(IPatientManager pm){
         this.patientManager = pm;
     }
 
@@ -44,7 +44,7 @@ public class AppointmentManager implements IAppointmentManager {
         doctor.addAppointment(appointment);
         doctor.removeAvailability(timeSlot);
         allAppointments.add(appointment);
-        System.out.println("Scheduled appointment for " + patient.getName() + " with Dr. " + doctor.getName() + " at " + timeSlot);
+        
     } else {
         System.out.println("Doctor is unavailable at the selected time slot.");
     }
@@ -164,35 +164,19 @@ public class AppointmentManager implements IAppointmentManager {
 
     public void recordAppointmentOutcome(Doctor doctor, String patientID, String appointmentID, String services, String notes, Prescription prescription) {
         Appointment appointment = findAppointmentById(appointmentID);
-        if (appointment == null) {
-            System.out.println("Error: Appointment ID " + appointmentID + " not found.");
+        if (appointment == null || !appointment.getDoctorID().equals(doctor.getUserId())) {
+            System.out.println("Error: Invalid appointment or unauthorized access.");
             return;
         }
-    
-        if (!appointment.getDoctorID().equals(doctor.getUserId())) {
-            System.out.println("Error: Unauthorized action. Doctor is not assigned to this appointment.");
-            return;
-        }
-    
-        if (appointment.getOutcome() != null) {
-            System.out.println("Error: Appointment outcome already recorded for Appointment ID: " + appointmentID);
-            return;
-        }
-    
-        AppointmentOutcome outcome = new AppointmentOutcome(appointment, services, notes, prescription, appointment.getTimeSlot().getDate());
-        appointment.setOutcome(outcome);
-    
-        MedicalRecord record = MedicalRecord.getRecordByPatientID(patientID);
-        if (record != null) {
-            if (!record.getAppointmentOutcomes().contains(outcome)) {  
-                record.addAppointmentOutcome(outcome);
-                System.out.println("Patient record updated for Patient ID: " + patientID);
-            }
+        
+        Patient patient = patientManager.findPatientById(patientID);
+        if (patient != null) {
+            appointment.recordOutcome(services, notes, prescription, patient);
         } else {
-            System.out.println("No medical record found for Patient ID: " + patientID + ", but appointment outcome was still recorded.");
+            System.out.println("Error: Patient not found.");
         }
-        System.out.println("Appointment outcome recorded for Appointment ID: " + appointmentID);
     }
+    
     
     
     
@@ -256,7 +240,7 @@ public class AppointmentManager implements IAppointmentManager {
             return;
         }
     
-        appointment.setOutcome(null);
+        appointment.recordOutcome(null, null, null, null);
     
         MedicalRecord record = MedicalRecord.getRecordByPatientID(appointment.getPatientID());
         if (record != null) {
@@ -402,8 +386,13 @@ public class AppointmentManager implements IAppointmentManager {
     @Override
     public void viewAppointmentOutcome(Patient patient) {
         List<AppointmentOutcome> outcomes = getOutcomesByPatientID(patient.getUserId());
-        for (AppointmentOutcome outcome : outcomes) {
+        if (outcomes.isEmpty()) {
+            System.out.println("No available appointments for the patient.");
+        }
+        else{
+            for (AppointmentOutcome outcome : outcomes) {
             System.out.println(outcome);
+            }
         }
     }
 }

@@ -5,17 +5,17 @@ import java.time.format.DateTimeFormatter;
 
 public class Pharmacist extends Staff implements IUser {
 
-    private PharmacistManager pharmacistManager;
-    private PrescriptionManager prescriptionManager;
+    private IPharmacistManager pharmacistManager;
+    private IPrescriptionManager prescriptionManager;
 
     public Pharmacist(String userId, String password, String name, String gender, String role, int age, 
-                      PharmacistManager pharmacistManager, PrescriptionManager prescriptionManager) {
+                      IPharmacistManager pharmacistManager, IPrescriptionManager prescriptionManager) {
         super(userId, password, name, gender, role, age);
         this.pharmacistManager = pharmacistManager;
         this.prescriptionManager = prescriptionManager; 
     }
 
-    public PrescriptionManager getPrescriptionManager() {
+    public IPrescriptionManager getPrescriptionManager() {
         return this.prescriptionManager;
     }
 
