@@ -72,7 +72,6 @@ public class PrescriptionManager implements IPrescriptionManager {
     }
 
 
-    @Override
     public Prescription findPrescriptionById(String prescriptionID) {
         for (Prescription prescription : prescriptions) {
             if (prescription.getPrescriptionID().equals(prescriptionID)) {
@@ -82,7 +81,6 @@ public class PrescriptionManager implements IPrescriptionManager {
         return null;
     }
 
-    @Override
     public void removePrescription(String prescriptionID) {
         if (prescriptions.removeIf(prescription -> prescription.getPrescriptionID().equals(prescriptionID))) {
             System.out.println("Prescription with ID " + prescriptionID + " removed.");

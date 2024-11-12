@@ -25,7 +25,6 @@ public class AppointmentManager implements IAppointmentManager {
         this.allAppointments = app;
     }
 
-    @Override
     public void viewAvailableSlots(Doctor doctor) {
         System.out.println("Available Slots for Dr. " + doctor.getName() + ":");
         List<TimeSlot> availableSlots = doctorManager.getAvailability(doctor);
@@ -34,7 +33,6 @@ public class AppointmentManager implements IAppointmentManager {
         }
     }
 
-    @Override
     public void scheduleAppointment(Patient patient, Doctor doctor, TimeSlot timeSlot) {
     if (doctorManager.isAvailable(doctor, timeSlot)) {
         String appointmentID = "APT" + System.currentTimeMillis();
@@ -50,8 +48,6 @@ public class AppointmentManager implements IAppointmentManager {
     }
 }
 
-
-    @Override
     public void rescheduleAppointment(Patient patient, Appointment appointment, TimeSlot newTimeSlot, Doctor doctor) {
         TimeSlot oldTimeSlot = appointment.getTimeSlot();
         if (doctorManager.isAvailable(doctor, newTimeSlot)) {
@@ -64,8 +60,6 @@ public class AppointmentManager implements IAppointmentManager {
     }
 
     
-
-    @Override
     public List<Appointment> getUpcomingAppointments(Patient patient) {
         List<Appointment> upcomingAppointments  = new ArrayList<>();
         for (Appointment appointment : patient.getAppointments()) {
@@ -119,8 +113,6 @@ public class AppointmentManager implements IAppointmentManager {
         }
     }
 
-
-    @Override
     public List<Appointment> getPastAppointments(Patient patient) {
         List<Appointment> pastAppointments = new ArrayList<>();
         for (Appointment appointment : patient.getAppointments()) {
@@ -150,7 +142,6 @@ public class AppointmentManager implements IAppointmentManager {
         return pastAppointments;
     }
 
-    @Override
     public Appointment getAppointmentDetails(Patient patient, String appointmentID) {
         for (Appointment appointment : patient.getAppointments()) {
             if (appointment.getAppointmentID().equals(appointmentID)) {
@@ -252,7 +243,6 @@ public class AppointmentManager implements IAppointmentManager {
     }
 
     
-    @Override 
     public void viewAppointments(Patient patient) {
         List<Appointment> appointments = patient.getAppointments();
 
@@ -316,7 +306,6 @@ public class AppointmentManager implements IAppointmentManager {
         }
     }
 
-    @Override
     public void cancelAppointment(Appointment appointment, User caller) {
         if (caller instanceof Doctor) {
             Doctor doctor = (Doctor) caller;
@@ -383,7 +372,7 @@ public class AppointmentManager implements IAppointmentManager {
         }
         return outcomes;
     }
-    @Override
+    
     public void viewAppointmentOutcome(Patient patient) {
         List<AppointmentOutcome> outcomes = getOutcomesByPatientID(patient.getUserId());
         if (outcomes.isEmpty()) {
@@ -395,4 +384,5 @@ public class AppointmentManager implements IAppointmentManager {
             }
         }
     }
+    
 }

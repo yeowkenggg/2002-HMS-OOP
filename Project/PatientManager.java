@@ -43,7 +43,6 @@ public class PatientManager implements IPatientManager {
         }
     }
 
-    @Override
     public void updateName(Patient patient, String newName) {
         if (newName != null && !newName.trim().isEmpty()) {
             patient.setName(newName);
@@ -57,7 +56,6 @@ public class PatientManager implements IPatientManager {
         }
     }
 
-    @Override
     public void updateGender(Patient patient, String newGender) {
         if ("Male".equalsIgnoreCase(newGender) || "Female".equalsIgnoreCase(newGender)) {
             patient.setGender(newGender);
@@ -71,7 +69,6 @@ public class PatientManager implements IPatientManager {
         }
     }
 
-    @Override
     public void updateDateOfBirth(Patient patient, LocalDate newDateOfBirth) {
         if (newDateOfBirth != null) {
             patient.setDateOfBirth(newDateOfBirth);

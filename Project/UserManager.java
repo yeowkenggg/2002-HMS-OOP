@@ -258,7 +258,7 @@ public class UserManager {
                 
                         System.out.print("Select appointment index to manage: ");
                         int appIndex = scanner.nextInt();
-                        scanner.nextLine(); // Consume newline
+                        scanner.nextLine(); 
                 
                         if (appIndex >= 0 && appIndex < appointmentReq.size()) {
                             Appointment appointment = appointmentReq.get(appIndex);

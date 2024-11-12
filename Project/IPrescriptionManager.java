@@ -2,6 +2,10 @@ import java.util.List;
 
 public interface IPrescriptionManager {
 
+
+
+    void setMedicineManager(IMedicineManager medicineManager);
+
     void addPrescription(Prescription prescription);
 
     List<Prescription> getAllPrescriptions();
@@ -9,10 +13,4 @@ public interface IPrescriptionManager {
     List<Prescription> getPendingPrescriptions();
 
     boolean updatePrescriptionStatus(String prescriptionID);
-
-    Prescription findPrescriptionById(String prescriptionID);
-
-    void removePrescription(String prescriptionID);
-
-    void setMedicineManager(IMedicineManager medicineManager);
 }
