@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class UserManager {
     private List<User> users;
@@ -12,6 +14,8 @@ public class UserManager {
     private IMedicineManager medicineManager;
     private IPrescriptionManager prescriptionManager;
 
+    //delcaring a regex to detect email for contactInfo update
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
     public UserManager(List<User> users, IDoctorManager doctorManager, IAppointmentManager appointmentManager, 
                        IMedicineManager medicineManager, IPrescriptionManager prescriptionManager) {
         this.users = users;
@@ -543,29 +547,32 @@ public class UserManager {
                     break;
     
                 case 2:
-                    System.out.print("Enter new contact information: (empty to keep current) ");
+                    System.out.print("Enter new contact information (email): (empty to keep current) ");
                     String newContact = scanner.nextLine();
-                    if(newContact.isEmpty()){
+                    if (newContact.isEmpty()) {
                         newContact = patient.getContactInfo();
+                    } else if (!isValidEmail(newContact)) {
+                        System.out.println("Invalid email format. Please enter a valid email address.");
+                        break;
                     }
+                
                     System.out.print("Enter new phone number: (empty to keep current) ");
                     String phone;
                     int newPhone;
-                    try{
+                    try {
                         phone = scanner.nextLine();
-                        if(!phone.isEmpty()){
+                        if (!phone.isEmpty()) {
                             newPhone = Integer.parseInt(phone);
-                        }
-                        else{
+                        } else {
                             newPhone = patient.getPhoneNumber();
                         }
-                    }
-                    catch(NumberFormatException e){
+                    } catch (NumberFormatException e) {
                         System.out.println("Invalid input. Please enter a number.");
                         break;
                     }
+                
                     patient.updateContactInfo(newContact, newPhone);
-                    break;
+                break;
     
                 case 3: 
                     // view appointment by doctor
@@ -810,6 +817,14 @@ public class UserManager {
                 scanner.nextLine(); 
             }
         }
+    }
+    
+    public static boolean isValidEmail(String email) {
+        if (email == null) {
+            return false;
+        }
+        Matcher matcher = EMAIL_PATTERN.matcher(email);
+        return matcher.matches();
     }
     
 }
