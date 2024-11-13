@@ -543,9 +543,29 @@ public class UserManager {
                     break;
     
                 case 2:
-                    System.out.print("Enter new contact information: ");
+                    System.out.print("Enter new contact information: (empty to keep current) ");
                     String newContact = scanner.nextLine();
-                    patient.updateContactInfo(newContact);
+                    if(newContact.isEmpty()){
+                        newContact = patient.getContactInfo();
+                    }
+                    System.out.print("Enter new phone number: (empty to keep current) ");
+                    String phone;
+                    int newPhone;
+                    try{
+                        phone = scanner.nextLine();
+                        if(!phone.isEmpty()){
+                            newPhone = Integer.parseInt(phone);
+                        }
+                        else{
+                            newPhone = patient.getPhoneNumber();
+                        }
+                    }
+                    catch(InputMismatchException e){
+                        System.out.println("Invalid input. Please enter a number.");
+                        scanner.nextLine();
+                        continue;
+                    }
+                    patient.updateContactInfo(newContact, newPhone);
                     break;
     
                 case 3: 

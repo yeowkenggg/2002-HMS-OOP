@@ -59,7 +59,7 @@ public class CSVImportManager {
                     String contactInfo = data[6];
 
                     Patient newPatient;
-                    newPatient = new Patient(userId, password, name, gender, dateOfBirth, bloodType, contactInfo, patientManager, appointmentManager);
+                    newPatient = new Patient(userId, password, name, gender, dateOfBirth, bloodType, contactInfo, 0, patientManager, appointmentManager);
 
                     patientManager.addPatient(newPatient);
                 }

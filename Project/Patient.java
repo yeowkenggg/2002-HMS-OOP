@@ -8,6 +8,7 @@ public class Patient extends User implements IUser {
     private LocalDate dateOfBirth;
     private String bloodType;
     private String contactInfo;
+    private int phoneNumber;
     private List<Appointment> appointments;
     private MedicalRecord medicalRecord;
     private IPatientManager patientManager;
@@ -15,17 +16,18 @@ public class Patient extends User implements IUser {
 
 
     // constructor
-    public Patient(String userId, String password, String name, String gender, LocalDate dateOfBirth, String bloodType, String contactInfo, IPatientManager patientManager, IAppointmentManager appointmentManager) {
+    public Patient(String userId, String password, String name, String gender, LocalDate dateOfBirth, String bloodType, String contactInfo, int phoneNumber, IPatientManager patientManager, IAppointmentManager appointmentManager) {
         super(userId, password, name, gender);
         this.patientID = userId;
         this.dateOfBirth = dateOfBirth;
         this.bloodType = bloodType;
         this.contactInfo = contactInfo;
+        this.phoneNumber = phoneNumber;
         this.appointments = new ArrayList<>();
         this.patientManager = patientManager;
         this.appointmentManager = appointmentManager;
         
-        this.medicalRecord = new MedicalRecord(userId, name, dateOfBirth, gender, bloodType, contactInfo);
+        this.medicalRecord = new MedicalRecord(this);
         MedicalRecord.addRecord(this.medicalRecord);
     }
 
@@ -53,6 +55,14 @@ public class Patient extends User implements IUser {
     public void setContactInfo(String contactInfo) {
         this.contactInfo = contactInfo;
     }
+    
+    public int getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(int phone) {
+        this.phoneNumber = phone;
+    }
 
     public List<Appointment> getAppointments() {
         return new ArrayList<>(appointments);
@@ -75,8 +85,8 @@ public class Patient extends User implements IUser {
         patientManager.viewMedicalRecord(this);
     }
     
-    public void updateContactInfo(String newContactInfo) {
-        patientManager.updateContactInfo(this, newContactInfo);
+    public void updateContactInfo(String newContactInfo, int phone) {
+        patientManager.updateContactInfo(this, newContactInfo, phone);
     }
 
     public void viewAvailableAppointmentSlots(Doctor doctor) {

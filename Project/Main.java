@@ -33,16 +33,16 @@ public class Main {
 
 
 
-        String staffFilePath = "Project\\Staff_List.csv";  
-        String patientFilePath = "Project\\Patient_List.csv";  
-        String medicineFilePath = "Project\\Medicine_List.csv";  
+        String staffFilePath = "Project/Staff_List.csv";  
+        String patientFilePath = "Project/Patient_List.csv";  
+        String medicineFilePath = "Project/Medicine_List.csv";  
 
         CSVImportManager.importStaffData(staffFilePath, staffManager, medicineManager, pharmacistManager, doctorManager, prescriptionManager);
         CSVImportManager.importPatientData(patientFilePath, patientManager, appointmentManager);
         CSVImportManager.importMedicineData(medicineFilePath, medicineManager);
 
         sharedUserList.addAll(staffManager.getAllStaff());
-        sharedUserList.addAll(patientManager.getAllPatientsPrv());
+        sharedUserList.addAll(patientManager.getAllPatientsInternal());
 
 
         Doctor doctor1 = doctorManager.findDoctorById("D001");

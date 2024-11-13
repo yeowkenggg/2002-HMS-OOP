@@ -10,9 +10,9 @@ public interface IPatientManager {
 
     void setAppointmentManager(IAppointmentManager appointmentManager);
 
-    Collection<? extends User> getAllPatientsPrv();
+    Collection<? extends User> getAllPatientsInternal();
 
-    void updateContactInfo(Patient patient, String newContactInfo);
+    void updateContactInfo(Patient patient, String newContactInfo, int phone);
 
     void viewMedicalRecord(Patient patient);
 }

@@ -4,14 +4,14 @@ import java.util.List;
 public class Administrator extends Staff implements IUser {
     private IStaffManager staffManager;
     private IMedicineManager medicineManager;
-    private AdministratorManager adminService;
+    private AdminService adminService;
 
     public Administrator(String userId, String password, String name, String gender, String role, int age, 
                          IStaffManager staffManager, IMedicineManager medicineManager) {
         super(userId, password, name, gender, role, age);
         this.staffManager = staffManager;
         this.medicineManager = medicineManager;
-        this.adminService = new AdministratorManager(medicineManager);
+        this.adminService = new AdminService(medicineManager);
     }
 
     public void setStaffManager(StaffManager sm){

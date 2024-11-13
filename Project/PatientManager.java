@@ -30,27 +30,21 @@ public class PatientManager implements IPatientManager {
     }
 
     @Override
-    public void updateContactInfo(Patient patient, String newContactInfo) {
+    public void updateContactInfo(Patient patient, String newContactInfo, int phone) {
         if (newContactInfo != null && !newContactInfo.trim().isEmpty()) {
             patient.setContactInfo(newContactInfo);
-            MedicalRecord record = MedicalRecord.getRecordByPatientID(patient.getUserId());
-            if (record != null) {
-                record.setContactInfo(newContactInfo);
-                System.out.println("Updated contact info to: " + newContactInfo);
-            }
+            patient.setPhoneNumber(phone);
+            System.out.println("Updated contact information.");
         } else {
             System.out.println("Invalid contact information.");
         }
     }
+    
 
     public void updateName(Patient patient, String newName) {
         if (newName != null && !newName.trim().isEmpty()) {
             patient.setName(newName);
-            MedicalRecord record = MedicalRecord.getRecordByPatientID(patient.getUserId());
-            if (record != null) {
-                record.setName(newName);
-                System.out.println("Name updated to: " + newName);
-            }
+            System.out.println("Name updated to: " + newName);
         } else {
             System.out.println("Name cannot be empty.");
         }
@@ -59,24 +53,16 @@ public class PatientManager implements IPatientManager {
     public void updateGender(Patient patient, String newGender) {
         if ("Male".equalsIgnoreCase(newGender) || "Female".equalsIgnoreCase(newGender)) {
             patient.setGender(newGender);
-            MedicalRecord record = MedicalRecord.getRecordByPatientID(patient.getUserId());
-            if (record != null) {
-                record.setGender(newGender);
-                System.out.println("Gender updated to: " + newGender);
-            }
+            System.out.println("Gender updated to: " + newGender);
         } else {
-            System.out.println("Invalid gender input.");
+            System.out.println("Invalid gender input. Please enter 'Male' or 'Female'.");
         }
     }
 
     public void updateDateOfBirth(Patient patient, LocalDate newDateOfBirth) {
         if (newDateOfBirth != null) {
             patient.setDateOfBirth(newDateOfBirth);
-            MedicalRecord record = MedicalRecord.getRecordByPatientID(patient.getUserId());
-            if (record != null) {
-                record.setDateOfBirth(newDateOfBirth);
-                System.out.println("Date of birth updated to: " + newDateOfBirth);
-            }
+            System.out.println("Date of birth updated to: " + newDateOfBirth);
         } else {
             System.out.println("Invalid date of birth.");
         }
@@ -92,12 +78,12 @@ public class PatientManager implements IPatientManager {
     }
 
 
-    public List<Patient> getAllPatientsPrv() {
+    public List<Patient> getAllPatientsInternal() {
         return patientList;
     }
 
     public Patient findPatientById(String patientID) {
-        for (Patient patient : getAllPatientsPrv()) {
+        for (Patient patient : getAllPatientsInternal()) {
             if (patient.getPatientID().equals(patientID)) {
                 return patient;
             }

@@ -191,6 +191,7 @@ public class StaffManager implements IStaffManager{
                 validateRole(role);
     
                 // if changing role, create a new instance of the appropriate subclass
+                // assuming you cannot just randomly change to an admin class
                 Staff newStaff;
                 if ("Doctor".equalsIgnoreCase(role)) {
                     newStaff = new Doctor(staff.getUserId(), staff.getPassword(), name.isEmpty() ? staff.getName() : name, staff.getGender(), "Doctor", staff.getAge(), doctorManager);
@@ -210,7 +211,7 @@ public class StaffManager implements IStaffManager{
                 staff.setName(name);
             }
     
-            System.out.print("Enter New Age (or 0 to keep current): ");
+            System.out.print("Enter New Age (or empty/0 to keep current): ");
             String ageInput = scanner.nextLine();
             if (!ageInput.isEmpty()) {
                 int age = Integer.parseInt(ageInput);

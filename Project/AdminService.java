@@ -1,8 +1,8 @@
 import java.util.*;
-public class AdministratorManager {
+public class AdminService {
     private IMedicineManager medicineManager;
 
-    public AdministratorManager(IMedicineManager medicineManager) {
+    public AdminService(IMedicineManager medicineManager) {
         this.medicineManager = medicineManager;
     }
 
