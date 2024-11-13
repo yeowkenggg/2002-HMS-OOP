@@ -560,10 +560,9 @@ public class UserManager {
                             newPhone = patient.getPhoneNumber();
                         }
                     }
-                    catch(InputMismatchException e){
+                    catch(NumberFormatException e){
                         System.out.println("Invalid input. Please enter a number.");
-                        scanner.nextLine();
-                        continue;
+                        break;
                     }
                     patient.updateContactInfo(newContact, newPhone);
                     break;
