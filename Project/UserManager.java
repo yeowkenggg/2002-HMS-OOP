@@ -207,7 +207,23 @@ public class UserManager {
                                 System.out.println(slot);
                             }
                         }
-                        break;
+                    
+                        List<Appointment> upcomingAppointments = doctor.getAppointments().stream()
+                            .filter(Appointment::isUpcoming)
+                            .toList();
+                    
+                        System.out.println("\n--- Upcoming Appointments ---");
+                        if (upcomingAppointments.isEmpty()) {
+                            System.out.println("No upcoming appointments.");
+                        } else {
+                            for (Appointment appointment : upcomingAppointments) {
+                                System.out.println("Appointment ID: " + appointment.getAppointmentID() +
+                                                   ", Patient ID: " + appointment.getPatientID() +
+                                                   ", Scheduled Time: " + appointment.getTimeSlot().getDate() +
+                                                   " @ " + appointment.getTimeSlot().getTime());
+                            }
+                        }
+                    break;
                     case 4:
                         System.out.print("Enter availability date (YYYY-MM-DD): ");
                         String dateInput = scanner.nextLine();
@@ -310,84 +326,94 @@ public class UserManager {
                             System.out.print("Enter any additional notes: ");
                             String notes = scanner.nextLine();
                     
-                            System.out.print("Enter Prescription ID: ");
-                            String prescriptionID = scanner.nextLine();
+                            System.out.print("Do you want to add a prescription? (Y/N): ");
+                            String prescriptionYN = scanner.nextLine();
+                            
+                            if (prescriptionYN.equalsIgnoreCase("Y")) {
+                                String prescriptionID = "Pres" + System.currentTimeMillis();
+                                List<Medicine> medicines = new ArrayList<>();
+                                List<Integer> qty = new ArrayList<>();
                     
-                            List<Medicine> medicines = new ArrayList<>();
-                            List<Integer> qty = new ArrayList<>();
-
-                            while (true) {
-                                medicineManager.displayInventory();
+                                while (true) {
+                                    medicineManager.displayInventory();
                     
-                                System.out.print("Enter the index of the medicine to add (or -1 to finish): ");
-                                int medicineIndex;
-                                try {
-                                    medicineIndex = scanner.nextInt();
-                                    scanner.nextLine(); 
-                                } catch (InputMismatchException e) {
-                                    System.out.println("Invalid input. Please enter a valid number.");
-                                    scanner.nextLine();
-                                    continue;
-                                }
+                                    System.out.print("Enter the index of the medicine to add (or -1 to finish): ");
+                                    int medicineIndex;
+                                    try {
+                                        medicineIndex = scanner.nextInt();
+                                        scanner.nextLine(); 
+                                    } catch (InputMismatchException e) {
+                                        System.out.println("Invalid input. Please enter a valid number.");
+                                        scanner.nextLine();
+                                        continue;
+                                    }
                     
-                                if (medicineIndex == -1) {
-                                    break; 
-                                }
+                                    if (medicineIndex == -1) {
+                                        break; 
+                                    }
                     
-                                List<Medicine> inventory = medicineManager.getInventory();
-                                if (medicineIndex >= 0 && medicineIndex < inventory.size()) {
-                                    Medicine selectedMedicine = inventory.get(medicineIndex);
-                                    int quantity;
-                                    while (true) {
-                                        System.out.print("Enter quantity for " + selectedMedicine.getName() + ": ");
-                                        try {
-                                            quantity = scanner.nextInt();
-                                            scanner.nextLine();
-                                            if (quantity > 0) { //if doctor select a medicine, atleast 1 must be dispensed
-                                                break; 
-                                            } else {
-                                                System.out.println("Quantity must be greater than 0. Please try again.");
+                                    List<Medicine> inventory = medicineManager.getInventory();
+                                    if (medicineIndex >= 0 && medicineIndex < inventory.size()) {
+                                        Medicine selectedMedicine = inventory.get(medicineIndex);
+                                        int quantity;
+                    
+                                        while (true) {
+                                            System.out.print("Enter quantity for " + selectedMedicine.getName() + ": ");
+                                            try {
+                                                quantity = scanner.nextInt();
+                                                scanner.nextLine();
+                                                if (quantity > 0) { 
+                                                    break; 
+                                                } else {
+                                                    System.out.println("Quantity must be greater than 0. Please try again.");
+                                                }
+                                            } catch (InputMismatchException e) {
+                                                System.out.println("Invalid quantity. Please enter a valid number.");
+                                                scanner.nextLine();
                                             }
-                                        } catch (InputMismatchException e) {
-                                            System.out.println("Invalid quantity. Please enter a valid number.");
-                                            scanner.nextLine();
                                         }
-                                    }
-
-                                    if (selectedMedicine.getStock() >= quantity) {
-
-                                        medicines.add(selectedMedicine);
-                                        qty.add(quantity);
-                                        System.out.println("Added " + quantity + " units of " + selectedMedicine.getName() + " to prescription.");
+                    
+                                        if (selectedMedicine.getStock() >= quantity) {
+                                            medicines.add(selectedMedicine);
+                                            qty.add(quantity);
+                                            System.out.println("Added " + quantity + " units of " + selectedMedicine.getName() + " to prescription.");
+                                        } else {
+                                            System.out.println("Insufficient stock for " + selectedMedicine.getName() + ". Available: " + selectedMedicine.getStock());
+                                        }
                                     } else {
-                                        System.out.println("Insufficient stock for " + selectedMedicine.getName() + ". Available: " + selectedMedicine.getStock());
+                                        System.out.println("Invalid index. Please select a valid medicine from the inventory.");
                                     }
-                                } else {
-                                    System.out.println("Invalid index. Please select a valid medicine from the inventory.");
                                 }
-                            }
-
-                            if (medicines.isEmpty()) {
-                                System.out.println("No valid medicines selected. Prescription was not created.");
-                            } else {
-                                Prescription prescription = new Prescription(prescriptionID, medicines, qty, "Pending");
-
-                                // add appointment outcome and add prescription
-                                appointmentManager.recordAppointmentOutcome(
+                    
+                                if (medicines.isEmpty()) {
+                                    System.out.println("No valid medicines selected. Prescription was not created.");
+                                } else {
+                                    Prescription prescription = new Prescription(prescriptionID, medicines, qty, "Pending");
+                    
+                                    appointmentManager.recordAppointmentOutcome(
                                         doctor, selectedAppointment.getPatientID(), selectedAppointment.getAppointmentID(),
                                         services, notes, prescription
+                                    );
+                    
+                                    prescriptionManager.addPrescription(prescription);
+                                    selectedAppointment.setStatus("Completed");
+                                    System.out.println("Appointment outcome recorded successfully.");
+                                }
+                            } else if (prescriptionYN.equalsIgnoreCase("N")) {
+                                appointmentManager.recordAppointmentOutcome(
+                                    doctor, selectedAppointment.getPatientID(), selectedAppointment.getAppointmentID(),
+                                    services, notes, null
                                 );
-
-                                // add the prescription to PrescriptionManager
-                                prescriptionManager.addPrescription(prescription);
                                 selectedAppointment.setStatus("Completed");
-                                System.out.println("Appointment outcome recorded successfully.");
+                                System.out.println("Appointment outcome recorded successfully without a prescription.");
+                            } else {
+                                System.out.println("Invalid input. Returning to the previous menu.");
+                                break; 
                             }
                         } else {
-                            System.out.println("Invalid appointment index. Please try again.");
+                            System.out.println("Invalid appointment index. Returning to the previous menu.");
                         }
-                        break;
-                    
+                    break;
                     case 8:
                         doctor.logout();
                         loginUser();
