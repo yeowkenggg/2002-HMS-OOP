@@ -181,13 +181,7 @@ public class UserManager {
                                     doctorManager.addTreatment(selectedPatientID, treatmentID, details);
                                 }
                                 case 3 -> {
-                                    System.out.print("Enter Prescription ID: ");
-                                    String prescriptionID = scanner.nextLine().trim();
-                                    if (prescriptionID.isEmpty()) {
-                                        System.out.println("Prescription ID cannot be empty. Returning to the previous menu.");
-                                        return; 
-                                    }
-                            
+                                    String prescriptionID = "Pres" + System.currentTimeMillis();
                                     doctorManager.addPrescription(selectedPatientID, prescriptionID, medicineManager);
                                 }
                                 default -> System.out.println("Invalid choice.");
