@@ -17,7 +17,7 @@ public class MedicalRecord {
 
 	//constructor
     public MedicalRecord(Patient patient) {
-        this.patient = patient; // Reference to existing Patient object
+        this.patient = patient; //reference to existing Patient object
         this.diagnoses = new ArrayList<>();
         this.treatments = new ArrayList<>();
         this.prescriptions = new ArrayList<>();
@@ -112,6 +112,15 @@ public class MedicalRecord {
         return null;  // null if no record found
     }
 
+    public String getPhoneNumberString(){
+        if(this.getPhoneNumber() == 0){
+            return "N/A";
+        }
+        else{
+            return String.valueOf(this.getPhoneNumber());
+        }
+    }
+
     
     public void viewMedicalRecord() {
         System.out.println("=== Medical Record ===");
@@ -121,7 +130,7 @@ public class MedicalRecord {
         System.out.println("Gender: " + patient.getGender());
         System.out.println("Blood Type: " + patient.getBloodType());
         System.out.println("Contact Info: " + patient.getContactInfo());
-        System.out.println("Phone Number: " + patient.getPhoneNumber());
+        System.out.println("Phone Number: " + getPhoneNumberString());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         System.out.println("\n--- Diagnoses History ---");
