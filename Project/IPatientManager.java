@@ -3,21 +3,16 @@ import java.util.Collection;
 
 public interface IPatientManager {
 
-    void viewMedicalRecord(Patient patient);
+    
+    void addPatient(Patient newPatient);
 
-    void updateContactInfo(Patient patient, String newContactInfo);
-
-    void updateName(Patient patient, String newName);
-
-    void updateGender(Patient patient, String newGender);
-
-    void updateDateOfBirth(Patient patient, LocalDate newDateOfBirth);
+    Patient findPatientById(String patientID);
 
     void setAppointmentManager(IAppointmentManager appointmentManager);
 
     Collection<? extends User> getAllPatientsPrv();
 
-    Patient findPatientById(String patientID);
+    void updateContactInfo(Patient patient, String newContactInfo);
 
-    void addPatient(Patient newPatient);
+    void viewMedicalRecord(Patient patient);
 }

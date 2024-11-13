@@ -25,7 +25,6 @@ public class MedicineManager implements IMedicineManager {
         return medicines;
     }
 
-    @Override
     public boolean needsReplenishment(String name) {
         Medicine medicine = findMedicineByName(name);
         if (medicine != null) {
@@ -35,7 +34,6 @@ public class MedicineManager implements IMedicineManager {
         return false;
     }
 
-    @Override
     public void viewMedicines() {
         System.out.println("\n=== All Medicines ===");
         for (Medicine med : medicines) {
@@ -43,7 +41,6 @@ public class MedicineManager implements IMedicineManager {
         }
     }
 
-    @Override
     public void updateMedicineStock(String name, int newStock) {
         Medicine medicine = findMedicineByName(name);
         if (medicine != null) {
@@ -54,7 +51,6 @@ public class MedicineManager implements IMedicineManager {
         }
     }
 
-    @Override
     public void updateStockAlertLevel(String name, int newAlertLevel) {
         Medicine medicine = findMedicineByName(name);
         if (medicine != null) {
@@ -65,7 +61,6 @@ public class MedicineManager implements IMedicineManager {
         }
     }
     
-    @Override
     public void removeMedicine(String name) {
         Medicine medicineToRemove = findMedicineByName(name);
         if (medicineToRemove != null) {
@@ -76,7 +71,6 @@ public class MedicineManager implements IMedicineManager {
         }
     }
 
-    @Override
     public Medicine findMedicineByName(String name) {
         for (Medicine med : medicines) {
             if (med.getName().equalsIgnoreCase(name)) {
@@ -86,7 +80,6 @@ public class MedicineManager implements IMedicineManager {
         return null;
     }
 
-    @Override
     public List<Medicine> getAllMedicines() {
         return new ArrayList<>(medicines);
     }

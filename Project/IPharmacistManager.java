@@ -2,6 +2,10 @@ import java.util.List;
 
 public interface IPharmacistManager {
 
+    void setMedicineManager(IMedicineManager medicineManager);
+
+    void setPrescriptionManager(IPrescriptionManager prescriptionManager);
+
     void viewPrescriptionRecords();
 
     void viewPendingPrescriptionRecords();
@@ -14,7 +18,5 @@ public interface IPharmacistManager {
 
     void viewReplenishmentRequests();
 
-    void setMedicineManager(IMedicineManager medicineManager);
-
-    void setPrescriptionManager(IPrescriptionManager prescriptionManager);
+    
 }
