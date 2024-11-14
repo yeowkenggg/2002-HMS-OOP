@@ -1,12 +1,14 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Predicate;
 
+/**
+ * StaffManager - logic implementation for Staff class
+ */
 public class StaffManager implements IStaffManager{
     private List<Staff> staffList;
     private List<User> userList;
@@ -21,7 +23,15 @@ public class StaffManager implements IStaffManager{
         return new ArrayList<>(staffList); 
     }
 
-    // Initialize with an existing list of staff members
+    /**
+     * Constructor for StaffManager
+     * @param initialStaffList 
+     * @param userList 
+     * @param userManager 
+     * @param inventoryManager 
+     * @param prescriptionManager 
+     * @param doctorManager 
+     */
     public StaffManager(List<Staff> initialStaffList, List<User> userList, UserManager userManager, IMedicineManager inventoryManager, IPrescriptionManager prescriptionManager, IDoctorManager doctorManager) {
         this.staffList = new ArrayList<>(initialStaffList);
         this.userList = userList; 
@@ -36,7 +46,10 @@ public class StaffManager implements IStaffManager{
         }
     }
 
-
+    /**
+     * Load staff data from staff CSV file.
+     * @param filePath path to the CSV file
+     */
     public void loadStaffFromCSV(String filePath) {
         try (Scanner scanner = new Scanner(new File(filePath))) {
             if (scanner.hasNextLine()) {
@@ -71,6 +84,11 @@ public class StaffManager implements IStaffManager{
             e.printStackTrace();
         }
     }
+
+    /**
+     * Displays the staff management menu.
+     * Allows the user to perform actions related to staff management.
+     */
     public void displayStaffManagementMenu() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("--- Staff Manaagement Menu ---");
@@ -87,7 +105,7 @@ public class StaffManager implements IStaffManager{
         scanner.nextLine();
 
         if (action == (6)) {
-            return; // Exit the method
+            return;
         }
 
         switch (action) {
@@ -100,14 +118,19 @@ public class StaffManager implements IStaffManager{
         }
     }
 
-    // CRUD Operations for Staff
+    /**
+     * Add new staff member to the system.
+     * @param staff staff member to add
+     */
     public void addStaff(Staff staff) {
         userList.add(staff);
         staffList.add(staff);
     }
     
    
-
+    /**
+     * Entering of details of the new staff member
+     */
     public void addStaffMenu() {
     Scanner scanner = new Scanner(System.in);
 
@@ -154,7 +177,9 @@ public class StaffManager implements IStaffManager{
 
 
 
-
+    /**
+     * Updates details of an existing staff member.
+     */
     public void updateStaff() {
         Scanner scanner = new Scanner(System.in);
     
@@ -190,8 +215,7 @@ public class StaffManager implements IStaffManager{
             if (!role.isEmpty() && !role.equalsIgnoreCase(staff.getRole())) {
                 validateRole(role);
     
-                // if changing role, create a new instance of the appropriate subclass
-                // assuming you cannot just randomly change to an admin class
+                
                 Staff newStaff;
                 if ("Doctor".equalsIgnoreCase(role)) {
                     newStaff = new Doctor(staff.getUserId(), staff.getPassword(), name.isEmpty() ? staff.getName() : name, staff.getGender(), "Doctor", staff.getAge(), doctorManager);
@@ -231,7 +255,10 @@ public class StaffManager implements IStaffManager{
     
     
     
-
+    /**
+     * Removes a staff member from the system.
+     * @param userManager UserManager to remove staff from system
+     */
     public void removeStaff(UserManager userManager) {
             Scanner scanner = new Scanner(System.in);
         
@@ -265,7 +292,9 @@ public class StaffManager implements IStaffManager{
     }
     
     
-
+    /**
+     * Displays all staff members in the system.
+     */
     public void viewAllStaff() {
         System.out.println("\n--- All Staff Members ---");
         for (Staff staff : staffList) {
@@ -273,6 +302,9 @@ public class StaffManager implements IStaffManager{
         }
     }
 
+    /**
+     * Filter staff by criteria such as role, gender, or age.
+     */
     public void filterStaffMenu() {
         Scanner scanner = new Scanner(System.in);
         while (true) { 
@@ -337,7 +369,11 @@ public class StaffManager implements IStaffManager{
     }
     
 
-    // Utility functions for staff operations
+    /**
+     * Finds a staff member by their user ID.
+     * @param userId user ID to search for
+     * @return staff member if found, otherwise null
+     */
     public Staff findStaffById(String userId) {
         for (Staff staff : staffList) {
             if (staff.getUserId().equals(userId)) {
@@ -347,6 +383,10 @@ public class StaffManager implements IStaffManager{
         return null;
     }
     
+    /**
+     * Filters staff based on a specified criterion and displays matching results.
+     * @param criteria the filter criterion
+     */
     public void filterStaff(Predicate<Staff> criteria, String filterDescription) {
         System.out.println("\nFiltered Staff by " + filterDescription + ":");
         for (Staff staff : staffList) {
@@ -358,24 +398,40 @@ public class StaffManager implements IStaffManager{
         }
     }
 
+    /**
+     * Exception for invalid roles.
+     */
     public class InvalidRoleException extends Exception {
         public InvalidRoleException(String message) {
             super(message);
         }
     }
     
+    /**
+     * Exception for invalid genders.
+     */
     public class InvalidGenderException extends Exception {
         public InvalidGenderException(String message) {
             super(message);
         }
     }
 
+    /**
+     * Validates if gender provided is valid.
+     * @param gender gender to validate
+     * @throws InvalidGenderException if the gender is not valid
+     */
     private void validateGender(String gender) throws InvalidGenderException {
         if (!"Male".equalsIgnoreCase(gender) && !"Female".equalsIgnoreCase(gender)) {
             throw new InvalidGenderException("Invalid gender. Only 'Male' or 'Female' is allowed.");
         }
     }
 
+    /**
+     * Validates if role provided is valid.
+     * @param role role to validate
+     * @throws InvalidRoleException if the role is not valid
+     */
     private void validateRole(String role) throws InvalidRoleException {
         if (!"Doctor".equalsIgnoreCase(role) && !"Pharmacist".equalsIgnoreCase(role)) {
             throw new InvalidRoleException("Invalid role. Only 'Doctor' or 'Pharmacist' is allowed.");
