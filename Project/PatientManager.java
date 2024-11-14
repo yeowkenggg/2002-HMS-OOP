@@ -5,21 +5,36 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Class that manages patient related operations
+ */
 public class PatientManager implements IPatientManager {
 
     private List<Patient> patientList;
     private IAppointmentManager appointmentManager;
 
+    /**
+     * Constructor for PatientManager
+     * Construct a new patient list and assigns the appointment manager
+     * @param appointmentManager the manager used for managing appointment-related operations
+     */
     public PatientManager(AppointmentManager appointmentManager) {
         this.patientList = new ArrayList<>();
         this.appointmentManager = appointmentManager;
     }
 
+    /**
+     * set the appointment manager
+     * @param am the manager to set
+     */
     public void setAppointmentManager(IAppointmentManager am){
         this.appointmentManager = am;
     }
-
-    @Override
+    
+    /**
+     * Display medical record of a patient
+     * @param patient the patient which medical record is being retrieved
+     */
     public void viewMedicalRecord(Patient patient) {
         MedicalRecord record = MedicalRecord.getRecordByPatientID(patient.getUserId());
         if (record != null) {
@@ -29,7 +44,12 @@ public class PatientManager implements IPatientManager {
         }
     }
 
-    @Override
+    /**
+     * update a contact information of a patient
+     * @param patient the patient to be updated
+     * @param newContactInfo the contact information of the patient (email)
+     * @param phone the phone number of the patient
+     */
     public void updateContactInfo(Patient patient, String newContactInfo, int phone) {
         if (newContactInfo != null && !newContactInfo.trim().isEmpty()) {
             patient.setContactInfo(newContactInfo);
@@ -40,34 +60,11 @@ public class PatientManager implements IPatientManager {
         }
     }
     
-
-    public void updateName(Patient patient, String newName) {
-        if (newName != null && !newName.trim().isEmpty()) {
-            patient.setName(newName);
-            System.out.println("Name updated to: " + newName);
-        } else {
-            System.out.println("Name cannot be empty.");
-        }
-    }
-
-    public void updateGender(Patient patient, String newGender) {
-        if ("Male".equalsIgnoreCase(newGender) || "Female".equalsIgnoreCase(newGender)) {
-            patient.setGender(newGender);
-            System.out.println("Gender updated to: " + newGender);
-        } else {
-            System.out.println("Invalid gender input. Please enter 'Male' or 'Female'.");
-        }
-    }
-
-    public void updateDateOfBirth(Patient patient, LocalDate newDateOfBirth) {
-        if (newDateOfBirth != null) {
-            patient.setDateOfBirth(newDateOfBirth);
-            System.out.println("Date of birth updated to: " + newDateOfBirth);
-        } else {
-            System.out.println("Invalid date of birth.");
-        }
-    }
-    
+    /**
+     * Retrieve a list of all patient
+     * @param caller the caller must be either a doctor or administrator
+     * @return a list of patient
+     */
     public List<Patient> getAllPatients(Staff caller) { //
     if ("Doctor".equals(caller.getRole()) || "Administrator".equals(caller.getRole())) {
         return new ArrayList<>(patientList);
@@ -77,11 +74,19 @@ public class PatientManager implements IPatientManager {
     }
     }
 
-
+    /**
+     * retrieves a list of all patients (used internally, no restrictions)
+     * @return a list of patients
+     */
     public List<Patient> getAllPatientsInternal() {
         return patientList;
     }
 
+    /**
+     * Finds a patient based on its ID
+     * @param patientID the ID of the patient to find
+     * @return the patient
+     */
     public Patient findPatientById(String patientID) {
         for (Patient patient : getAllPatientsInternal()) {
             if (patient.getPatientID().equals(patientID)) {
@@ -91,23 +96,15 @@ public class PatientManager implements IPatientManager {
         return null;
     }
     
-    @Override
+    /**
+     * Adds a new patient to the patient list
+     * @param patient the patient to be added
+     */
     public void addPatient(Patient patient) {
         if (!patientList.contains(patient)) {
             patientList.add(patient);
             //System.out.println("Patient added: " + patient.getName() + " (ID: " + patient.getUserId() + ")");
         }
     }
-
-
-    
-    
-
-
-
-
-
-
-
     
 }

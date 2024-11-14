@@ -8,12 +8,12 @@ public abstract class Staff extends User {
 
     /**
      * Constructor for Staff
-     * @param userId
-     * @param password
-     * @param name
-     * @param gender
-     * @param role
-     * @param age
+     * @param userId from superclass
+     * @param password from superclass
+     * @param name from superclass
+     * @param gender from superclass
+     * @param role role of staff
+     * @param age age of staff
      */
 	public Staff(String userId, String password, String name, String gender, String role, int age) {
 		super(userId, password, name, gender);  
@@ -53,7 +53,7 @@ public abstract class Staff extends User {
 
     /**
      * Set method to update the age of the staff member.
-     * @return age of the staff member
+     * @param age  age of the staff member
      */
     public void setAge(int age) {
         this.age = age;
@@ -67,6 +67,9 @@ public abstract class Staff extends User {
         return staffList;
     }
 
+    /**
+     * Abstract class for subclasses to implement their own displayMenu
+     */
     @Override
     public abstract void displayMenu();
     

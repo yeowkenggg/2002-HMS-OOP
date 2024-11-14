@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Prescription Class
+ */
 public class Prescription {
 
     private String prescriptionID;
@@ -10,7 +13,13 @@ public class Prescription {
 
     private static List<Prescription> allPrescriptions = new ArrayList<>();
 
-    //constructor
+    /**
+     * Constructor for Prescription
+     * @param prescriptionID unique identifier for prescription
+     * @param medicines the medicine for the prescription
+     * @param quantities the quantity of medicine for the prescription
+     * @param status the status of the prescription
+     */
     public Prescription(String prescriptionID, List<Medicine> medicines, List<Integer> quantities, String status) {
         this.prescriptionID = prescriptionID;
         this.medicines = medicines;
@@ -19,26 +28,42 @@ public class Prescription {
         allPrescriptions.add(this);
     }
 
-    //check if medicine exists in the list
+    /**
+     * A check if the inventory has such a medicine
+     * @param med the medicine to be checked for
+     * @return a boolean to indicate if the medicine exists
+     */
     public boolean hasMedicine(Medicine med) {
         return medicines.contains(med);
     }
     
-    //get prescription id 
+    /**
+     * get method to get prescription ID
+     * @return the prescription iD
+     */
     public String getPrescriptionID() {
         return prescriptionID;
     }
 
-    //get status
+    /**
+     * get method for status
+     * @return the status
+     */
     public String getStatus() {
         return status;
     }
 
+    /**
+     * get method to get a list of all prescrptions
+     * @return a list of all prescriptions
+     */
     public static List<Prescription> getAllPrescriptions() {
         return allPrescriptions;
     }
 
-    //change the status from pending to dispensed
+    /**
+     * update method to change the method from "Pending" to "Dispensed"
+     */
     public void updateStatus() {
         if ("Pending".equals(this.status)) {
             this.status = "Dispensed";
@@ -48,15 +73,25 @@ public class Prescription {
         }
     }
     
+    /**
+     * Method to retrieve all medicines
+     * @return a list of medicines
+     */
     public List<Medicine> getMedicines() {
         return medicines;
     }
 
+    /**
+     * Method to retrieve the quantity of medicines
+     * @return a list of quantities of medicines
+     */
     public List<Integer> getQuantities() {
         return quantities;
     }
 
-    @Override
+    /**
+     * String representation of prescription 
+     */
     public String toString() {
         String result = prescriptionID + " Medicines: ";
         

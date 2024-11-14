@@ -2,14 +2,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * A manager class for managing the medicines
+ */
 public class MedicineManager implements IMedicineManager {
     private List<Medicine> medicines;
 
+    /**
+     * Constructing a new MedicineManager with a empty list 
+    */
     public MedicineManager() {
         this.medicines = new ArrayList<>();
     }
 
-    @Override
+    /**
+     * Adds a new medicine to the inventory
+     * @param name the name of the medicine
+     * @param stock the stock of the medicine
+     * @param alertLevel the alert level of the medicine
+     */
     public void addMedicine(String name, int stock, int alertLevel) {
         Medicine existingMedicine = findMedicineByName(name);
         if (existingMedicine != null) {
@@ -21,10 +32,19 @@ public class MedicineManager implements IMedicineManager {
         
     }
 
+    /**
+     * get method to retrieve the inventory of medicine
+     * @return the list of medicine
+     */
     public List<Medicine> getInventory() {
         return medicines;
     }
 
+    /**
+     * check if a medicine requires replenishment
+     * @param name the name of the medicine
+     * @return boolean to check if the medicine requires replenishment
+     */
     public boolean needsReplenishment(String name) {
         Medicine medicine = findMedicineByName(name);
         if (medicine != null) {
@@ -34,6 +54,9 @@ public class MedicineManager implements IMedicineManager {
         return false;
     }
 
+    /**
+     * display information of all the medicine
+     */
     public void viewMedicines() {
         System.out.println("\n=== All Medicines ===");
         for (Medicine med : medicines) {
@@ -41,6 +64,11 @@ public class MedicineManager implements IMedicineManager {
         }
     }
 
+    /**
+     * update the stock of a medicine
+     * @param name the name of the medicine
+     * @param newStock the new stock of the medicine
+     */
     public void updateMedicineStock(String name, int newStock) {
         Medicine medicine = findMedicineByName(name);
         if (medicine != null) {
@@ -51,6 +79,11 @@ public class MedicineManager implements IMedicineManager {
         }
     }
 
+    /**
+     * update the stock alert level of a medicine
+     * @param name the name of the medicine
+     * @param newAlertLevel the new alert level of the medicine
+     */
     public void updateStockAlertLevel(String name, int newAlertLevel) {
         Medicine medicine = findMedicineByName(name);
         if (medicine != null) {
@@ -61,6 +94,10 @@ public class MedicineManager implements IMedicineManager {
         }
     }
     
+    /**
+     * remove a medicine from the inventory
+     * @param name the name of the medicine to be removed
+     */
     public void removeMedicine(String name) {
         Medicine medicineToRemove = findMedicineByName(name);
         if (medicineToRemove != null) {
@@ -71,6 +108,11 @@ public class MedicineManager implements IMedicineManager {
         }
     }
 
+    /**
+     * retrieves the medicine based on its name
+     * @param name the name of the medicine
+     * @return the medicine
+     */
     public Medicine findMedicineByName(String name) {
         for (Medicine med : medicines) {
             if (med.getName().equalsIgnoreCase(name)) {
@@ -80,10 +122,17 @@ public class MedicineManager implements IMedicineManager {
         return null;
     }
 
+    /**
+     * get method to get all the medicine
+     * @return a list of medicines
+     */
     public List<Medicine> getAllMedicines() {
         return new ArrayList<>(medicines);
     }
 
+    /**
+     * a display menu for medicine managmenet
+     */
     public void displayMedicineManagementMenu() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\n--- Medicine Management ---");
@@ -111,6 +160,7 @@ public class MedicineManager implements IMedicineManager {
         }
     }
 
+    //internal CRUD of medicine
     private void addMedicineMenu() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter Medicine Name: ");
@@ -181,6 +231,9 @@ public class MedicineManager implements IMedicineManager {
     }
     
 
+    /**
+     * view all pending replenishment request
+     */
     public void viewReplenishmentRequests() {
         System.out.println("Pending Replenishment Requests:");
         for (ReplenishmentRequest request : ReplenishmentRequest.getRequests()) {
@@ -192,6 +245,10 @@ public class MedicineManager implements IMedicineManager {
         }
     }
 
+    /**
+     * approve a replenishment based on its ID
+     * @param requestID the ID of the replennishmnet request
+     */
     public void approveReplenishment(String requestID) {
         for (ReplenishmentRequest request : ReplenishmentRequest.getRequests()) {
             if (request.getRequestID().equals(requestID) && !request.isApproved()) {
@@ -203,6 +260,10 @@ public class MedicineManager implements IMedicineManager {
         System.out.println("Replenishment request not found or already approved.");
     }
 
+    /**
+     * retrieve a list of replenishment request that is pending status
+     * @return a list of pending replenishment request
+     */
     public List<ReplenishmentRequest> getPendingReplenishmentRequests() {
         List<ReplenishmentRequest> pendingRequests = new ArrayList<>();
         for (ReplenishmentRequest request : ReplenishmentRequest.getRequests()) {
@@ -213,11 +274,19 @@ public class MedicineManager implements IMedicineManager {
         return pendingRequests;
     }
 
+    /**
+     * Check if a medicien is available
+     * @param medicineName the medicine name to be checked
+     * @return a indication if the medicine is available
+     */
     public boolean isAvailable(String medicineName) {
         return medicines.stream()
                 .anyMatch(medicine -> medicine.getName().equalsIgnoreCase(medicineName));
     }
 
+    /**
+     * Display inventory
+     */
     public void displayInventory() {
         System.out.println("\n=== Inventory ===");
         for (int i = 0; i < medicines.size(); i++) {
@@ -226,6 +295,11 @@ public class MedicineManager implements IMedicineManager {
         }
     }
 
+    /**
+     * get the index of medicine (for input)
+     * @param index the index of medicine
+     * @return the medicine
+     */
     public Medicine getMedicineByIndex(int index) {
         if (index >= 0 && index < medicines.size()) {
             return medicines.get(index);
@@ -235,7 +309,10 @@ public class MedicineManager implements IMedicineManager {
     }
     
     
-    //will call this method a few time repeatedly, so might as well make a method for it
+    /**
+     * Select a medicine by indicating the index (user input)
+     * @return the medicine
+     */
     private Medicine selectMedicineByIndex() {
         Scanner scanner = new Scanner(System.in);
         List<Medicine> inventory = getInventory();

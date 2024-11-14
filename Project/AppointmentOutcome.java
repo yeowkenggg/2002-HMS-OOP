@@ -2,6 +2,9 @@ import java.util.*;
 import java.io.*;
 import java.time.LocalDate;
 
+/**
+ * Appointment outcome class
+ */
 public class AppointmentOutcome {
 	
 	
@@ -11,7 +14,14 @@ public class AppointmentOutcome {
 	private Prescription prescription;
 	private LocalDate appointmentDate;
 
-	//constructor
+	/**
+	 * Constructor for AppointmentOutcome
+	 * @param appointment the appointment associated with this outcome
+	 * @param services the services provided
+	 * @param notes the notes recorded
+	 * @param prescription the prescription issued
+	 * @param localDate the date of appointment
+	 */
 	public AppointmentOutcome(Appointment appointment, String services, String notes, Prescription prescription, LocalDate localDate) {
         this.appointment = appointment;
         this.services = services;
@@ -21,50 +31,75 @@ public class AppointmentOutcome {
 
     }
 
+	/**
+	 * get method to retrieve appointment
+	 * @return the appointment to get
+	 */
 	public Appointment getAppointment() {
         return appointment;
     }
 
 	
 	/**
-	 * 
-	 * @param services
+	 * set method to set services
+	 * @param services the services to set
 	 */
 	public void setServices(String services) {
 		this.services = services;
 	}
 
+	/**
+	 * get method to retrieve services
+	 * @return the service to get
+	 */
 	public String getServices() {
         return services;
     }
+
 	/**
-	 * 
-	 * @param notes
+	 * set method to set notes
+	 * @param notes the notes to set
 	 */
 	public void setNotes(String notes) {
 		this.notes = notes;
 	}
 
+	/**
+	 * get method to retrieve notes
+	 * @return the notes to get
+	 */
 	public String getNotes() {
         return notes;
     }
 
+	/**
+	 * get method for prescription
+	 * @return the prescription to get
+	 */
 	public Prescription getPrescriptrion() {
 		return prescription;
 	}
 
+	/**
+	 * get method for appointmentDate
+	 * @return the date of appointment
+	 */
 	public LocalDate getAppointmentDate() {
         return appointmentDate;
     }
 
 	/**
-	 * 
-	 * @param prescription
+	 * set method for prescription
+	 * @param prescription the prescription to set
 	 */
 	public void setPrescription(Prescription prescription) {
 		this.prescription = prescription;
 	}
 	
+	/**
+	 * Details of a appointment outcome
+	 * @return formatted string with details of outcome
+	 */
 	public String getDetails() {
 		StringBuilder details = new StringBuilder();
 		details.append("======= Appointment Outcome =======\n");
@@ -85,7 +120,10 @@ public class AppointmentOutcome {
 	
 	
 
-
+	/**
+	 * Generates a representation of appointmentoutcome
+	 * @return a string representing appointmentoutcome details
+	 */
 	public String toString() {
 		return "======= Appointment Outcome =======\n" +
 				"Appointment Date: " + appointmentDate +

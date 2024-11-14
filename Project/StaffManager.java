@@ -25,12 +25,12 @@ public class StaffManager implements IStaffManager{
 
     /**
      * Constructor for StaffManager
-     * @param initialStaffList 
-     * @param userList 
-     * @param userManager 
-     * @param inventoryManager 
-     * @param prescriptionManager 
-     * @param doctorManager 
+     * @param initialStaffList  initalize a new staffList to populate staff
+     * @param userList shared list of all users
+     * @param userManager  the manager for handling user-related operations
+     * @param inventoryManager the manager for handling inventory-related operations
+     * @param prescriptionManager the manager for handling prescrpition-related operations
+     * @param doctorManager the manager for handling doctor-related operations
      */
     public StaffManager(List<Staff> initialStaffList, List<User> userList, UserManager userManager, IMedicineManager inventoryManager, IPrescriptionManager prescriptionManager, IDoctorManager doctorManager) {
         this.staffList = new ArrayList<>(initialStaffList);
@@ -386,6 +386,7 @@ public class StaffManager implements IStaffManager{
     /**
      * Filters staff based on a specified criterion and displays matching results.
      * @param criteria the filter criterion
+     * @param filterDescription name of the filter
      */
     public void filterStaff(Predicate<Staff> criteria, String filterDescription) {
         System.out.println("\nFiltered Staff by " + filterDescription + ":");
@@ -402,6 +403,10 @@ public class StaffManager implements IStaffManager{
      * Exception for invalid roles.
      */
     public class InvalidRoleException extends Exception {
+        /**
+         * Custom exception for role validation
+         * @param message the message for exception
+         */
         public InvalidRoleException(String message) {
             super(message);
         }
@@ -411,6 +416,10 @@ public class StaffManager implements IStaffManager{
      * Exception for invalid genders.
      */
     public class InvalidGenderException extends Exception {
+        /**
+         * Custom exception for gender validation
+         * @param message the message for exception
+         */
         public InvalidGenderException(String message) {
             super(message);
         }

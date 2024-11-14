@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Class for patient's medical records
+ */
 public class MedicalRecord {
 
 	private Patient patient;
@@ -15,9 +18,12 @@ public class MedicalRecord {
 
 	private static List<MedicalRecord> allRecords = new ArrayList<>();
 
-	//constructor
+	/**
+     * Constructor for MedicalRecord
+     * @param patient reference to existing patient object 
+     */
     public MedicalRecord(Patient patient) {
-        this.patient = patient; //reference to existing Patient object
+        this.patient = patient; 
         this.diagnoses = new ArrayList<>();
         this.treatments = new ArrayList<>();
         this.prescriptions = new ArrayList<>();
@@ -25,29 +31,66 @@ public class MedicalRecord {
         this.entryTimestamps = new ArrayList<>();
     }
 
+    /**
+     * get method to get patient's name
+     * @return patient's name
+     */
     public String getPatientName(){
         return patient.getName();
     }
+
+    /**
+     * get method to get patient's blood type
+     * @return patient's bloodtype
+     */
     public String getPatientBloodType(){
         return patient.getBloodType();
     }
+
+    /**
+     * get method to get patient's contact information (email)
+     * @return patient's contact info
+     */
     public String getContactInfo(){
         return patient.getContactInfo();
     }
+
+    /**
+     * get method to get patient's dob
+     * @return patient's dob
+     */    
     public LocalDate getDateOfBirth(){
         return patient.getDateOfBirth();
     }
+
+    /**
+     * get method to get patient's phone number
+     * @return patient's phone number
+     */
     public int getPhoneNumber(){
         return patient.getPhoneNumber();
     }
+    
+    /**
+     * get method to get patient's gender
+     * @return patient's gender
+     */
     public String getGender(){
         return patient.getGender();
     }
 
+    /**
+     * adds a medical record to the list of allrecords
+     * @param record the medical record to be added
+     */
  	public static void addRecord(MedicalRecord record) {
         allRecords.add(record);
     }
 
+    /**
+     * adds an appointment outcome to the medical records
+     * @param outcome the outcome to add
+     */
     public void addAppointmentOutcome(AppointmentOutcome outcome) {
         if (!pastAppointments.contains(outcome)) {  // Check to prevent duplicates
             pastAppointments.add(outcome);
@@ -56,53 +99,50 @@ public class MedicalRecord {
             System.out.println("Appointment outcome already exists in the record for Patient ID: " + patient.getPatientID());
         }
     }
-    
 
-    public void removeAppointmentOutcome(AppointmentOutcome outcome) {
-        if (pastAppointments.contains(outcome)) {
-            pastAppointments.remove(outcome);
-            System.out.println("Appointment outcome removed from medical record for Patient ID: " + patient.getPatientID());
-        } else {
-            System.out.println("Outcome not found in the medical record for Patient ID: " + patient.getPatientID());
-        }
-    }
-
+    /**
+     * adds a diagnosis to medical record
+     * @param diagnosis the diagnosis to be added
+     */
     public void addDiagnosis(Diagnosis diagnosis) {
         diagnoses.add(diagnosis);
         entryTimestamps.add(LocalDateTime.now());
         System.out.println("Diagnosis added to medical record for Patient ID: " + patient.getPatientID());
     }
 
+    /**
+     * adds a prescription to medical record
+     * @param prescription the prescription to be added
+     */
     public void addPrescription(Prescription prescription) {
         prescriptions.add(prescription);
         entryTimestamps.add(LocalDateTime.now());
         System.out.println("Prescription added to medical record for Patient ID: " + patient.getPatientID());
     }
 
+    /**
+     * adds a treatment to medical record
+     * @param treatment the treatment to be added
+     */
     public void addTreatment(Treatment treatment) {
         treatments.add(treatment);
         entryTimestamps.add(LocalDateTime.now());
         System.out.println("Treatment added to medical record for Patient ID: " + patient.getPatientID());
     }
 
-    public void removeDiagnosis(String diagnosisID) {
-        diagnoses.removeIf(diagnosis -> diagnosis.getDiagnosisID().equals(diagnosisID));
-        System.out.println("Diagnosis with ID " + diagnosisID + " removed from medical record for Patient ID: " + patient.getPatientID());
-    }
-
-    public void removeTreatment(String treatmentID) {
-        treatments.removeIf(treatment -> treatment.getTreatmentID().equals(treatmentID));
-        System.out.println("Treatment with ID " + treatmentID + " removed from medical record for Patient ID: " + patient.getPatientID());
-    }
-
-    public void removePrescription(String prescriptionID) {
-        prescriptions.removeIf(treatment -> treatment.getPrescriptionID().equals(prescriptionID));
-        System.out.println("Prescription with ID " + prescriptionID + " removed from medical record for Patient ID: " + patient.getPatientID());
-    }
-
+    /**
+     * retrieves all appointment outcomes
+     * @return a list of appointment outcomes
+     */
     public List<AppointmentOutcome> getAppointmentOutcomes() {
         return new ArrayList<>(pastAppointments); 
     }
+
+    /**
+     * finds medical record by patient ID
+     * @param patientID the ID to be retrieved
+     * @return the medical record that was retrieved
+     */
 	public static MedicalRecord getRecordByPatientID(String patientID) {
         for (MedicalRecord record : allRecords) {
             if (record.patient.getPatientID().equals(patientID)) {
@@ -112,6 +152,11 @@ public class MedicalRecord {
         return null;  // null if no record found
     }
 
+    /**
+     * Method to return a patient's phone number formatted as string
+     * this is use for display purposes, as default when a patient information is added, their phone number is 0
+     * @return the patient's phone number if available, else N/A
+     */
     public String getPhoneNumberString(){
         if(this.getPhoneNumber() == 0){
             return "N/A";
@@ -121,7 +166,9 @@ public class MedicalRecord {
         }
     }
 
-    
+    /**
+     * Display for medical record
+     */
     public void viewMedicalRecord() {
         System.out.println("=== Medical Record ===");
         System.out.println("Patient ID: " + patient.getPatientID());

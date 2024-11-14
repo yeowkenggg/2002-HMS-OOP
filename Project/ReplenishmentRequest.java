@@ -18,11 +18,11 @@ public class ReplenishmentRequest {
 
 	/**
      * Constructor for ReplenishmentRequest
-     * @param requestID
-     * @param medicine 
-     * @param requestedAmount 
-     * @param pharmacistID 
-     * @param pharmacistName 
+     * @param requestID the ID of replenishment request
+     * @param medicine the medicine for request
+     * @param requestedAmount the amount requested
+     * @param pharmacistID the pharmacist ID
+     * @param pharmacistName  the pharmacist Name
      */
 	public ReplenishmentRequest(String requestID, Medicine medicine, int requestedAmount, String pharmacistID, String pharmacistName) {
         this.requestID = requestID;

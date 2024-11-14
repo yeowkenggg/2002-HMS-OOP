@@ -7,6 +7,10 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+/**
+ * The main logic of the entire application
+ * Here, it will manage the different menu for different roles and providing the core application functionality 
+ */
 public class UserManager {
     private List<User> users;
     private IDoctorManager doctorManager;
@@ -16,6 +20,15 @@ public class UserManager {
 
     //delcaring a regex to detect email for contactInfo update
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+
+    /**
+     * Constructor for UserManager
+     * @param users list of user
+     * @param doctorManager manager responsible for doctor-related operations
+     * @param appointmentManager manager responsible for appointment-related operations
+     * @param medicineManager manager responsible for medicine-related operations
+     * @param prescriptionManager manager responsible for prescription-related operations
+     */
     public UserManager(List<User> users, IDoctorManager doctorManager, IAppointmentManager appointmentManager, 
                        IMedicineManager medicineManager, IPrescriptionManager prescriptionManager) {
         this.users = users;
@@ -25,17 +38,35 @@ public class UserManager {
         this.prescriptionManager = prescriptionManager; 
     }
 
+    /**
+     * set method to set medicine manager
+     * @param mm the medicine manager
+     */
     public void setMedicineManager(MedicineManager mm) {
         this.medicineManager = mm;
     }
+
+    /**
+     * set method to set doctor manager
+     * @param dm the doctor manager
+     */
     public void setDoctorManager(DoctorManager dm){
         this.doctorManager = dm;
     }
 
+    /**
+     * set method to set appointment manager
+     * @param am the appointment manager
+     */
     public void setAppointmentManager(AppointmentManager am){
         this.appointmentManager = am;
     }
 
+    /**
+     * prompts user for login userId and password and initiate the session based on the role of the credentials
+     * it will require the user to change password upon the first logon
+     * displaying the menu bsaed on the user role
+     */
     public void loginUser() {
         Scanner scanner = new Scanner(System.in);
     
@@ -80,7 +111,10 @@ public class UserManager {
         loginUser(); // repeat logins if failed
     }
 
- 
+    /**
+     * manages the doctor menu, providing options to navigate and its logic implementation
+     * @param doctor the logged in doctor
+     */
     private void handleDoctorMenu(Doctor doctor) {
         Scanner scanner = new Scanner(System.in);
         while (doctor.isLoggedIn()) {
@@ -423,6 +457,10 @@ public class UserManager {
         }
     }
 
+    /**
+     * manages the admin menu, providing options to navigate and its logic implementation
+     * @param admin the logged in admin
+     */
     private void handleAdminMenu(Administrator admin) {
         Scanner scanner = new Scanner(System.in);
         while (admin.isLoggedIn()) {
@@ -460,7 +498,10 @@ public class UserManager {
         }
     }
     
-
+    /**
+     * manages the pharmacist menu, providing options to navigate and its logic implementation
+     * @param pharmacist the logged in pharmacist
+     */
     private void handlePharmacistMenu(Pharmacist pharmacist) {
         Scanner scanner = new Scanner(System.in);
         while (pharmacist.isLoggedIn()) {
@@ -545,6 +586,11 @@ public class UserManager {
             }
         }
     }
+
+    /**
+     * manages the patient menu, providing options to navigate and its logic implementation
+     * @param patient the logged in patient
+     */
     private void handlePatientMenu(Patient patient) {
         Scanner scanner = new Scanner(System.in);
         while (patient.isLoggedIn()) {
@@ -806,10 +852,20 @@ public class UserManager {
             }
         }
     }
+
+    /**
+     * returns a list of all users
+     * @return list of all users
+     */
     public List<User> getUsers() {
         return users;
     }
 
+
+    /**
+     * prompts user for password change upon their first logon
+     * @param user the user that require to change password
+     */
     private void promptPasswordChange(User user) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter new password: ");
@@ -828,6 +884,11 @@ public class UserManager {
         }
     }
     
+    /**
+     * retrieve an input from user and checking if its an integer
+     * @param scanner the scanner that is declared for user input
+     * @return a valid integer
+     */
     public int getValidIntInput(Scanner scanner) {
         while (true) {
             try {
@@ -839,6 +900,11 @@ public class UserManager {
         }
     }
     
+    /**
+     * validate an email which is checked against a regex
+     * @param email the email to checked/validated
+     * @return boolean whether if the email is of correct format
+     */
     public static boolean isValidEmail(String email) {
         if (email == null) {
             return false;

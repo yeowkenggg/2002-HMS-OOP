@@ -16,7 +16,6 @@ public abstract class User {
      * @param password User password
      * @param name     User full name
      * @param gender   User gender
-     * @param isLogged ensures no account is logged in by default
      */ 
     public User(String userId, String password, String name, String gender) {
         this.userId = userId;

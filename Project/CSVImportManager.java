@@ -3,8 +3,28 @@ import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.Scanner;
 
+/**
+ * A class made just to import the information of the CSV files for this project.
+ * Medicine_List.csv, Patient_List.csv, Staff_List.csv
+ * The files are indicated in Main.java
+ */
 public class CSVImportManager {
-
+    
+    /**
+     * Default constructor for CSVImportManager.
+     */
+    public CSVImportManager() {
+    }
+    
+    /**
+     * Method to import staff information from the CSV file and initialize them
+     * @param filePath the filepath to the CSV
+     * @param staffManager the manager responsible for handling staff-related operations
+     * @param medicineManager the manager responsible for handling medicine-related operations
+     * @param pharmacistManager the manager responsible for handling pharmacist-related operations
+     * @param doctorManager the manager responsible for handling doctor-related operations
+     * @param prescriptionManager the manager responsible for handling prescription-related operations
+     */
     public static void importStaffData(String filePath, IStaffManager staffManager, IMedicineManager medicineManager, IPharmacistManager pharmacistManager, IDoctorManager doctorManager, IPrescriptionManager prescriptionManager) {
         try (Scanner scanner = new Scanner(new File(filePath))) {
             if (scanner.hasNextLine()) {
@@ -39,6 +59,12 @@ public class CSVImportManager {
         }
     }
 
+    /**
+     * Method to import patient information from the CSV and initialize them
+     * @param filePath the filepath to the CSV 
+     * @param patientManager the manager responsible for handling patient-related operations
+     * @param appointmentManager the manager responsible for handling appointment-related operations
+     */
     public static void importPatientData(String filePath, IPatientManager patientManager, IAppointmentManager appointmentManager) {
         try (Scanner scanner = new Scanner(new File(filePath))) {
             if (scanner.hasNextLine()) {
@@ -69,6 +95,11 @@ public class CSVImportManager {
         }
     }
 
+    /**
+     * Method to import medicine information from the CSV and initialize them
+     * @param filePath the filepath to the CSV
+     * @param medicineManager the manager responsible for handling medicine-related operations
+     */
     public static void importMedicineData(String filePath, IMedicineManager medicineManager) {
         try (Scanner scanner = new Scanner(new File(filePath))) {
             if (scanner.hasNextLine()) {

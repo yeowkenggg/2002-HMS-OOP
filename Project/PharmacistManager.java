@@ -3,27 +3,45 @@ import java.util.List;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Manager class which manages the pharmacist-related operations
+ */
 class PharmacistManager implements IPharmacistManager {
 
     private IPrescriptionManager prescriptionManager;
     private IMedicineManager medicineManager;
     private List<ReplenishmentRequest> replenishmentRequests;
 
+    /**
+     * Constructor for PharmacistManager
+     * @param prescriptionManager the manager used for managing prescription records
+     * @param medicineManager the manager used for managing medicine records
+     */
     public PharmacistManager(IPrescriptionManager prescriptionManager, IMedicineManager medicineManager) {
         this.prescriptionManager = prescriptionManager;
         this.medicineManager = medicineManager;
         this.replenishmentRequests = new ArrayList<>();
     }
 
+    /**
+     * set method to set prescriptionmanager
+     * @param pm the prescription manager
+     */
     public void setPrescriptionManager(IPrescriptionManager pm){
         this.prescriptionManager = pm;   
     }
 
+    /**
+     * set method to set medicine manager
+     * @param mm the medicine manager
+     */
     public void setMedicineManager(IMedicineManager mm){
         this.medicineManager = mm;
     }
     
-    @Override
+    /**
+     * display all prescription record
+     */
     public void viewPrescriptionRecords() {
         System.out.println("\nPrescription Records:");
         List<Prescription> prescriptions = prescriptionManager.getAllPrescriptions();
@@ -37,7 +55,9 @@ class PharmacistManager implements IPharmacistManager {
         }
     }
 
-    @Override
+    /**
+     * display all pending prescription record
+     */
     public void viewPendingPrescriptionRecords() {
         System.out.println("\nPending Prescription Records:");
         List<Prescription> pendingPrescriptions = prescriptionManager.getPendingPrescriptions();
@@ -51,14 +71,21 @@ class PharmacistManager implements IPharmacistManager {
         }
     }
 
-    @Override
+    /**
+     * update a prescription record status
+     * @param prescriptionID the ID of the prescription to be udpated
+     */
     public void updatePrescriptionStatus(String prescriptionID) {
         if (!prescriptionManager.updatePrescriptionStatus(prescriptionID)) {
             System.out.println("Prescription with ID " + prescriptionID + " not found.");
         }
     }
 
-    @Override
+    /**
+     * submit a replenishment request for a medicine
+     * @param medicineName the name of the medicine to be replenished
+     * @param amt the amount to be replenished
+     */
     public void replenishmentRequest(String medicineName, int amt) {
         Medicine medicine = medicineManager.findMedicineByName(medicineName);
 
@@ -81,7 +108,7 @@ class PharmacistManager implements IPharmacistManager {
                 return;
             }
 
-            // Creating a new request
+            // creating a new request
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMHHmmss");
             String requestID = "R" + LocalDateTime.now().format(formatter);
             ReplenishmentRequest request = new ReplenishmentRequest(requestID, medicine, amt, "pharmacistID", "pharmacistName");
@@ -93,12 +120,17 @@ class PharmacistManager implements IPharmacistManager {
         }
     }
 
-    @Override
+
+    /**
+     * Method to view all the inventory in the system
+     */
     public void viewInventory() {
         medicineManager.viewMedicines();
     }
 
-    @Override
+    /**
+     * Display all replenishment request made by pharmacist
+     */
     public void viewReplenishmentRequests() {
         System.out.println("Replenishment Requests by Pharmacist:");
         for (ReplenishmentRequest request : replenishmentRequests) {

@@ -1,30 +1,55 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * AppointmentManager, logic for appointments
+ */
 public class AppointmentManager implements IAppointmentManager {
 
     private IDoctorManager doctorManager;
     private IPatientManager patientManager;
     private List<Appointment> allAppointments;
 
-
+    /**
+     * Constructor for appointment manager
+     * @param doctorManager  manager responsible for doctor-related logic
+     * @param patientManager manager responsible for patient-related logic
+     * @param allAppointments a list of appointments
+     */
     public AppointmentManager(IDoctorManager doctorManager, IPatientManager patientManager,List<Appointment> allAppointments) {
         this.doctorManager = doctorManager;
         this.patientManager = patientManager;    
         this.allAppointments = allAppointments;
     }
+
+    /**
+     * setting doctorManager (to prevent cyclic in Main)
+     * @param dm set doctorManager
+     */
     public void setDoctorManager(IDoctorManager dm){
         this.doctorManager = dm;
     }
 
+    /**
+     * setting patientManager (to prevent cyclic in Main)
+     * @param pm set patientManager
+     */
     public void setPatientManager(IPatientManager pm){
         this.patientManager = pm;
     }
 
+    /**
+     * setting allAppointment (to prevent cyclic in Main)
+     * @param app set list
+     */
     public void setAppList(List<Appointment> app){
         this.allAppointments = app;
     }
 
+    /**
+     * Outputs all available slots for a particular doctor based on the parameters
+     * @param doctor specified doctor for this method to output his/her available slots
+     */
     public void viewAvailableSlots(Doctor doctor) {
         System.out.println("Available Slots for Dr. " + doctor.getName() + ":");
         List<TimeSlot> availableSlots = doctorManager.getAvailability(doctor);
@@ -33,21 +58,34 @@ public class AppointmentManager implements IAppointmentManager {
         }
     }
 
+    /**
+     * Method to schedule an appointment between patient and doctor
+     * @param patient indicating which patient is involved with the appointment
+     * @param doctor indicating which doctor is involved with the appointment
+     * @param timeSlot the time which the appointment is scheduled
+     */
     public void scheduleAppointment(Patient patient, Doctor doctor, TimeSlot timeSlot) {
-    if (doctorManager.isAvailable(doctor, timeSlot)) {
-        String appointmentID = "APT" + System.currentTimeMillis();
-        Appointment appointment = new Appointment(appointmentID, patient.getUserId(), doctor.getUserId(), timeSlot, "Pending");
+        if (doctorManager.isAvailable(doctor, timeSlot)) {
+            String appointmentID = "APT" + System.currentTimeMillis();
+            Appointment appointment = new Appointment(appointmentID, patient.getUserId(), doctor.getUserId(), timeSlot, "Pending");
 
-        patient.addAppointment(appointment);
-        doctor.addAppointment(appointment);
-        doctor.removeAvailability(timeSlot);
-        allAppointments.add(appointment);
-        
-    } else {
-        System.out.println("Doctor is unavailable at the selected time slot.");
+            patient.addAppointment(appointment);
+            doctor.addAppointment(appointment);
+            doctor.removeAvailability(timeSlot);
+            allAppointments.add(appointment);
+            
+        } else {
+            System.out.println("Doctor is unavailable at the selected time slot.");
+        }
     }
-}
 
+    /**
+     * Method to reschedule an appointment between patient and doctor
+     * @param patient indicating which patient is involved with the appointment
+     * @param appointment indicating which appointment is involved with the rescheduling
+     * @param newTimeSlot the chosen new timeslot to be rescheduled
+     * @param doctor indicating which doctor is involved with the appointment
+     */
     public void rescheduleAppointment(Patient patient, Appointment appointment, TimeSlot newTimeSlot, Doctor doctor) {
         TimeSlot oldTimeSlot = appointment.getTimeSlot();
         if (doctorManager.isAvailable(doctor, newTimeSlot)) {
@@ -59,7 +97,11 @@ public class AppointmentManager implements IAppointmentManager {
         }
     }
 
-    
+    /**
+     * Retrieves a list of upcoming appointments for a specific patient
+     * @param patient the patient whose upcoming appointments are to be retrieved 
+     * @return a list of appointments that are scheduled for a future date and time
+     */
     public List<Appointment> getUpcomingAppointments(Patient patient) {
         List<Appointment> upcomingAppointments  = new ArrayList<>();
         for (Appointment appointment : patient.getAppointments()) {
@@ -70,6 +112,10 @@ public class AppointmentManager implements IAppointmentManager {
         return upcomingAppointments ;
     }
 
+    /**
+     * Displays the upcoming appointments for a specified patient in the console
+     * @param patient the patient whose upcoming appointments are to be retrieved 
+     */
     public void viewUpcomingAppointments(Patient patient) {
         System.out.println("\nViewing Upcoming Appointments for Patient ID: " + patient.getUserId());
         List<Appointment> upcomingAppointments = getUpcomingAppointments(patient);
@@ -86,6 +132,11 @@ public class AppointmentManager implements IAppointmentManager {
         }
     }
 
+    /**
+     * Retrieves a list of upcoming appointments for a specific doctor
+     * @param doctor the doctor whose upcoming appointments are to be retrieved 
+     * @return a list of appointments that are scheduled for a future date and time
+     */
     //method overloading
     public List<Appointment> getUpcomingAppointments(Doctor doctor) {
         List<Appointment> upcomingAppointments  = new ArrayList<>();
@@ -97,6 +148,10 @@ public class AppointmentManager implements IAppointmentManager {
         return upcomingAppointments ;
     }
 
+    /**
+     * Displays the upcoming appointments for a specified doctor in the console
+     * @param doctor the doctor whose upcoming appointments are to be retrieved 
+     */
     public void viewUpcomingAppointments(Doctor doctor) {
         System.out.println("\nViewing Upcoming Appointments for Doctor ID: " + doctor.getUserId());
         List<Appointment> upcomingAppointments = getUpcomingAppointments(doctor);
@@ -113,6 +168,11 @@ public class AppointmentManager implements IAppointmentManager {
         }
     }
 
+    /**
+     * Retrieves a list of past appointments for a specific patient
+     * @param patient the patient whose upcoming appointments are to be retrieved 
+     * @return a list of appointments that are scheduled for a past date and time
+     */
     public List<Appointment> getPastAppointments(Patient patient) {
         List<Appointment> pastAppointments = new ArrayList<>();
         for (Appointment appointment : patient.getAppointments()) {
@@ -127,6 +187,11 @@ public class AppointmentManager implements IAppointmentManager {
         return pastAppointments;
     }
 
+    /**
+     * Retrieves a list of past appointments for a specific doctor
+     * @param doctor the doctor whose upcoming appointments are to be retrieved 
+     * @return a list of appointments that are scheduled for a past date and time
+     */
     //method overloading
     public List<Appointment> getPastAppointments(Doctor doctor) {
         List<Appointment> pastAppointments = new ArrayList<>();
@@ -142,6 +207,12 @@ public class AppointmentManager implements IAppointmentManager {
         return pastAppointments;
     }
 
+    /**
+     * Retrieves appointment details
+     * @param patient the patient whose appointments are to be retrieved 
+     * @param appointmentID the appointment that is specified for retrival 
+     * @return the appointment
+     */
     public Appointment getAppointmentDetails(Patient patient, String appointmentID) {
         for (Appointment appointment : patient.getAppointments()) {
             if (appointment.getAppointmentID().equals(appointmentID)) {
@@ -153,6 +224,16 @@ public class AppointmentManager implements IAppointmentManager {
         return null; 
     }
 
+    /**
+     * Method to record a new appointment outcome for an appointment
+     * This allows the doctor to record the outcome of a patient's appointment
+     * @param doctor the doctor who wrote the appointment outcome
+     * @param patientID patient associated to this appointment outcome
+     * @param appointmentID the appointment associated to this appointment outcome
+     * @param services a description of the services provided during the appointment
+     * @param notes additional notes regarding the outcome
+     * @param prescription prescription issued for the appointment
+     */
     public void recordAppointmentOutcome(Doctor doctor, String patientID, String appointmentID, String services, String notes, Prescription prescription) {
         Appointment appointment = findAppointmentById(appointmentID);
         if (appointment == null || !appointment.getDoctorID().equals(doctor.getUserId())) {
@@ -168,14 +249,11 @@ public class AppointmentManager implements IAppointmentManager {
         }
     }
     
-    
-    
-    
-
-    public AppointmentManager(List<Appointment> allAppointments) {
-        this.allAppointments = allAppointments;
-    }
-
+    /**
+     * Finds an appointment based on the appointmentID
+     * @param appointmentID specified appointmentID to find
+     * @return the appointment with the specified appointmentID
+     */
     public Appointment findAppointmentById(String appointmentID) {
         for (Appointment appointment : allAppointments) {
             if (appointment.getAppointmentID().equals(appointmentID)) {
@@ -186,63 +264,10 @@ public class AppointmentManager implements IAppointmentManager {
         return null;
     }
     
-    public void modifyAppointmentOutcome(Doctor doctor, String appointmentID, String newServices, String newNotes, Prescription newPrescription) {
-        Appointment appointment = findAppointmentById(appointmentID);
-
-        if (appointment == null) {
-            System.out.println("Error: Appointment ID " + appointmentID + " not found.");
-            return;
-        }
-
-        if (!appointment.getDoctorID().equals(doctor.getUserId())) {
-            System.out.println("Error: Unauthorized action. Doctor is not assigned to this appointment.");
-            return;
-        }
-
-        AppointmentOutcome outcome = appointment.getOutcome();
-        if (outcome == null) {
-            System.out.println("Error: No existing outcome for Appointment ID " + appointmentID);
-            return;
-        }
-
-        outcome.setServices(newServices);
-        outcome.setNotes(newNotes);
-        outcome.setPrescription(newPrescription);
-
-        System.out.println("Appointment outcome modified for Appointment ID: " + appointmentID);
-    }
-
-    public void deleteAppointmentOutcome(Doctor doctor, String appointmentID) {
-        Appointment appointment = findAppointmentById(appointmentID);
-    
-        if (appointment == null) {
-            System.out.println("Error: Appointment ID " + appointmentID + " not found.");
-            return;
-        }
-    
-        if (!appointment.getDoctorID().equals(doctor.getUserId())) {
-            System.out.println("Error: Unauthorized action. Doctor is not assigned to this appointment.");
-            return;
-        }
-    
-        AppointmentOutcome outcome = appointment.getOutcome();
-        if (outcome == null) {
-            System.out.println("Error: No existing outcome to delete for Appointment ID " + appointmentID);
-            return;
-        }
-    
-        appointment.recordOutcome(null, null, null, null);
-    
-        MedicalRecord record = MedicalRecord.getRecordByPatientID(appointment.getPatientID());
-        if (record != null) {
-            record.removeAppointmentOutcome(outcome);
-            System.out.println("Appointment outcome deleted from patient record for Appointment ID: " + appointmentID);
-        }
-    
-        System.out.println("Appointment outcome deleted for Appointment ID: " + appointmentID);
-    }
-
-    
+   /**
+    * Views all appointment for a specific patient
+    * @param patient the patient appointment to be viewed
+    */
     public void viewAppointments(Patient patient) {
         List<Appointment> appointments = patient.getAppointments();
 
@@ -255,6 +280,10 @@ public class AppointmentManager implements IAppointmentManager {
         }
     }
     
+    /**
+     Views all appointment for a specific doctor
+    * @param doctor the doctor appointment to be viewed
+     */
     //Utilizing method overloading to do the same, but for doctor
     public void viewAppointments(Doctor doctor) {
         List<Appointment> appointments = doctor.getAppointments();
@@ -268,6 +297,11 @@ public class AppointmentManager implements IAppointmentManager {
         }
     }
     
+   /**
+     * Accepts a specified appointment for a doctor and adding it to the doctor and patient records.
+     * @param doctor the doctor accepting the appointment
+     * @param appointment the appointment to be accepted
+     */
     public void acceptAppointment(Doctor doctor, Appointment appointment) {
         if (appointment.getDoctorID().equals(doctor.getUserId())) {
             if (!doctor.getAppointments().contains(appointment)) {
@@ -295,6 +329,11 @@ public class AppointmentManager implements IAppointmentManager {
         }
     }
 
+    /**
+     * Declines a specified appointment for a doctor and adding it to the doctor and patient records.
+     * @param doctor the doctor declining the appointment
+     * @param appointment the appointment to be declined
+     */
     public void declineAppointment(Doctor doctor, Appointment appointment) {
         if (appointment.getDoctorID().equals(doctor.getUserId()) && doctor.getAppointments().contains(appointment)) {
             appointment.setStatus("Declined");
@@ -306,6 +345,11 @@ public class AppointmentManager implements IAppointmentManager {
         }
     }
 
+    /**
+     * Cancels a specified appointment and removing it to the doctor and patient records.
+     * @param appointment the appointment to be canceled
+     * @param caller the user who requested the cancellation (doctor or patient)
+     */
     public void cancelAppointment(Appointment appointment, User caller) {
         if (caller instanceof Doctor) {
             Doctor doctor = (Doctor) caller;
@@ -337,7 +381,11 @@ public class AppointmentManager implements IAppointmentManager {
     }
 
     
-
+    /**
+     * Views all appointment outcomes in the system, accessible only to pharmacists.
+     * 
+     * @param caller the staff member requesting access to view all outcomes
+     */
     public void viewAllAppointmentOutcome(Staff caller) {
         // Ensure only pharmacists can view all outcomes
         if (caller == null || !"Pharmacist".equalsIgnoreCase(caller.getRole())) {
@@ -358,11 +406,12 @@ public class AppointmentManager implements IAppointmentManager {
         }
     }
     
-
-    private List<Appointment> getAllAppointments() {
-        return new ArrayList<>(allAppointments); 
-    }
-
+    /**
+     * Retrieves a list of appointment outcomes based on their patient ID.
+     * 
+     * @param patientID the ID of the patient
+     * @return a list of all recorded outcomes for the specified patient
+     */
     public List<AppointmentOutcome> getOutcomesByPatientID(String patientID) {
         List<AppointmentOutcome> outcomes = new ArrayList<>();
         for (Appointment appointment : allAppointments) {
@@ -373,6 +422,11 @@ public class AppointmentManager implements IAppointmentManager {
         return outcomes;
     }
     
+    /**
+     * Views all appointment outcomes for a specific patient.
+     * 
+     * @param patient the patient which appointment outcomes are to be viewed
+     */
     public void viewAppointmentOutcome(Patient patient) {
         List<AppointmentOutcome> outcomes = getOutcomesByPatientID(patient.getUserId());
         if (outcomes.isEmpty()) {
