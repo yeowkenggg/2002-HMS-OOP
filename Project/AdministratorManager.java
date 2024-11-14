@@ -1,11 +1,23 @@
 import java.util.*;
-public class AdminService {
+
+/**
+ * AdminstratorManager - logic implementation for Administrator class
+ */
+public class AdministratorManager {
     private IMedicineManager medicineManager;
 
-    public AdminService(IMedicineManager medicineManager) {
+    /**
+     * Constructor for AdministratorManager
+     * @param medicineManager manager responsible for medicine-related logic
+     */
+    public AdministratorManager(IMedicineManager medicineManager) {
         this.medicineManager = medicineManager;
     }
 
+    /**
+     * Logic for approving replenishment requests.
+     * Asks user for an index and updates it from "Pending" to "Approved"
+     */
     public void approveReplenishmentRequests() {
         List<ReplenishmentRequest> requests = medicineManager.getPendingReplenishmentRequests();
         if (requests.isEmpty()) {

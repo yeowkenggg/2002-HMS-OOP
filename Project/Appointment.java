@@ -2,6 +2,9 @@ import java.util.*;
 import java.io.*;
 import java.time.LocalDateTime;
 
+/*
+ * Appointment class
+ */
 public class Appointment {
 
     private static List<Appointment> allAppointments = new ArrayList<>();
@@ -13,7 +16,14 @@ public class Appointment {
 	private String status;
     private AppointmentOutcome outcome;
 
-
+    /**
+     * Constructor for appointment class
+     * @param appointmentID unique ID for appointment
+     * @param patientID get Patient through ID
+     * @param doctorID get Doctor through ID
+     * @param timeSlot TimeSlot for appointment
+     * @param status status indicator for the status of appointment
+     */
     public Appointment(String appointmentID, String patientID, String doctorID, TimeSlot timeSlot, String status) {
         this.appointmentID = appointmentID;
         this.patientID = patientID;
