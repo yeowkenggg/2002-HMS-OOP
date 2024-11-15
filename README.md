@@ -16,8 +16,10 @@ Instructions on how to set up the project on their local machines.
 ## Project Structure
 - `Project/` - Source code
 - `Project/javadoc` - Documentation files
+- `OOP ASSIGNMENT - HMS.pdf` Assignment Brief / Handout 
 - `VPP UML Class Diagram.vpp` - Visual Paradigm File for Project Class Diagram
-- `UML Class Diagram.pdf` - Exported Class Diagram in PDF
+- `UML Class Diagram.pdf` - Exported Class Diagram in PDF (Section B)
+- `Test Cases.pdf` Supplementary Test Case for Report (Section D)
 - `README.md` - README documentation
 
 ## Prerequisites
