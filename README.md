@@ -63,6 +63,7 @@ To ensure the project can access the required CSV file in Main.java, set the cor
 - **Jared Chung Wai Kit** [GitHub Profile](https://github.com/RiceCookerEXE)
 - **Chea Yuan Sheng** [GitHub Profile](https://github.com/CysXX)
 
-## Report Revision History (if needed)
+## Etc
 
+Report Revision History (if needed)
 [Google Doc](https://docs.google.com/document/d/1Gw4YAYQy0c_BEW8aioORywS3iYdmaB-PtTUgvxHh_fs/edit?usp=sharing)
