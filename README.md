@@ -9,6 +9,7 @@ NTU SC2002 Project Assignment (2024)
 - [Usage](#usage)
 - [Instructions / Pre-configurations](#instructions--pre-configurations)
 - [Team Members](#team-members)
+- [Etc](#etc)
 
 ## Getting Started
 Instructions on how to set up the project on their local machines.
@@ -49,10 +50,19 @@ To ensure the project can access the required CSV file in Main.java, set the cor
     2. Right-click on each CSV file in your file explorer.
     3. Copy Relative Path or Copy Path to get the exact file path.
     4. Paste the path in Main.java where the CSV paths are set, ensuring it is formatted correctly as a string.
-
+      Example:
+      ```bash
+        String staffFilePath = "Project\\Staff_List.csv";  
+        String patientFilePath = "Project\\Patient_List.csv";  
+        String medicineFilePath = "Project\\Medicine_List.csv";
+      ```
 
 ## Team Members
 
 - **Chiu Yeow Keng** [GitHub Profile](https://github.com/yeowkenggg)
 - **Jared Chung Wai Kit** [GitHub Profile](https://github.com/RiceCookerEXE)
 - **Chea Yuan Sheng** [GitHub Profile](https://github.com/CysXX)
+
+## Report Revision History (if needed)
+
+[Google Doc](https://docs.google.com/document/d/1Gw4YAYQy0c_BEW8aioORywS3iYdmaB-PtTUgvxHh_fs/edit?usp=sharing)
