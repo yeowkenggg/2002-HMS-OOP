@@ -91,30 +91,43 @@ public class StaffManager implements IStaffManager{
      */
     public void displayStaffManagementMenu() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("--- Staff Manaagement Menu ---");
-        System.out.println("1. Add New Staff");
-        System.out.println("2. Update Staff");
-        System.out.println("3. Remove Staff");
-        System.out.println("4. View All Staff");
-        System.out.println("5. Filter Staff");
-        System.out.println("6. Return");
-        System.out.print("Enter an action (1-6): ");
-        
-        
-        int action = scanner.nextInt();
-        scanner.nextLine();
-
-        if (action == (6)) {
-            return;
-        }
-
-        switch (action) {
-            case 1 -> addStaffMenu();
-            case 2 -> updateStaff();
-            case 3 -> removeStaff(userManager);
-            case 4 -> viewAllStaff();
-            case 5 -> filterStaffMenu();
-            default -> System.out.println("Invalid action.");
+        while (true) { 
+            try {
+                System.out.println("\n--- Staff Management Menu ---");
+                System.out.println("1. Add New Staff");
+                System.out.println("2. Update Staff");
+                System.out.println("3. Remove Staff");
+                System.out.println("4. View All Staff");
+                System.out.println("5. Filter Staff");
+                System.out.println("6. Return");
+                System.out.print("Enter an action (1-6): ");
+    
+                String input = scanner.nextLine().trim(); 
+    
+                int action;
+                try {
+                    action = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number between 1 and 6.");
+                    continue; 
+                }
+    
+                if (action == 6) {
+                    return; 
+                }
+    
+                // Handle the actions
+                switch (action) {
+                    case 1 -> addStaffMenu();
+                    case 2 -> updateStaff();
+                    case 3 -> removeStaff(userManager);
+                    case 4 -> viewAllStaff();
+                    case 5 -> filterStaffMenu();
+                    default -> System.out.println("Invalid choice. Please enter a number between 1 and 6.");
+                }
+            } catch (Exception e) {
+                System.out.println("An error occurred: " + e.getMessage());
+            }
         }
     }
 
@@ -184,7 +197,8 @@ public class StaffManager implements IStaffManager{
             System.out.println("Error: " + e.getMessage());
         } catch (InputMismatchException e) {
             System.out.println("Invalid input. Please enter the correct data type.");
-            scanner.nextLine(); // Clear the buffer
+            scanner.nextLine(); 
+            addStaffMenu();
         }
     }
 

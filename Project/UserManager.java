@@ -248,7 +248,8 @@ public class UserManager {
                                 System.out.println("Appointment ID: " + appointment.getAppointmentID() +
                                                    ", Patient ID: " + appointment.getPatientID() +
                                                    ", Scheduled Time: " + appointment.getTimeSlot().getDate() +
-                                                   " @ " + appointment.getTimeSlot().getTime());
+                                                   " @ " + appointment.getTimeSlot().getTime()+
+                                                   " Status: " +appointment.getStatus());
                             }
                         }
                     break;
@@ -467,9 +468,17 @@ public class UserManager {
             try {
                 admin.displayMenu();
                 System.out.print("Choose an option: ");
-                int choice = scanner.nextInt();
-                scanner.nextLine();  // Consume newline
+                
+                String input = scanner.nextLine().trim(); 
 
+                int choice;
+                try {
+                    choice = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number.");
+                    continue; 
+                }
+    
                 switch (choice) {
                     case 1:
                         admin.manageHospitalStaff();
@@ -484,16 +493,15 @@ public class UserManager {
                         admin.viewAppointmentDetails();
                         break;
                     case 5:
-                        admin.logout();   
+                        admin.logout();
                         loginUser(); 
-                        return;
+                        return; 
                     default:
                         System.out.println("Invalid choice. Please try again.");
-                        continue;
                 }
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Please enter a number.");
-                scanner.nextLine(); // Clear the invalid input
+            } catch (Exception e) {
+                System.out.println("An error occurred: " + e.getMessage());
+                scanner.nextLine(); 
             }
         }
     }
@@ -521,7 +529,7 @@ public class UserManager {
                     case 3:
                         List<Prescription> prescriptions = pharmacist.getPrescriptionManager().getAllPrescriptions().stream()
                         .filter(prescription -> "Pending".equalsIgnoreCase(prescription.getStatus()))
-                        .toList();;
+                        .toList();
                         if (prescriptions.isEmpty()) {
                             System.out.println("No prescriptions available.");
                         } else {
@@ -529,14 +537,29 @@ public class UserManager {
                             for (int i = 0; i < prescriptions.size(); i++) {
                                 System.out.println(i + ": " + prescriptions.get(i));
                             }
-                            System.out.print("Enter the index of the prescription to update status: ");
-                            int prescriptionIndex = getValidIntInput(scanner);
-
-                            if (prescriptionIndex >= 0 && prescriptionIndex < prescriptions.size()) {
-                                Prescription selectedPrescription = prescriptions.get(prescriptionIndex);
-                                pharmacist.updatePrescriptionStatus(selectedPrescription.getPrescriptionID());
-                            } else {
-                                System.out.println("Invalid index. Please select a valid prescription index.");
+                        
+                            while (true) {
+                                System.out.print("Enter the index of the prescription to update status (or 'E' to exit): ");
+                                String input = scanner.nextLine().trim();
+                        
+                                if (input.equalsIgnoreCase("E")) {
+                                    System.out.println("Exiting to previous menu.");
+                                    break; 
+                                }
+                                try {
+                                    int prescriptionIndex = Integer.parseInt(input);
+                        
+                                    if (prescriptionIndex >= 0 && prescriptionIndex < prescriptions.size()) {
+                                        Prescription selectedPrescription = prescriptions.get(prescriptionIndex);
+                                        pharmacist.updatePrescriptionStatus(selectedPrescription.getPrescriptionID());
+                                        System.out.println("Prescription status updated for ID: " + selectedPrescription.getPrescriptionID());
+                                        break; 
+                                    } else {
+                                        System.out.println("Invalid index. Please select a valid prescription index.");
+                                    }
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Invalid input. Please enter a valid number or 'E' to exit.");
+                                }
                             }
                         }
                         break;
@@ -547,26 +570,58 @@ public class UserManager {
                         List<Medicine> inventory = medicineManager.getInventory();
                         if (inventory.isEmpty()) {
                             System.out.println("No medicines available for replenishment.");
-                            break;
-                        }
-                    
-                        System.out.println("\n--- Medicine Inventory ---");
-                        for (int i = 0; i < inventory.size(); i++) {
-                            System.out.println(i + ": " + inventory.get(i).getName() + " - Current Stock: " + inventory.get(i).getStock());
-                        }
-                    
-                        System.out.print("Enter the index of the medicine for replenishment: ");
-                        int medicineIndex = getValidIntInput(scanner); 
-                    
-                        if (medicineIndex >= 0 && medicineIndex < inventory.size()) {
-                            Medicine selectedMedicine = inventory.get(medicineIndex);
-                    
-                            System.out.print("Enter amount to replenish for " + selectedMedicine.getName() + ": ");
-                            int replenishAmount = getValidIntInput(scanner);
-                    
-                            pharmacist.replenishmentRequest(selectedMedicine.getName(), replenishAmount);
                         } else {
-                            System.out.println("Invalid index. Please try again.");
+                            System.out.println("\n--- Medicine Inventory ---");
+                            for (int i = 0; i < inventory.size(); i++) {
+                                System.out.println(i + ": " + inventory.get(i).getName() + " - Current Stock: " + inventory.get(i).getStock());
+                            }
+                        
+                            while (true) {
+                                System.out.print("Enter the index of the medicine for replenishment (or 'E' to exit): ");
+                                String input = scanner.nextLine().trim();
+                        
+                                if (input.equalsIgnoreCase("E")) {
+                                    System.out.println("Exiting to previous menu.");
+                                    break; 
+                                }
+                        
+                                try {
+                                    int medicineIndex = Integer.parseInt(input);
+                        
+                                    if (medicineIndex >= 0 && medicineIndex < inventory.size()) {
+                                        Medicine selectedMedicine = inventory.get(medicineIndex);
+                        
+                                        while (true) {
+                                            System.out.print("Enter amount to replenish for " + selectedMedicine.getName() + " (or 'E' to exit): ");
+                                            input = scanner.nextLine().trim();
+                        
+                                            if (input.equalsIgnoreCase("E")) {
+                                                System.out.println("Exiting to previous menu.");
+                                                break; 
+                                            }
+                        
+                                            try {
+                                                int replenishAmount = Integer.parseInt(input);
+                        
+                                                if (replenishAmount > 0) {
+                                                    pharmacist.replenishmentRequest(selectedMedicine.getName(), replenishAmount);
+                                                    
+                                                    break; 
+                                                } else {
+                                                    System.out.println("Please enter a positive amount to replenish.");
+                                                }
+                                            } catch (NumberFormatException e) {
+                                                System.out.println("Invalid input. Please enter a valid number or 'E' to exit.");
+                                            }
+                                        }
+                                        break; 
+                                    } else {
+                                        System.out.println("Invalid index. Please select a valid medicine index.");
+                                    }
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Invalid input. Please enter a valid number or 'E' to exit.");
+                                }
+                            }
                         }
                         break;
                     case 6:
@@ -653,13 +708,8 @@ public class UserManager {
                         System.out.println(i + ": Dr. " + allDoctors.get(i).getName() + " (ID: " + allDoctors.get(i).getUserId() + ")");
                     }
 
-                    System.out.print("Enter the index of the doctor to view available slots (or 'E' to exit): ");
+                    System.out.print("Enter the index of the doctor to view available slots: ");
                     String appointmentCheckInput = scanner.nextLine().trim();
-
-                    if (appointmentCheckInput.equalsIgnoreCase("E")) {
-                        System.out.println("Exiting to previous menu.");
-                        break;
-                    }
 
                     try {
                         int doctorIndex = Integer.parseInt(appointmentCheckInput);

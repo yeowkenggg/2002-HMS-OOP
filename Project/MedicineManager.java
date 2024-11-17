@@ -135,30 +135,47 @@ public class MedicineManager implements IMedicineManager {
      */
     public void displayMedicineManagementMenu() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("\n--- Medicine Management ---");
-        System.out.println("1. View All Medicines");
-        System.out.println("2. Add New Medicine");
-        System.out.println("3. Update Medicine Stock");
-        System.out.println("4. Update Stock Alert Level");
-        System.out.println("5. Remove Medicine");
-        System.out.println("6. Return");
-        System.out.print("Choose an option (1-6): ");
-
-        int option = scanner.nextInt();
-        scanner.nextLine();
-
-        if (option ==(6)) {
-            return; 
-        }
-        switch (option) {
-            case 1 -> viewMedicines();
-            case 2 -> addMedicineMenu();
-            case 3 -> updateMedicineStockMenu();
-            case 4 -> updateStockAlertLevelMenu();
-            case 5 -> removeMedicineMenu();
-            default -> System.out.println("Invalid option.");
+    
+        while (true) { 
+            try {
+                System.out.println("\n--- Medicine Management ---");
+                System.out.println("1. View All Medicines");
+                System.out.println("2. Add New Medicine");
+                System.out.println("3. Update Medicine Stock");
+                System.out.println("4. Update Stock Alert Level");
+                System.out.println("5. Remove Medicine");
+                System.out.println("6. Return");
+                System.out.print("Choose an option (1-6): ");
+    
+                String input = scanner.nextLine().trim(); 
+    
+                int option;
+                try {
+                    option = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number between 1 and 6.");
+                    continue; 
+                }
+    
+                if (option == 6) {
+                    return; 
+                }
+    
+                // Handle the actions
+                switch (option) {
+                    case 1 -> viewMedicines();
+                    case 2 -> addMedicineMenu();
+                    case 3 -> updateMedicineStockMenu();
+                    case 4 -> updateStockAlertLevelMenu();
+                    case 5 -> removeMedicineMenu();
+                    default -> System.out.println("Invalid option. Please enter a number between 1 and 6.");
+                }
+            } catch (Exception e) {
+                System.out.println("An error occurred: " + e.getMessage());
+            }
         }
     }
+    
 
     //internal CRUD of medicine
     private void addMedicineMenu() {

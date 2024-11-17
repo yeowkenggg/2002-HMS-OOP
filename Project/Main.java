@@ -22,9 +22,9 @@ public class Main {
          * LOOK AT README.MD IF YOU DONT KNOW HOW TO CHANGE
          */
         //CSV file paths
-        String staffFilePath = "Staff_List.csv";  
-        String patientFilePath = "Patient_List.csv";  
-        String medicineFilePath = "Medicine_List.csv";  
+        String staffFilePath = "Project\\Staff_List.csv";  
+        String patientFilePath = "Project\\Patient_List.csv";  
+        String medicineFilePath = "Project\\Medicine_List.csv";  
 
         Scanner scanner = new Scanner(System.in);
         List<Appointment> allAppointments = new ArrayList<>();
