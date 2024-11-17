@@ -658,7 +658,7 @@ public class UserManager {
 
                     if (appointmentCheckInput.equalsIgnoreCase("E")) {
                         System.out.println("Exiting to previous menu.");
-                        return;
+                        break;
                     }
 
                     try {
