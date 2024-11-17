@@ -15,5 +15,6 @@ To ensure the project can access the required CSV file in Main.java, set the cor
     3. Copy Relative Path or Copy Path to get the exact file path.
     4. Paste the path in Main.java where the CSV paths are set, ensuring it is formatted correctly as a string.
 
-For additional info, go to the markdown file README.md in this folder.
+**ALL INFORMATION CAN BE FOUND AT: (Project Structure, Installation, Members&Github, Report Revision History, etc.)
+Go to the markdown file README.md in this folder.
 For a styled version - visit https://github.com/yeowkenggg/2002-HMS-OOP
