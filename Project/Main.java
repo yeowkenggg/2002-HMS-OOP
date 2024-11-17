@@ -16,6 +16,16 @@ public class Main {
      * @param args cli
      */
     public static void main(String[] args) {
+
+        /*
+         * CHANGE THIS TO YOUR OWN CORRECT FILEPATH
+         * LOOK AT README.MD IF YOU DONT KNOW HOW TO CHANGE
+         */
+        //CSV file paths
+        String staffFilePath = "Staff_List.csv";  
+        String patientFilePath = "Patient_List.csv";  
+        String medicineFilePath = "Medicine_List.csv";  
+
         Scanner scanner = new Scanner(System.in);
         List<Appointment> allAppointments = new ArrayList<>();
         List<User> sharedUserList = new ArrayList<>();
@@ -46,11 +56,6 @@ public class Main {
         doctorManager.setStaffManager(staffManager);
         doctorManager.setPrescriptionManager(prescriptionManager);
 
-
-        //CSV file paths
-        String staffFilePath = "Staff_List.csv";  
-        String patientFilePath = "Patient_List.csv";  
-        String medicineFilePath = "Medicine_List.csv";  
 
         //loading of CSV files
         CSVImportManager.importStaffData(staffFilePath, staffManager, medicineManager, pharmacistManager, doctorManager, prescriptionManager);
