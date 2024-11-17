@@ -138,11 +138,24 @@ public class StaffManager implements IStaffManager{
         System.out.print("Enter User ID: ");
         String userId = scanner.nextLine();
 
+        if (userList.stream().anyMatch(user -> user.getUserId().equalsIgnoreCase(userId))) {
+            System.out.println("Error: User ID already exists. Please use a different ID.");
+            return; 
+        }
+
         System.out.print("Enter Password: ");
-        String password = scanner.nextLine();
+        String password = scanner.nextLine().trim();
+        if (password.isEmpty()) {
+            System.out.println("Error: Password cannot be empty.");
+            return; 
+        }
 
         System.out.print("Enter Name: ");
-        String name = scanner.nextLine();
+        String name = scanner.nextLine().trim();
+        if (name.isEmpty()) {
+            System.out.println("Error: Name cannot be empty.");
+            return; 
+        }
 
         System.out.print("Enter Gender (Male/Female): ");
         String gender = scanner.nextLine().trim();

@@ -678,9 +678,11 @@ public class UserManager {
                             }
                         } else {
                             System.out.println("Invalid index. Returning to the previous menu.");
+                            break;
                         }
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid input. Returning to the previous menu.");
+                        break;
                     }
 
                     break;
@@ -753,51 +755,68 @@ public class UserManager {
                 case 5:
                     // reschedule appointment
                     List<Appointment> appointments = patient.getAppointments().stream()
-                    .filter(appointment -> "Pending".equalsIgnoreCase(appointment.getStatus()))
-                    .toList();
+                        .filter(appointment -> "Pending".equalsIgnoreCase(appointment.getStatus()))
+                        .toList();
 
                     if (appointments.isEmpty()) {
                         System.out.println("No appointments to reschedule.");
-                    } else {
-                        System.out.println("\n--- Your Scheduled Appointments ---");
-                        for (int i = 0; i < appointments.size(); i++) {
-                            System.out.println(i + ": " + appointments.get(i));
-                        }
-                        System.out.print("Enter the index of the appointment to reschedule: ");
-                        int appointmentIndex = getValidIntInput(scanner);
-                
-                        if (appointmentIndex >= 0 && appointmentIndex < appointments.size()) {
-                            Appointment appointmentToReschedule = appointments.get(appointmentIndex);
-                            Doctor doctorForReschedule = doctorManager.findDoctorById(appointmentToReschedule.getDoctorID());
-                
-                            if (doctorForReschedule != null) {
-                                List<TimeSlot> availableSlots = doctorForReschedule.getAvailability();
-                                if (availableSlots.isEmpty()) {
-                                    System.out.println("No available slots for Dr. " + doctorForReschedule.getName());
-                                } else {
-                                    System.out.println("\n--- Available Slots for Dr. " + doctorForReschedule.getName() + " ---");
-                                    for (int i = 0; i < availableSlots.size(); i++) {
-                                        System.out.println(i + ": " + availableSlots.get(i));
-                                    }
-                
-                                    System.out.print("Enter the index of available time slot to reschedule: ");
-                                    int newSlotIndex = getValidIntInput(scanner);
-                
-                                    if (newSlotIndex >= 0 && newSlotIndex < availableSlots.size()) {
-                                        TimeSlot newTimeSlot = availableSlots.get(newSlotIndex);
-                                        patient.rescheduleAppointment(appointmentToReschedule, newTimeSlot, doctorForReschedule);
-                                        System.out.println("Scheduled appointment for " + patient.getName() + " with Dr. " + doctorForReschedule.getName() + " at " + newTimeSlot);
-                                    } else {
-                                        System.out.println("Invalid slot index. Please try again.");
-                                    }
-                                }
-                            } else {
-                                System.out.println("Doctor not found.");
-                            }
-                        } else {
-                            System.out.println("Invalid appointment index. Please try again.");
-                        }
+                        break; 
                     }
+
+                    System.out.println("\n--- Your Scheduled Appointments ---");
+                    for (int i = 0; i < appointments.size(); i++) {
+                        System.out.println(i + ": " + appointments.get(i));
+                    }
+
+                    System.out.print("Enter the index of the appointment to reschedule: ");
+                    try {
+                        int appointmentIndex = Integer.parseInt(scanner.nextLine().trim());
+                        if (appointmentIndex < 0 || appointmentIndex >= appointments.size()) {
+                            System.out.println("Invalid appointment index. Returning to the previous menu.");
+                            break; 
+                        }
+
+                        Appointment appointmentToReschedule = appointments.get(appointmentIndex);
+                        Doctor doctorForReschedule = doctorManager.findDoctorById(appointmentToReschedule.getDoctorID());
+
+                        if (doctorForReschedule == null) {
+                            System.out.println("Doctor not found. Returning to the previous menu.");
+                            break; 
+                        }
+
+                        List<TimeSlot> availableSlots = doctorForReschedule.getAvailability();
+
+                        if (availableSlots.isEmpty()) {
+                            System.out.println("No available slots for Dr. " + doctorForReschedule.getName() + ". Returning to the previous menu.");
+                            break; 
+                        }
+
+                        System.out.println("\n--- Available Slots for Dr. " + doctorForReschedule.getName() + " ---");
+                        for (int i = 0; i < availableSlots.size(); i++) {
+                            System.out.println(i + ": " + availableSlots.get(i));
+                        }
+
+                        System.out.print("Enter the index of available time slot to reschedule: ");
+                        try {
+                            int newSlotIndex = Integer.parseInt(scanner.nextLine().trim());
+                            if (newSlotIndex < 0 || newSlotIndex >= availableSlots.size()) {
+                                System.out.println("Invalid slot index. Returning to the previous menu.");
+                                break; 
+                            }
+
+                            TimeSlot newTimeSlot = availableSlots.get(newSlotIndex);
+                            patient.rescheduleAppointment(appointmentToReschedule, newTimeSlot, doctorForReschedule);
+                            System.out.println("Scheduled appointment for " + patient.getName() +
+                                            " with Dr. " + doctorForReschedule.getName() + " at " + newTimeSlot);
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input. Returning to the previous menu.");
+                            break;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid input. Returning to the previous menu.");
+                        break; 
+                    }
+
                     break;
             
     

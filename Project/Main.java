@@ -48,9 +48,9 @@ public class Main {
 
 
         //CSV file paths
-        String staffFilePath = "Project\\Staff_List.csv";  
-        String patientFilePath = "Project\\Patient_List.csv";  
-        String medicineFilePath = "Project\\Medicine_List.csv";  
+        String staffFilePath = "Staff_List.csv";  
+        String patientFilePath = "Patient_List.csv";  
+        String medicineFilePath = "Medicine_List.csv";  
 
         //loading of CSV files
         CSVImportManager.importStaffData(staffFilePath, staffManager, medicineManager, pharmacistManager, doctorManager, prescriptionManager);
